@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Marco Miozzo <marco.miozzo@cttc.es>,
  *         Nicola Baldo <nbaldo@cttc.es>
@@ -27,9 +16,9 @@
 using namespace ns3;
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief This system test program creates different test cases with a single eNB and
+ * @brief This system test program creates different test cases with a single eNB and
  * several UEs, all having the same Radio Bearer specification. In each test
  * case, the UEs see the same SINR from the eNB; different test cases are
  * implemented obtained by using different SINR values and different numbers of
@@ -43,11 +32,11 @@ class LenaPfFfMacSchedulerTestCase1 : public TestCase
     /**
      * Constructor
      *
-     * \param nUser the number of UE nodes
-     * \param dist the distance between nodes
-     * \param thrRefDl the DL throughput reference
-     * \param thrRefUl the UL throughput reference
-     * \param errorModelEnabled if true the error model is enabled
+     * @param nUser the number of UE nodes
+     * @param dist the distance between nodes
+     * @param thrRefDl the DL throughput reference
+     * @param thrRefUl the UL throughput reference
+     * @param errorModelEnabled if true the error model is enabled
      */
     LenaPfFfMacSchedulerTestCase1(uint16_t nUser,
                                   double dist,
@@ -59,9 +48,9 @@ class LenaPfFfMacSchedulerTestCase1 : public TestCase
   private:
     /**
      * Build name string
-     * \param nUser the number of UE nodes
-     * \param dist the distance between nodes
-     * \returns the name string
+     * @param nUser the number of UE nodes
+     * @param dist the distance between nodes
+     * @returns the name string
      */
     static std::string BuildNameString(uint16_t nUser, double dist);
     void DoRun() override;
@@ -73,9 +62,9 @@ class LenaPfFfMacSchedulerTestCase1 : public TestCase
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Lena PfFf Mac Scheduler Test Case 2
+ * @brief Lena PfFf Mac Scheduler Test Case 2
  */
 class LenaPfFfMacSchedulerTestCase2 : public TestCase
 {
@@ -83,10 +72,10 @@ class LenaPfFfMacSchedulerTestCase2 : public TestCase
     /**
      * Constructor
      *
-     * \param dist the distance between nodes
-     * \param estThrPfDl the estimated DL throughput PF
-     * \param estThrPfUl the estimated UL throughput PF
-     * \param errorModelEnabled if true the error model is enabled
+     * @param dist the distance between nodes
+     * @param estThrPfDl the estimated DL throughput PF
+     * @param estThrPfUl the estimated UL throughput PF
+     * @param errorModelEnabled if true the error model is enabled
      */
     LenaPfFfMacSchedulerTestCase2(std::vector<double> dist,
                                   std::vector<uint32_t> estThrPfDl,
@@ -97,9 +86,9 @@ class LenaPfFfMacSchedulerTestCase2 : public TestCase
   private:
     /**
      * Builds the test name string based on provided parameter values
-     * \param nUser the number of UE nodes
-     * \param dist the distance between nodes
-     * \returns the name string
+     * @param nUser the number of UE nodes
+     * @param dist the distance between nodes
+     * @returns the name string
      */
     static std::string BuildNameString(uint16_t nUser, std::vector<double> dist);
     void DoRun() override;
@@ -111,9 +100,9 @@ class LenaPfFfMacSchedulerTestCase2 : public TestCase
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief PfFfMacScheduler test suite
+ * @brief PfFfMacScheduler test suite
  */
 
 class LenaTestPfFfMacSchedulerSuite : public TestSuite

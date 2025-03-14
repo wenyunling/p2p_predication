@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2019 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  *         (based on the original point-to-point-epc-helper.cc)
@@ -48,11 +37,11 @@ NS_OBJECT_ENSURE_REGISTERED(NoBackhaulEpcHelper);
 NoBackhaulEpcHelper::NoBackhaulEpcHelper()
     : m_gtpuUdpPort(2152), // fixed by the standard
       m_s11LinkDataRate(DataRate("10Gb/s")),
-      m_s11LinkDelay(Seconds(0)),
+      m_s11LinkDelay(),
       m_s11LinkMtu(3000),
       m_gtpcUdpPort(2123), // fixed by the standard
       m_s5LinkDataRate(DataRate("10Gb/s")),
-      m_s5LinkDelay(Seconds(0)),
+      m_s5LinkDelay(),
       m_s5LinkMtu(3000)
 {
     NS_LOG_FUNCTION(this);
@@ -105,7 +94,7 @@ NoBackhaulEpcHelper::NoBackhaulEpcHelper()
     NetDeviceContainer tunDeviceContainer;
     tunDeviceContainer.Add(m_tunDevice);
     // the TUN device is on the same subnet as the UEs, so when a packet
-    // addressed to an UE arrives at the intenet to the WAN interface of
+    // addressed to an UE arrives at the internet to the WAN interface of
     // the PGW it will be forwarded to the TUN device.
     Ipv4InterfaceContainer tunDeviceIpv4IfContainer = AssignUeIpv4Address(tunDeviceContainer);
 

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2019 Universita' degli Studi di Napoli Federico II
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Stefano Avallone <stavallo@unina.it>
  */
@@ -118,7 +107,7 @@ WifiPsdu::GetAddr1() const
     {
         if (m_mpduList.at(i)->GetHeader().GetAddr1() != ra)
         {
-            NS_ABORT_MSG("MPDUs in an A-AMPDU must have the same receiver address");
+            NS_ABORT_MSG("MPDUs in an A-MPDU must have the same receiver address");
         }
     }
     return ra;
@@ -133,7 +122,7 @@ WifiPsdu::GetAddr2() const
     {
         if (m_mpduList.at(i)->GetHeader().GetAddr2() != ta)
         {
-            NS_ABORT_MSG("MPDUs in an A-AMPDU must have the same transmitter address");
+            NS_ABORT_MSG("MPDUs in an A-MPDU must have the same transmitter address");
         }
     }
     return ta;
@@ -174,6 +163,16 @@ WifiPsdu::SetDuration(Time duration)
     }
 }
 
+void
+WifiPsdu::IncrementRetryCount()
+{
+    NS_LOG_FUNCTION(this);
+    for (auto& mpdu : m_mpduList)
+    {
+        mpdu->IncrementRetryCount();
+    }
+}
+
 std::set<uint8_t>
 WifiPsdu::GetTids() const
 {
@@ -192,7 +191,7 @@ WifiMacHeader::QosAckPolicy
 WifiPsdu::GetAckPolicyForTid(uint8_t tid) const
 {
     NS_LOG_FUNCTION(this << +tid);
-    WifiMacHeader::QosAckPolicy policy;
+    WifiMacHeader::QosAckPolicy policy{WifiMacHeader::NORMAL_ACK};
     auto it = m_mpduList.begin();
     bool found = false;
 
@@ -376,6 +375,42 @@ std::ostream&
 operator<<(std::ostream& os, const WifiPsdu& psdu)
 {
     psdu.Print(os);
+    return os;
+}
+
+std::ostream&
+operator<<(std::ostream& os, const WifiPsduMap& psduMap)
+{
+    for (const auto& [staId, psdu] : psduMap)
+    {
+        if (staId != SU_STA_ID)
+        {
+            os << "[PSDU for STA_ID=" << staId << ", ";
+        }
+        psdu->Print(os);
+        if (staId != SU_STA_ID)
+        {
+            os << "]";
+        }
+    }
+    return os;
+}
+
+std::ostream&
+operator<<(std::ostream& os, const WifiConstPsduMap& psduMap)
+{
+    for (const auto& [staId, psdu] : psduMap)
+    {
+        if (staId != SU_STA_ID)
+        {
+            os << "[PSDU for STA_ID=" << staId << ", ";
+        }
+        psdu->Print(os);
+        if (staId != SU_STA_ID)
+        {
+            os << "]";
+        }
+    }
     return os;
 }
 

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Leonard Tracy <lentracy@gmail.com>
  */
@@ -294,7 +283,7 @@ UanMacRc::Enqueue(Ptr<Packet> packet, uint16_t protocolNumber, const Address& de
         Associate();
         return true;
     case IDLE:
-        if (!m_rtsEvent.IsRunning())
+        if (!m_rtsEvent.IsPending())
         {
             SendRts();
         }
@@ -361,7 +350,7 @@ UanMacRc::ReceiveOkFromPhy(Ptr<Packet> pkt, double /* sinr */, UanTxMode mode)
 
         Time winDelay = ctsg.GetWindowTime();
 
-        if (winDelay > Time(0))
+        if (winDelay.IsStrictlyPositive())
         {
             m_rtsBlocked = false;
             Simulator::Schedule(winDelay, &UanMacRc::BlockRtsing, this);
@@ -450,7 +439,7 @@ UanMacRc::ScheduleData(const UanHeaderRcCts& ctsh,
 
     Time startDelay = txTime - Simulator::Now();
 
-    Time frameDelay = Seconds(0);
+    Time frameDelay;
 
     const std::list<std::pair<Ptr<Packet>, Mac8Address>> l = it->GetPktList();
     auto pit = l.begin();
@@ -471,7 +460,7 @@ UanMacRc::ScheduleData(const UanHeaderRcCts& ctsh,
 
         pkt->AddHeader(ch);
         Time eventTime = startDelay + frameDelay;
-        if (eventTime < Time(0))
+        if (eventTime.IsStrictlyNegative())
         {
             NS_FATAL_ERROR(
                 "Scheduling error resulted in very negative data transmission time! eventTime = "
@@ -489,7 +478,7 @@ UanMacRc::ScheduleData(const UanHeaderRcCts& ctsh,
     m_state = IDLE;
     if (!m_pktQueue.empty())
     {
-        if (m_rtsEvent.IsRunning())
+        if (m_rtsEvent.IsPending())
         {
             m_rtsEvent.Cancel();
         }
@@ -625,7 +614,7 @@ UanMacRc::Associate()
         SendPacket(pkt, m_currentRate + m_numRates);
     }
     m_state = GWPSENT;
-    NS_ASSERT(!m_rtsEvent.IsRunning());
+    NS_ASSERT(!m_rtsEvent.IsPending());
     m_ev->SetAttribute("Mean", DoubleValue(1 / m_retryRate));
     double timeout = m_ev->GetValue();
     m_rtsEvent = Simulator::Schedule(Seconds(timeout), &UanMacRc::AssociateTimeout, this);
@@ -659,7 +648,7 @@ UanMacRc::AssociateTimeout()
         SendPacket(pkt, m_currentRate + m_numRates);
         m_resList.push_back(res);
     }
-    NS_ASSERT(!m_rtsEvent.IsRunning());
+    NS_ASSERT(!m_rtsEvent.IsPending());
     m_ev->SetAttribute("Mean", DoubleValue(1 / m_retryRate));
     double timeout = m_ev->GetValue();
     m_rtsEvent = Simulator::Schedule(Seconds(timeout), &UanMacRc::AssociateTimeout, this);
@@ -693,7 +682,7 @@ UanMacRc::SendRts()
         SendPacket(pkt, m_currentRate + m_numRates);
     }
     m_state = RTSSENT;
-    NS_ASSERT(!m_rtsEvent.IsRunning());
+    NS_ASSERT(!m_rtsEvent.IsPending());
     m_ev->SetAttribute("Mean", DoubleValue(1 / m_retryRate));
     double timeout = m_ev->GetValue();
     m_rtsEvent = Simulator::Schedule(Seconds(timeout), &UanMacRc::RtsTimeout, this);
@@ -711,11 +700,8 @@ UanMacRc::IsPhy1Ok()
         Ptr<Packet> pkt = phyDual->GetPhy1PacketRx();
         UanHeaderCommon ch;
         pkt->PeekHeader(ch);
-        if (ch.GetType() == TYPE_CTS || ch.GetType() == TYPE_ACK)
-        {
-            phy1ok = false;
-        }
-        else if (ch.GetDest() == Mac8Address::ConvertFrom(GetAddress()))
+        if (ch.GetType() == TYPE_CTS || ch.GetType() == TYPE_ACK ||
+            ch.GetDest() == Mac8Address::ConvertFrom(GetAddress()))
         {
             phy1ok = false;
         }
@@ -758,7 +744,7 @@ UanMacRc::RtsTimeout()
         SendPacket(pkt, m_currentRate + m_numRates);
     }
     m_state = RTSSENT;
-    NS_ASSERT(!m_rtsEvent.IsRunning());
+    NS_ASSERT(!m_rtsEvent.IsPending());
     m_ev->SetAttribute("Mean", DoubleValue(1 / m_retryRate));
     double timeout = m_ev->GetValue();
     m_rtsEvent = Simulator::Schedule(Seconds(timeout), &UanMacRc::RtsTimeout, this);

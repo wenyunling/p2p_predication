@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007-2009 Strasbourg University
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: David Gross <gdavid.devel@gmail.com>
  */
@@ -150,14 +139,14 @@ OptionField::~OptionField()
 uint32_t
 OptionField::GetSerializedSize() const
 {
-    return m_optionData.GetSize() + CalculatePad((Ipv6OptionHeader::Alignment){8, 0});
+    return m_optionData.GetSize() + CalculatePad(Ipv6OptionHeader::Alignment{8, 0});
 }
 
 void
 OptionField::Serialize(Buffer::Iterator start) const
 {
     start.Write(m_optionData.Begin(), m_optionData.End());
-    uint32_t fill = CalculatePad((Ipv6OptionHeader::Alignment){8, 0});
+    uint32_t fill = CalculatePad(Ipv6OptionHeader::Alignment{8, 0});
     NS_LOG_LOGIC("fill with " << fill << " bytes padding");
     switch (fill)
     {
@@ -700,26 +689,26 @@ Ipv6ExtensionESPHeader::~Ipv6ExtensionESPHeader()
 void
 Ipv6ExtensionESPHeader::Print(std::ostream& os) const
 {
-    /** \todo */
+    /** @todo */
 }
 
 uint32_t
 Ipv6ExtensionESPHeader::GetSerializedSize() const
 {
-    /** \todo */
+    /** @todo */
     return 0;
 }
 
 void
 Ipv6ExtensionESPHeader::Serialize(Buffer::Iterator start) const
 {
-    /** \todo */
+    /** @todo */
 }
 
 uint32_t
 Ipv6ExtensionESPHeader::Deserialize(Buffer::Iterator start)
 {
-    /** \todo */
+    /** @todo */
     return 0;
 }
 
@@ -752,26 +741,26 @@ Ipv6ExtensionAHHeader::~Ipv6ExtensionAHHeader()
 void
 Ipv6ExtensionAHHeader::Print(std::ostream& os) const
 {
-    /** \todo */
+    /** @todo */
 }
 
 uint32_t
 Ipv6ExtensionAHHeader::GetSerializedSize() const
 {
-    /** \todo */
+    /** @todo */
     return 0;
 }
 
 void
 Ipv6ExtensionAHHeader::Serialize(Buffer::Iterator start) const
 {
-    /** \todo */
+    /** @todo */
 }
 
 uint32_t
 Ipv6ExtensionAHHeader::Deserialize(Buffer::Iterator start)
 {
-    /** \todo */
+    /** @todo */
     return 0;
 }
 

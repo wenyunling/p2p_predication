@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  * Modified by Marco Miozzo <mmiozzo@ctt.es>
@@ -25,13 +14,13 @@
 
 #include "ns3/boolean.h"
 #include "ns3/log.h"
+#include "ns3/lte-chunk-processor.h"
+#include "ns3/lte-control-messages.h"
 #include "ns3/lte-helper.h"
 #include "ns3/lte-phy-tag.h"
 #include "ns3/lte-spectrum-signal-parameters.h"
 #include "ns3/simulator.h"
 #include "ns3/spectrum-test.h"
-#include <ns3/lte-chunk-processor.h>
-#include <ns3/lte-control-messages.h>
 
 using namespace ns3;
 
@@ -46,7 +35,7 @@ NS_LOG_COMPONENT_DEFINE("LteDownlinkSinrTest");
  */
 
 LteDownlinkSinrTestSuite::LteDownlinkSinrTestSuite()
-    : TestSuite("lte-downlink-sinr", SYSTEM)
+    : TestSuite("lte-downlink-sinr", Type::SYSTEM)
 {
     /**
      * Build Spectrum Model values for the TX signal
@@ -81,9 +70,9 @@ LteDownlinkSinrTestSuite::LteDownlinkSinrTestSuite()
     (*theoreticalSinr1)[1] = 3.72255684126076;
 
     AddTestCase(new LteDownlinkDataSinrTestCase(rxPsd1, theoreticalSinr1, "sdBm = [-46 -48]"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteDownlinkCtrlSinrTestCase(rxPsd1, theoreticalSinr1, "sdBm = [-46 -48]"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     /**
      * TX signal #2: Power Spectral Density (W/Hz) of the signal of interest = [-63 -61] dBm and BW
@@ -98,13 +87,13 @@ LteDownlinkSinrTestSuite::LteDownlinkSinrTestSuite()
     (*theoreticalSinr2)[1] = 0.1865697965291756;
 
     AddTestCase(new LteDownlinkDataSinrTestCase(rxPsd2, theoreticalSinr2, "sdBm = [-63 -61]"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteDownlinkCtrlSinrTestCase(rxPsd2, theoreticalSinr2, "sdBm = [-63 -61]"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteDownlinkSinrTestSuite lteDownlinkSinrTestSuite;
@@ -157,10 +146,10 @@ LteDownlinkDataSinrTestCase::DoRun()
      */
 
     // Number of packet bursts (1 data + 4 interferences)
-    const int numOfPbs = 5;
+    constexpr int numOfPbs = 5;
 
     // Number of packets in the packet bursts
-    const int numOfPkts = 10;
+    constexpr int numOfPkts = 10;
 
     // Packet bursts
     Ptr<PacketBurst> packetBursts[numOfPbs];
@@ -265,7 +254,7 @@ LteDownlinkDataSinrTestCase::DoRun()
     ip4->cellId = pbCellId[4];
     Simulator::Schedule(ti4, &LteSpectrumPhy::StartRx, dlPhy, ip4);
 
-    Simulator::Stop(Seconds(5.0));
+    Simulator::Stop(Seconds(5));
     Simulator::Run();
 
     NS_LOG_INFO("Data Frame - Theoretical SINR: " << *m_expectedSinr);
@@ -440,7 +429,7 @@ LteDownlinkCtrlSinrTestCase::DoRun()
     ip4->pss = false;
     Simulator::Schedule(ti4, &LteSpectrumPhy::StartRx, dlPhy, ip4);
 
-    Simulator::Stop(Seconds(5.0));
+    Simulator::Stop(Seconds(5));
     Simulator::Run();
 
     NS_LOG_INFO("Ctrl Frame - Theoretical SINR: " << *m_expectedSinr);

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012-2018 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  */
@@ -33,10 +22,10 @@ NS_LOG_COMPONENT_DEFINE("LenaX2HandoverExample");
 /**
  * UE Connection established notification.
  *
- * \param context The context.
- * \param imsi The IMSI of the connected terminal.
- * \param cellid The Cell ID.
- * \param rnti The RNTI.
+ * @param context The context.
+ * @param imsi The IMSI of the connected terminal.
+ * @param cellid The Cell ID.
+ * @param rnti The RNTI.
  */
 void
 NotifyConnectionEstablishedUe(std::string context, uint64_t imsi, uint16_t cellid, uint16_t rnti)
@@ -48,11 +37,11 @@ NotifyConnectionEstablishedUe(std::string context, uint64_t imsi, uint16_t celli
 /**
  * UE Start Handover notification.
  *
- * \param context The context.
- * \param imsi The IMSI of the connected terminal.
- * \param cellid The actual Cell ID.
- * \param rnti The RNTI.
- * \param targetCellId The target Cell ID.
+ * @param context The context.
+ * @param imsi The IMSI of the connected terminal.
+ * @param cellid The actual Cell ID.
+ * @param rnti The RNTI.
+ * @param targetCellId The target Cell ID.
  */
 void
 NotifyHandoverStartUe(std::string context,
@@ -69,10 +58,10 @@ NotifyHandoverStartUe(std::string context,
 /**
  * UE Handover end successful notification.
  *
- * \param context The context.
- * \param imsi The IMSI of the connected terminal.
- * \param cellid The Cell ID.
- * \param rnti The RNTI.
+ * @param context The context.
+ * @param imsi The IMSI of the connected terminal.
+ * @param cellid The Cell ID.
+ * @param rnti The RNTI.
  */
 void
 NotifyHandoverEndOkUe(std::string context, uint64_t imsi, uint16_t cellid, uint16_t rnti)
@@ -84,10 +73,10 @@ NotifyHandoverEndOkUe(std::string context, uint64_t imsi, uint16_t cellid, uint1
 /**
  * eNB Connection established notification.
  *
- * \param context The context.
- * \param imsi The IMSI of the connected terminal.
- * \param cellid The Cell ID.
- * \param rnti The RNTI.
+ * @param context The context.
+ * @param imsi The IMSI of the connected terminal.
+ * @param cellid The Cell ID.
+ * @param rnti The RNTI.
  */
 void
 NotifyConnectionEstablishedEnb(std::string context, uint64_t imsi, uint16_t cellid, uint16_t rnti)
@@ -100,11 +89,11 @@ NotifyConnectionEstablishedEnb(std::string context, uint64_t imsi, uint16_t cell
 /**
  * eNB Start Handover notification.
  *
- * \param context The context.
- * \param imsi The IMSI of the connected terminal.
- * \param cellid The actual Cell ID.
- * \param rnti The RNTI.
- * \param targetCellId The target Cell ID.
+ * @param context The context.
+ * @param imsi The IMSI of the connected terminal.
+ * @param cellid The actual Cell ID.
+ * @param rnti The RNTI.
+ * @param targetCellId The target Cell ID.
  */
 void
 NotifyHandoverStartEnb(std::string context,
@@ -121,10 +110,10 @@ NotifyHandoverStartEnb(std::string context,
 /**
  * eNB Handover end successful notification.
  *
- * \param context The context.
- * \param imsi The IMSI of the connected terminal.
- * \param cellid The Cell ID.
- * \param rnti The RNTI.
+ * @param context The context.
+ * @param imsi The IMSI of the connected terminal.
+ * @param cellid The Cell ID.
+ * @param rnti The RNTI.
  */
 void
 NotifyHandoverEndOkEnb(std::string context, uint64_t imsi, uint16_t cellid, uint16_t rnti)
@@ -136,10 +125,10 @@ NotifyHandoverEndOkEnb(std::string context, uint64_t imsi, uint16_t cellid, uint
 /**
  * Handover failure notification
  *
- * \param context The context.
- * \param imsi The IMSI of the connected terminal.
- * \param cellid The Cell ID.
- * \param rnti The RNTI.
+ * @param context The context.
+ * @param imsi The IMSI of the connected terminal.
+ * @param cellid The Cell ID.
+ * @param rnti The RNTI.
  */
 void
 NotifyHandoverFailure(std::string context, uint64_t imsi, uint16_t cellid, uint16_t rnti)

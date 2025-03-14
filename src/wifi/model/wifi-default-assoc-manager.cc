@@ -2,18 +2,7 @@
  * Copyright (c) 2022 Universita' degli Studi di Napoli Federico II
 
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Stefano Avallone <stavallo@unina.it>
  */
@@ -21,10 +10,12 @@
 #include "wifi-default-assoc-manager.h"
 
 #include "sta-wifi-mac.h"
+#include "wifi-net-device.h"
 #include "wifi-phy.h"
 
 #include "ns3/log.h"
 #include "ns3/simulator.h"
+#include "ns3/vht-configuration.h"
 
 #include <algorithm>
 
@@ -99,9 +90,12 @@ WifiDefaultAssocManager::DoStartScanning()
         for (uint8_t linkId = 0; linkId < m_mac->GetNLinks(); linkId++)
         {
             Simulator::Schedule(GetScanParams().probeDelay,
-                                &StaWifiMac::SendProbeRequest,
+                                &StaWifiMac::EnqueueProbeRequest,
                                 m_mac,
-                                linkId);
+                                m_mac->GetProbeRequest(linkId),
+                                linkId,
+                                Mac48Address::GetBroadcast(),
+                                Mac48Address::GetBroadcast());
         }
         m_probeRequestEvent =
             Simulator::Schedule(GetScanParams().probeDelay + GetScanParams().maxChannelTime,
@@ -202,7 +196,7 @@ WifiDefaultAssocManager::EndScanning()
             Mac48Address bssid = rnr->get().GetBssid(apIt->m_nbrApInfoId, apIt->m_tbttInfoFieldId);
             setupLinks.emplace_back(StaWifiMac::ApInfo::SetupLinksInfo{
                 linkId,
-                rnr->get().GetLinkId(apIt->m_nbrApInfoId, apIt->m_tbttInfoFieldId),
+                rnr->get().GetMldParameters(apIt->m_nbrApInfoId, apIt->m_tbttInfoFieldId).linkId,
                 bssid});
 
             if (needChannelSwitch)
@@ -212,14 +206,17 @@ WifiDefaultAssocManager::EndScanning()
                     // switching channel while a PHY is in sleep state fails
                     phy->ResumeFromSleep();
                 }
-                // switch this link to using the channel used by a reported AP
-                // TODO check if the STA only supports a narrower channel width
+                // switch this link to using the channel used by a reported AP (or its primary80
+                // in case the reported AP is using a 160 MHz and the non-AP MLD does not support
+                // 160 MHz operations)
+                if (apChannel.GetTotalWidth() > MHz_u{80} &&
+                    !phy->GetDevice()->GetVhtConfiguration()->m_160MHzSupported)
+                {
+                    apChannel = apChannel.GetPrimaryChannel(MHz_u{80});
+                }
+
                 NS_LOG_DEBUG("Switch link " << +linkId << " to using " << apChannel);
-                WifiPhy::ChannelTuple chTuple{apChannel.GetNumber(),
-                                              apChannel.GetWidth(),
-                                              apChannel.GetPhyBand(),
-                                              apChannel.GetPrimaryChannelIndex(20)};
-                phy->SetOperatingChannel(chTuple);
+                phy->SetOperatingChannel(apChannel);
                 // actual channel switching may be delayed, thus setup a channel switch timer
                 m_channelSwitchInfo.resize(m_mac->GetNLinks());
                 m_channelSwitchInfo[linkId].timer.Cancel();
@@ -240,7 +237,7 @@ WifiDefaultAssocManager::EndScanning()
     }
 
     if (std::none_of(m_channelSwitchInfo.begin(), m_channelSwitchInfo.end(), [](auto&& info) {
-            return info.timer.IsRunning();
+            return info.timer.IsPending();
         }))
     {
         // we are done
@@ -252,13 +249,13 @@ void
 WifiDefaultAssocManager::NotifyChannelSwitched(uint8_t linkId)
 {
     NS_LOG_FUNCTION(this << +linkId);
-    if (m_channelSwitchInfo.size() > linkId && m_channelSwitchInfo[linkId].timer.IsRunning())
+    if (m_channelSwitchInfo.size() > linkId && m_channelSwitchInfo[linkId].timer.IsPending())
     {
         // we were waiting for this notification
         m_channelSwitchInfo[linkId].timer.Cancel();
 
         if (std::none_of(m_channelSwitchInfo.begin(), m_channelSwitchInfo.end(), [](auto&& info) {
-                return info.timer.IsRunning();
+                return info.timer.IsPending();
             }))
         {
             // we are done
@@ -282,7 +279,7 @@ WifiDefaultAssocManager::ChannelSwitchTimeout(uint8_t linkId)
     setupLinks.erase(it);
 
     if (std::none_of(m_channelSwitchInfo.begin(), m_channelSwitchInfo.end(), [](auto&& info) {
-            return info.timer.IsRunning();
+            return info.timer.IsPending();
         }))
     {
         // we are done
@@ -293,7 +290,7 @@ WifiDefaultAssocManager::ChannelSwitchTimeout(uint8_t linkId)
 bool
 WifiDefaultAssocManager::CanBeInserted(const StaWifiMac::ApInfo& apInfo) const
 {
-    return (m_waitBeaconEvent.IsRunning() || m_probeRequestEvent.IsRunning());
+    return (m_waitBeaconEvent.IsPending() || m_probeRequestEvent.IsPending());
 }
 
 bool

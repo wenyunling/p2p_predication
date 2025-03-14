@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -20,8 +9,8 @@
 #ifndef SPECTRUM_SIGNAL_PARAMETERS_H
 #define SPECTRUM_SIGNAL_PARAMETERS_H
 
-#include <ns3/matrix-array.h>
-#include <ns3/nstime.h>
+#include "ns3/matrix-array.h"
+#include "ns3/nstime.h"
 
 namespace ns3
 {
@@ -31,7 +20,7 @@ class SpectrumValue;
 class AntennaModel;
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  *
  * This struct provides the generic signal representation to be used by
  * all wireless technologies. Any specific wireless technology is
@@ -46,7 +35,7 @@ class AntennaModel;
  * directly from this struct, each PHY can test (by using a dynamic
  * cast) if a signal being received belongs to a given technology or not.
  *
- * \note when inheriting from this class, make sure that the assignment operator and the copy
+ * @note when inheriting from this class, make sure that the assignment operator and the copy
  * constructor work properly, making deep copies if needed.
  */
 struct SpectrumSignalParameters : public SimpleRefCount<SpectrumSignalParameters>
@@ -63,7 +52,7 @@ struct SpectrumSignalParameters : public SimpleRefCount<SpectrumSignalParameters
 
     /**
      * copy constructor
-     * \param p object to copy
+     * @param p object to copy
      */
     SpectrumSignalParameters(const SpectrumSignalParameters& p);
 
@@ -76,7 +65,7 @@ struct SpectrumSignalParameters : public SimpleRefCount<SpectrumSignalParameters
      * SpectrumSignalParameters should override this method and use it
      * to call the copy constructor of the derived class.
      *
-     * \return a copy of the (possibly derived) class
+     * @return a copy of the (possibly derived) class
      */
     virtual Ptr<SpectrumSignalParameters> Copy() const;
 
@@ -87,7 +76,7 @@ struct SpectrumSignalParameters : public SimpleRefCount<SpectrumSignalParameters
      * underwater acoustic communications. Other transmission media to
      * be defined.
      *
-     * \note when SpectrumSignalParameters is copied, only the pointer to the PSD will be copied.
+     * @note when SpectrumSignalParameters is copied, only the pointer to the PSD will be copied.
      * This is because SpectrumChannel objects normally overwrite the psd anyway, so there is no
      * point in making a copy.
      */

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2008 INESC Porto
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Gustavo Carneiro  <gjc@inescporto.pt>
  */
@@ -80,8 +69,8 @@ struct PyVizPacketTag : public Tag
 };
 
 /**
- * \brief Get the type ID.
- * \return the object TypeId
+ * @brief Get the type ID.
+ * @return the object TypeId
  */
 TypeId
 PyVizPacketTag::GetTypeId()
@@ -601,21 +590,13 @@ PyViz::TraceNetDevTxWifi(std::string context, Ptr<const Packet> packet)
     WifiMacHeader hdr;
     NS_ABORT_IF(packet->PeekHeader(hdr) == 0);
     Mac48Address destinationAddress;
-    if (hdr.IsToDs() && !hdr.IsFromDs())
+    if (hdr.IsToDs())
     {
         destinationAddress = hdr.GetAddr3();
-    }
-    else if (!hdr.IsToDs() && hdr.IsFromDs())
-    {
-        destinationAddress = hdr.GetAddr1();
-    }
-    else if (!hdr.IsToDs() && !hdr.IsFromDs())
-    {
-        destinationAddress = hdr.GetAddr1();
     }
     else
     {
-        destinationAddress = hdr.GetAddr3();
+        destinationAddress = hdr.GetAddr1();
     }
     TraceNetDevTxCommon(context, packet, destinationAddress);
 }
@@ -769,19 +750,15 @@ PyViz::TraceNetDevRxWifi(std::string context, Ptr<const Packet> packet)
     WifiMacHeader hdr;
     NS_ABORT_IF(packet->PeekHeader(hdr) == 0);
     Mac48Address sourceAddress;
-    if (hdr.IsToDs() && !hdr.IsFromDs())
+    if (!hdr.IsFromDs())
     {
         sourceAddress = hdr.GetAddr2();
     }
-    else if (!hdr.IsToDs() && hdr.IsFromDs())
+    else if (!hdr.IsToDs())
     {
         sourceAddress = hdr.GetAddr3();
     }
-    else if (!hdr.IsToDs() && !hdr.IsFromDs())
-    {
-        sourceAddress = hdr.GetAddr2();
-    }
-    else
+    else // if (hdr.IsToDs())
     {
         sourceAddress = hdr.GetAddr4();
     }
@@ -953,7 +930,7 @@ class FastClipping
   private:
     /**
      * Clip start top function
-     * \param line the clip line
+     * @param line the clip line
      */
     void ClipStartTop(Line& line) const
     {
@@ -963,7 +940,7 @@ class FastClipping
 
     /**
      * Clip start bottom function
-     * \param line the clip line
+     * @param line the clip line
      */
     void ClipStartBottom(Line& line) const
     {
@@ -973,7 +950,7 @@ class FastClipping
 
     /**
      * Clip start right function
-     * \param line the clip line
+     * @param line the clip line
      */
     void ClipStartRight(Line& line) const
     {
@@ -983,7 +960,7 @@ class FastClipping
 
     /**
      * Clip start left function
-     * \param line the clip line
+     * @param line the clip line
      */
     void ClipStartLeft(Line& line) const
     {
@@ -993,7 +970,7 @@ class FastClipping
 
     /**
      * Clip end top function
-     * \param line the clip line
+     * @param line the clip line
      */
     void ClipEndTop(Line& line) const
     {
@@ -1003,7 +980,7 @@ class FastClipping
 
     /**
      * Clip end bottom function
-     * \param line the clip line
+     * @param line the clip line
      */
     void ClipEndBottom(Line& line) const
     {
@@ -1013,7 +990,7 @@ class FastClipping
 
     /**
      * Clip end right function
-     * \param line the clip line
+     * @param line the clip line
      */
     void ClipEndRight(Line& line) const
     {
@@ -1023,7 +1000,7 @@ class FastClipping
 
     /**
      * Clip end left function
-     * \param line the clip line
+     * @param line the clip line
      */
     void ClipEndLeft(Line& line) const
     {
@@ -1035,8 +1012,8 @@ class FastClipping
     /**
      * Constructor
      *
-     * \param clipMin minimum clipping vector
-     * \param clipMax maximum clipping vector
+     * @param clipMin minimum clipping vector
+     * @param clipMax maximum clipping vector
      */
     FastClipping(Vector2 clipMin, Vector2 clipMax)
         : m_clipMin(clipMin),
@@ -1046,8 +1023,8 @@ class FastClipping
 
     /**
      * Clip line function
-     * \param line the clip line
-     * \returns true if clipped
+     * @param line the clip line
+     * @returns true if clipped
      */
     bool ClipLine(Line& line)
     {

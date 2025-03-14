@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Marco Miozzo <marco.miozzo@cttc.es>
  *         Nicola Baldo  <nbaldo@cttc.es>
@@ -29,10 +18,10 @@
 #include "lte-mac-sap.h"
 #include "lte-radio-bearer-tag.h"
 
-#include <ns3/log.h>
-#include <ns3/packet.h>
-#include <ns3/pointer.h>
-#include <ns3/simulator.h>
+#include "ns3/log.h"
+#include "ns3/packet.h"
+#include "ns3/pointer.h"
+#include "ns3/simulator.h"
 
 namespace ns3
 {
@@ -52,7 +41,7 @@ class EnbMacMemberLteEnbCmacSapProvider : public LteEnbCmacSapProvider
     /**
      * Constructor
      *
-     * \param mac the MAC
+     * @param mac the MAC
      */
     EnbMacMemberLteEnbCmacSapProvider(LteEnbMac* mac);
 
@@ -137,7 +126,7 @@ class EnbMacMemberFfMacSchedSapUser : public FfMacSchedSapUser
     /**
      * Constructor
      *
-     * \param mac the MAC
+     * @param mac the MAC
      */
     EnbMacMemberFfMacSchedSapUser(LteEnbMac* mac);
 
@@ -172,7 +161,7 @@ class EnbMacMemberFfMacCschedSapUser : public FfMacCschedSapUser
     /**
      * Constructor
      *
-     * \param mac the MAC
+     * @param mac the MAC
      */
     EnbMacMemberFfMacCschedSapUser(LteEnbMac* mac);
 
@@ -244,7 +233,7 @@ class EnbMacMemberLteEnbPhySapUser : public LteEnbPhySapUser
     /**
      * Constructor
      *
-     * \param mac the MAC
+     * @param mac the MAC
      */
     EnbMacMemberLteEnbPhySapUser(LteEnbMac* mac);
 
@@ -771,7 +760,7 @@ void
 LteEnbMac::DoConfigureMac(uint16_t ulBandwidth, uint16_t dlBandwidth)
 {
     NS_LOG_FUNCTION(this << " ulBandwidth=" << ulBandwidth << " dlBandwidth=" << dlBandwidth);
-    FfMacCschedSapProvider::CschedCellConfigReqParameters params;
+    FfMacCschedSapProvider::CschedCellConfigReqParameters params{};
     // Configure the subset of parameters used by FfMacScheduler
     params.m_ulBandwidth = ulBandwidth;
     params.m_dlBandwidth = dlBandwidth;

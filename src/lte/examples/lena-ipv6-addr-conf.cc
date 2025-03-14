@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2017 Jadavpur University, India
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manoj Kumar Rana <manoj24.rana@gmail.com>
  */
@@ -133,25 +122,25 @@ main(int argc, char* argv[])
 
     ApplicationContainer serverApps = echoServer.Install(remoteHost);
 
-    serverApps.Start(Seconds(4.0));
-    serverApps.Stop(Seconds(20.0));
+    serverApps.Start(Seconds(4));
+    serverApps.Stop(Seconds(20));
 
     UdpEchoClientHelper echoClient1(remoteHostAddr, 9);
     UdpEchoClientHelper echoClient2(remoteHostAddr, 9);
 
     echoClient1.SetAttribute("MaxPackets", UintegerValue(1000));
-    echoClient1.SetAttribute("Interval", TimeValue(Seconds(1.0)));
+    echoClient1.SetAttribute("Interval", TimeValue(Seconds(1)));
     echoClient1.SetAttribute("PacketSize", UintegerValue(1024));
 
     echoClient2.SetAttribute("MaxPackets", UintegerValue(1000));
-    echoClient2.SetAttribute("Interval", TimeValue(Seconds(1.0)));
+    echoClient2.SetAttribute("Interval", TimeValue(Seconds(1)));
     echoClient2.SetAttribute("PacketSize", UintegerValue(1024));
 
     ApplicationContainer clientApps1 = echoClient1.Install(ueNodes.Get(0));
     ApplicationContainer clientApps2 = echoClient2.Install(ueNodes.Get(1));
 
-    clientApps1.Start(Seconds(4.0));
-    clientApps1.Stop(Seconds(14.0));
+    clientApps1.Start(Seconds(4));
+    clientApps1.Stop(Seconds(14));
 
     clientApps2.Start(Seconds(4.5));
     clientApps2.Stop(Seconds(14.5));

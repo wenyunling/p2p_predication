@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2023 Universita' degli Studi di Napoli Federico II
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Stefano Avallone <stavallo@unina.it>
  */
@@ -41,7 +30,7 @@ class UniformRandomBitGenerator
     }
 
     /**
-     * \return the ns-3 style uniform random variable
+     * @return the ns-3 style uniform random variable
      */
     Ptr<UniformRandomVariable> GetRv() const
     {
@@ -52,7 +41,7 @@ class UniformRandomBitGenerator
     using result_type = uint32_t;
 
     /**
-     * \return the smallest value that operator() may return
+     * @return the smallest value that operator() may return
      */
     static constexpr result_type min()
     {
@@ -60,7 +49,7 @@ class UniformRandomBitGenerator
     }
 
     /**
-     * \return the largest value that operator() may return
+     * @return the largest value that operator() may return
      */
     static constexpr result_type max()
     {
@@ -68,7 +57,7 @@ class UniformRandomBitGenerator
     }
 
     /**
-     * \return a value in the closed interval [min(), max()]
+     * @return a value in the closed interval [min(), max()]
      */
     result_type operator()()
     {

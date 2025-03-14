@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -23,6 +12,8 @@
 #include "ns3/inet-socket-address.h"
 #include "ns3/internet-stack-helper.h"
 #include "ns3/ipv4-address-helper.h"
+#include "ns3/ipv4-static-routing-helper.h"
+#include "ns3/ipv4-static-routing.h"
 #include "ns3/log.h"
 #include "ns3/lte-helper.h"
 #include "ns3/mobility-helper.h"
@@ -35,15 +26,13 @@
 #include "ns3/udp-client-server-helper.h"
 #include "ns3/udp-echo-helper.h"
 #include "ns3/uinteger.h"
-#include <ns3/ipv4-static-routing-helper.h>
-#include <ns3/ipv4-static-routing.h>
 
 using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("LteEpcE2eData");
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  */
 
 /// BearerTestData structure
@@ -52,9 +41,9 @@ struct BearerTestData
     /**
      * Constructor
      *
-     * \param n the number of packets
-     * \param s the packet size
-     * \param i the inter packet interval in seconds
+     * @param n the number of packets
+     * @param s the packet size
+     * @param i the inter packet interval in seconds
      */
     BearerTestData(uint32_t n, uint32_t s, double i);
 
@@ -89,9 +78,9 @@ struct EnbTestData
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test that e2e packet flow is correct. Compares the data send and the
+ * @brief Test that e2e packet flow is correct. Compares the data send and the
  * data received. Test uses mostly the PDCP stats to check the performance.
  */
 
@@ -101,8 +90,8 @@ class LteEpcE2eDataTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param name the reference name
-     * \param v the ENB test data
+     * @param name the reference name
+     * @param v the ENB test data
      */
     LteEpcE2eDataTestCase(std::string name, std::vector<EnbTestData> v);
     ~LteEpcE2eDataTestCase() override;
@@ -368,9 +357,9 @@ LteEpcE2eDataTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test that the S1-U interface implementation works correctly
+ * @brief Test that the S1-U interface implementation works correctly
  */
 class LteEpcE2eDataTestSuite : public TestSuite
 {
@@ -380,7 +369,7 @@ class LteEpcE2eDataTestSuite : public TestSuite
 } g_lteEpcE2eDataTestSuite; ///< the test suite
 
 LteEpcE2eDataTestSuite::LteEpcE2eDataTestSuite()
-    : TestSuite("lte-epc-e2e-data", SYSTEM)
+    : TestSuite("lte-epc-e2e-data", Type::SYSTEM)
 {
     std::vector<EnbTestData> v1;
     EnbTestData e1;
@@ -389,7 +378,7 @@ LteEpcE2eDataTestSuite::LteEpcE2eDataTestSuite()
     u1.bearers.push_back(f1);
     e1.ues.push_back(u1);
     v1.push_back(e1);
-    AddTestCase(new LteEpcE2eDataTestCase("1 eNB, 1UE", v1), TestCase::QUICK);
+    AddTestCase(new LteEpcE2eDataTestCase("1 eNB, 1UE", v1), TestCase::Duration::QUICK);
 
     std::vector<EnbTestData> v2;
     EnbTestData e2;
@@ -402,12 +391,12 @@ LteEpcE2eDataTestSuite::LteEpcE2eDataTestSuite()
     u2_2.bearers.push_back(f2_2);
     e2.ues.push_back(u2_2);
     v2.push_back(e2);
-    AddTestCase(new LteEpcE2eDataTestCase("1 eNB, 2UEs", v2), TestCase::EXTENSIVE);
+    AddTestCase(new LteEpcE2eDataTestCase("1 eNB, 2UEs", v2), TestCase::Duration::EXTENSIVE);
 
     std::vector<EnbTestData> v3;
     v3.push_back(e1);
     v3.push_back(e2);
-    AddTestCase(new LteEpcE2eDataTestCase("2 eNBs", v3), TestCase::EXTENSIVE);
+    AddTestCase(new LteEpcE2eDataTestCase("2 eNBs", v3), TestCase::Duration::EXTENSIVE);
 
     EnbTestData e4;
     UeTestData u4_1;
@@ -426,7 +415,7 @@ LteEpcE2eDataTestSuite::LteEpcE2eDataTestSuite()
     v4.push_back(e4);
     v4.push_back(e1);
     v4.push_back(e2);
-    AddTestCase(new LteEpcE2eDataTestCase("3 eNBs", v4), TestCase::EXTENSIVE);
+    AddTestCase(new LteEpcE2eDataTestCase("3 eNBs", v4), TestCase::Duration::EXTENSIVE);
 
     EnbTestData e5;
     UeTestData u5;
@@ -436,7 +425,7 @@ LteEpcE2eDataTestSuite::LteEpcE2eDataTestSuite()
     std::vector<EnbTestData> v5;
     v5.push_back(e5);
     AddTestCase(new LteEpcE2eDataTestCase("1 eNB, 1UE with 1000 byte packets", v5),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
 
     EnbTestData e6;
     UeTestData u6;
@@ -446,7 +435,7 @@ LteEpcE2eDataTestSuite::LteEpcE2eDataTestSuite()
     std::vector<EnbTestData> v6;
     v6.push_back(e6);
     AddTestCase(new LteEpcE2eDataTestCase("1 eNB, 1UE with 1400 byte packets", v6),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
 
     EnbTestData e7;
     UeTestData u7;
@@ -457,7 +446,8 @@ LteEpcE2eDataTestSuite::LteEpcE2eDataTestSuite()
     e7.ues.push_back(u7);
     std::vector<EnbTestData> v7;
     v7.push_back(e7);
-    AddTestCase(new LteEpcE2eDataTestCase("1 eNB, 1UE with 2 bearers", v7), TestCase::EXTENSIVE);
+    AddTestCase(new LteEpcE2eDataTestCase("1 eNB, 1UE with 2 bearers", v7),
+                TestCase::Duration::EXTENSIVE);
 
     EnbTestData e8;
     UeTestData u8;
@@ -467,7 +457,7 @@ LteEpcE2eDataTestSuite::LteEpcE2eDataTestSuite()
     std::vector<EnbTestData> v8;
     v8.push_back(e8);
     AddTestCase(new LteEpcE2eDataTestCase("1 eNB, 1UE with fragmentation", v8),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
 
     EnbTestData e9;
     UeTestData u9;
@@ -476,5 +466,6 @@ LteEpcE2eDataTestSuite::LteEpcE2eDataTestSuite()
     e9.ues.push_back(u9);
     std::vector<EnbTestData> v9;
     v9.push_back(e9);
-    AddTestCase(new LteEpcE2eDataTestCase("1 eNB, 1UE with aggregation", v9), TestCase::EXTENSIVE);
+    AddTestCase(new LteEpcE2eDataTestCase("1 eNB, 1UE with aggregation", v9),
+                TestCase::Duration::EXTENSIVE);
 }

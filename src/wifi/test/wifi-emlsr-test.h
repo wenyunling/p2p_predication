@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2023 Universita' degli Studi di Napoli Federico II
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Stefano Avallone <stavallo@unina.it>
  */
@@ -32,13 +21,26 @@
 #include "ns3/wifi-ppdu.h"
 #include "ns3/wifi-psdu.h"
 
+#include <list>
+#include <map>
+#include <memory>
+#include <optional>
+#include <set>
+#include <vector>
+
 using namespace ns3;
 
+// forward declaration
+namespace ns3
+{
+struct EmlsrMainPhySwitchTrace;
+}
+
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test EML Operating Mode Notification frame serialization and deserialization
+ * @brief Test EML Operating Mode Notification frame serialization and deserialization
  */
 class EmlOperatingModeNotificationTest : public HeaderSerializationTestCase
 {
@@ -54,10 +56,10 @@ class EmlOperatingModeNotificationTest : public HeaderSerializationTestCase
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Base class for EMLSR Operations tests
+ * @brief Base class for EMLSR Operations tests
  *
  * This base class setups and configures one AP MLD, a variable number of non-AP MLDs with
  * EMLSR activated and a variable number of non-AP MLD with EMLSR deactivated. Every MLD has
@@ -74,7 +76,7 @@ class EmlsrOperationsTestBase : public TestCase
     /**
      * Constructor
      *
-     * \param name The name of the new TestCase created
+     * @param name The name of the new TestCase created
      */
     EmlsrOperationsTestBase(const std::string& name);
     ~EmlsrOperationsTestBase() override = default;
@@ -90,11 +92,11 @@ class EmlsrOperationsTestBase : public TestCase
     /**
      * Callback invoked when a FEM passes PSDUs to the PHY.
      *
-     * \param mac the MAC transmitting the PSDUs
-     * \param phyId the ID of the PHY transmitting the PSDUs
-     * \param psduMap the PSDU map
-     * \param txVector the TX vector
-     * \param txPowerW the tx power in Watts
+     * @param mac the MAC transmitting the PSDUs
+     * @param phyId the ID of the PHY transmitting the PSDUs
+     * @param psduMap the PSDU map
+     * @param txVector the TX vector
+     * @param txPowerW the tx power in Watts
      */
     virtual void Transmit(Ptr<WifiMac> mac,
                           uint8_t phyId,
@@ -103,11 +105,11 @@ class EmlsrOperationsTestBase : public TestCase
                           double txPowerW);
 
     /**
-     * \param dir the traffic direction (downlink/uplink)
-     * \param staId the index (starting at 0) of the non-AP MLD generating/receiving packets
-     * \param count the number of packets to generate
-     * \param pktSize the size of the packets to generate
-     * \return an application generating the given number packets of the given size from/to the
+     * @param dir the traffic direction (downlink/uplink)
+     * @param staId the index (starting at 0) of the non-AP MLD generating/receiving packets
+     * @param count the number of packets to generate
+     * @param pktSize the size of the packets to generate
+     * @return an application generating the given number packets of the given size from/to the
      *         AP MLD to/from the given non-AP MLD
      */
     Ptr<PacketSocketClient> GetApplication(TrafficDirection dir,
@@ -119,13 +121,13 @@ class EmlsrOperationsTestBase : public TestCase
      * Check whether QoS data unicast transmissions addressed to the given destination on the
      * given link are blocked or unblocked for the given reason on the given device.
      *
-     * \param mac the MAC of the given device
-     * \param dest the MAC address of the given destination
-     * \param linkId the ID of the given link
-     * \param reason the reason for blocking transmissions to test
-     * \param blocked whether transmissions are blocked for the given reason
-     * \param description text indicating when this check is performed
-     * \param testUnblockedForOtherReasons whether to test if transmissions are unblocked for
+     * @param mac the MAC of the given device
+     * @param dest the MAC address of the given destination
+     * @param linkId the ID of the given link
+     * @param reason the reason for blocking transmissions to test
+     * @param blocked whether transmissions are blocked for the given reason
+     * @param description text indicating when this check is performed
+     * @param testUnblockedForOtherReasons whether to test if transmissions are unblocked for
      *                                     all the reasons other than the one provided
      */
     void CheckBlockedLink(Ptr<WifiMac> mac,
@@ -135,6 +137,52 @@ class EmlsrOperationsTestBase : public TestCase
                           bool blocked,
                           std::string description,
                           bool testUnblockedForOtherReasons = true);
+
+    /**
+     * Check whether the MediumSyncDelay timer is running on the given link of the given device.
+     *
+     * @param staMac the MAC of the given device
+     * @param linkId the ID of the given link
+     * @param isRunning whether the MediumSyncDelay timer is running
+     * @param msg message to print in case the check failed
+     */
+    void CheckMsdTimerRunning(Ptr<StaWifiMac> staMac,
+                              uint8_t linkId,
+                              bool isRunning,
+                              const std::string& msg);
+
+    /**
+     * Check whether aux PHYs of the given device are in sleep mode/awake.
+     *
+     * @param staMac the MAC of the given device
+     * @param sleep whether aux PHYs should be in sleep mode
+     */
+    void CheckAuxPhysSleepMode(Ptr<StaWifiMac> staMac, bool sleep);
+
+    /**
+     * Callback connected to the EMLSR Manager MainPhySwitch trace source.
+     *
+     * @param index the index of the EMLSR client whose main PHY switch event is logged
+     * @param info the information associated with the main PHY switch event
+     */
+    void MainPhySwitchInfoCallback(std::size_t index, const EmlsrMainPhySwitchTrace& info);
+
+    /**
+     * Check information provided by the EMLSR Manager MainPhySwitch trace.
+     *
+     * @param index the ID of the EMLSR client this check refers to
+     * @param reason the reason for main PHY to switch
+     * @param fromLinkId the ID of the link the main PHY is moving from (if any)
+     * @param toLinkId the ID of the link the main PHY is moving to
+     * @param checkFromLinkId whether to check the given fromLinkId value
+     * @param checkToLinkId whether to check the given toLinkId value
+     */
+    void CheckMainPhyTraceInfo(std::size_t index,
+                               std::string_view reason,
+                               const std::optional<uint8_t>& fromLinkId,
+                               uint8_t toLinkId,
+                               bool checkFromLinkId = true,
+                               bool checkToLinkId = true);
 
     void DoSetup() override;
 
@@ -158,18 +206,21 @@ class EmlsrOperationsTestBase : public TestCase
     std::vector<Time> m_paddingDelay{
         {MicroSeconds(32)}}; ///< Padding Delay advertised by the non-AP MLD
     std::vector<Time> m_transitionDelay{
-        {MicroSeconds(16)}};                ///< Transition Delay advertised by the non-AP MLD
-    bool m_establishBaDl{false};            /**< whether BA needs to be established (for TID 0)
-                                                 with the AP as originator */
-    bool m_establishBaUl{false};            /**< whether BA needs to be established (for TID 0)
-                                                 with the AP as recipient */
-    std::vector<FrameInfo> m_txPsdus;       ///< transmitted PSDUs
-    Ptr<ApWifiMac> m_apMac;                 ///< AP wifi MAC
-    std::vector<Ptr<StaWifiMac>> m_staMacs; ///< MACs of the non-AP MLDs
+        {MicroSeconds(16)}};          ///< Transition Delay advertised by the non-AP MLD
+    bool m_establishBaDl{false};      /**< whether BA needs to be established (for TID 0)
+                                           with the AP as originator */
+    bool m_establishBaUl{false};      /**< whether BA needs to be established (for TID 0)
+                                           with the AP as recipient */
+    bool m_putAuxPhyToSleep{false};   //!< whether aux PHYs are put to sleep during DL/UL TXOPs
+    std::vector<FrameInfo> m_txPsdus; ///< transmitted PSDUs
+    Ptr<ApWifiMac> m_apMac;           ///< AP wifi MAC
+    std::vector<Ptr<StaWifiMac>> m_staMacs;       ///< MACs of the non-AP MLDs
     std::vector<PacketSocketAddress> m_dlSockets; ///< packet socket address for DL traffic
     std::vector<PacketSocketAddress> m_ulSockets; ///< packet socket address for UL traffic
     uint16_t m_lastAid{0};                        ///< AID of last associated station
     Time m_duration{0};                           ///< simulation duration
+    std::map<std::size_t, std::shared_ptr<EmlsrMainPhySwitchTrace>>
+        m_traceInfo; ///< EMLSR client ID-indexed map of trace info from last main PHY switch
 
   private:
     /**
@@ -177,7 +228,7 @@ class EmlsrOperationsTestBase : public TestCase
      * This method is connected to the ApWifiMac's AssociatedSta trace source.
      * Start generating traffic (if needed) when all stations are associated.
      *
-     * \param aid the AID assigned to the previous associated STA
+     * @param aid the AID assigned to the previous associated STA
      */
     void SetSsid(uint16_t aid, Mac48Address /* addr */);
 
@@ -190,10 +241,10 @@ class EmlsrOperationsTestBase : public TestCase
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the exchange of EML Operating Mode Notification frames.
+ * @brief Test the exchange of EML Operating Mode Notification frames.
  *
  * This test considers an AP MLD and a non-AP MLD with EMLSR activated. Upon association,
  * the non-AP MLD sends an EML Operating Mode Notification frame, which is however corrupted
@@ -217,8 +268,8 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
     /**
      * Constructor
      *
-     * \param linksToEnableEmlsrOn IDs of links on which EMLSR mode should be enabled
-     * \param transitionTimeout the Transition Timeout advertised by the AP MLD
+     * @param linksToEnableEmlsrOn IDs of links on which EMLSR mode should be enabled
+     * @param transitionTimeout the Transition Timeout advertised by the AP MLD
      */
     EmlOmnExchangeTest(const std::set<uint8_t>& linksToEnableEmlsrOn, Time transitionTimeout);
     ~EmlOmnExchangeTest() override = default;
@@ -235,14 +286,14 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
     /**
      * Callback invoked when the non-AP MLD receives the acknowledgment for a transmitted MPDU.
      *
-     * \param mpdu the acknowledged MPDU
+     * @param mpdu the acknowledged MPDU
      */
     void TxOk(Ptr<const WifiMpdu> mpdu);
     /**
      * Callback invoked when the non-AP MLD drops the given MPDU for the given reason.
      *
-     * \param reason the reason why the MPDU was dropped
-     * \param mpdu the dropped MPDU
+     * @param reason the reason why the MPDU was dropped
+     * @param mpdu the dropped MPDU
      */
     void TxDropped(WifiMacDropReason reason, Ptr<const WifiMpdu> mpdu);
 
@@ -250,9 +301,9 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
      * Check the content of the EML Capabilities subfield of the Multi-Link Element included
      * in the Association Request frame sent by the non-AP MLD.
      *
-     * \param mpdu the MPDU containing the Association Request frame
-     * \param txVector the TXVECTOR used to transmit the frame
-     * \param linkId the ID of the link on which the frame was transmitted
+     * @param mpdu the MPDU containing the Association Request frame
+     * @param txVector the TXVECTOR used to transmit the frame
+     * @param linkId the ID of the link on which the frame was transmitted
      */
     void CheckEmlCapabilitiesInAssocReq(Ptr<const WifiMpdu> mpdu,
                                         const WifiTxVector& txVector,
@@ -261,9 +312,9 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
      * Check the content of the EML Capabilities subfield of the Multi-Link Element included
      * in the Association Response frame sent by the AP MLD to the EMLSR client.
      *
-     * \param mpdu the MPDU containing the Association Response frame
-     * \param txVector the TXVECTOR used to transmit the frame
-     * \param linkId the ID of the link on which the frame was transmitted
+     * @param mpdu the MPDU containing the Association Response frame
+     * @param txVector the TXVECTOR used to transmit the frame
+     * @param linkId the ID of the link on which the frame was transmitted
      */
     void CheckEmlCapabilitiesInAssocResp(Ptr<const WifiMpdu> mpdu,
                                          const WifiTxVector& txVector,
@@ -271,9 +322,9 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
     /**
      * Check the content of a received EML Operating Mode Notification frame.
      *
-     * \param psdu the PSDU containing the EML Operating Mode Notification frame
-     * \param txVector the TXVECTOR used to transmit the frame
-     * \param linkId the ID of the link on which the frame was transmitted
+     * @param psdu the PSDU containing the EML Operating Mode Notification frame
+     * @param txVector the TXVECTOR used to transmit the frame
+     * @param linkId the ID of the link on which the frame was transmitted
      */
     void CheckEmlNotification(Ptr<const WifiPsdu> psdu,
                               const WifiTxVector& txVector,
@@ -296,10 +347,10 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the transmission of DL frames to EMLSR clients.
+ * @brief Test the transmission of DL frames to EMLSR clients.
  *
  * This test considers an AP MLD and a configurable number of non-AP MLDs that support EMLSR
  * and a configurable number of non-AP MLDs that do not support EMLSR. All MLDs have three
@@ -345,6 +396,9 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
  *   the link used to exchange EML Notification frames, the two A-MPDUs are transmitted one
  *   after another on the link used to exchange EML Notification frames. Otherwise, the two
  *   A-MPDUs are sent concurrently on two distinct links
+ *
+ * Also, if the PutAuxPhyToSleep attribute is set to true, it is checked that aux PHYs are in
+ * sleep mode after receiving an ICF and are resumed from sleep after receiving the CF-End frame.
  */
 class EmlsrDlTxopTest : public EmlsrOperationsTestBase
 {
@@ -364,12 +418,13 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
             transitionDelay;    //!< vector (whose size equals <i>nEmlsrStations</i>) of
                                 //!< transition the delay values advertised by non-AP MLDs
         Time transitionTimeout; //!< the Transition Timeout advertised by the AP MLD
+        bool putAuxPhyToSleep;  //!< whether aux PHYs are put to sleep during DL/UL TXOPs
     };
 
     /**
      * Constructor
      *
-     * \param params parameters for the EMLSR DL TXOP test
+     * @param params parameters for the EMLSR DL TXOP test
      */
     EmlsrDlTxopTest(const Params& params);
     ~EmlsrDlTxopTest() override = default;
@@ -392,29 +447,41 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
      * Check that the AP MLD considers the correct Power Management mode for the links setup
      * with the given non-AP MLD. This method is intended to be called shortly after ML setup.
      *
-     * \param address a link address of the given non-AP MLD
+     * @param address a link address of the given non-AP MLD
      */
     void CheckPmModeAfterAssociation(const Mac48Address& address);
 
     /**
-     * Check that appropriate actions are taken by the AP MLD transmitting an EML Operating Mode
+     * Check that appropriate actions are taken when the AP MLD transmits an EML Operating Mode
      * Notification response frame to an EMLSR client on the given link.
      *
-     * \param mpdu the MPDU carrying the EML Operating Mode Notification frame
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param mpdu the MPDU carrying the EML Operating Mode Notification frame
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
-    void CheckEmlNotificationFrame(Ptr<const WifiMpdu> mpdu,
-                                   const WifiTxVector& txVector,
-                                   uint8_t linkId);
+    void CheckApEmlNotificationFrame(Ptr<const WifiMpdu> mpdu,
+                                     const WifiTxVector& txVector,
+                                     uint8_t linkId);
+
+    /**
+     * Check that appropriate actions are taken when an EMLSR client transmits an EML Operating
+     * Mode Notification frame to the AP MLD on the given link.
+     *
+     * @param mpdu the MPDU carrying the EML Operating Mode Notification frame
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
+     */
+    void CheckStaEmlNotificationFrame(Ptr<const WifiMpdu> mpdu,
+                                      const WifiTxVector& txVector,
+                                      uint8_t linkId);
 
     /**
      * Check that appropriate actions are taken by the AP MLD transmitting an initial
      * Control frame to an EMLSR client on the given link.
      *
-     * \param mpdu the MPDU carrying the MU-RTS TF
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param mpdu the MPDU carrying the MU-RTS TF
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckInitialControlFrame(Ptr<const WifiMpdu> mpdu,
                                   const WifiTxVector& txVector,
@@ -424,9 +491,9 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken by the AP MLD transmitting a PPDU containing
      * QoS data frames to EMLSR clients on the given link.
      *
-     * \param psduMap the PSDU(s) carrying QoS data frames
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param psduMap the PSDU(s) carrying QoS data frames
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckQosFrames(const WifiConstPsduMap& psduMap,
                         const WifiTxVector& txVector,
@@ -436,9 +503,9 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken by the AP MLD receiving a PPDU containing
      * BlockAck frames from EMLSR clients on the given link.
      *
-     * \param psduMap the PSDU carrying BlockAck frames
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param phyId the ID of the PHY transmitting the PSDU(s)
+     * @param psduMap the PSDU carrying BlockAck frames
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param phyId the ID of the PHY transmitting the PSDU(s)
      */
     void CheckBlockAck(const WifiConstPsduMap& psduMap,
                        const WifiTxVector& txVector,
@@ -462,10 +529,10 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the transmission of UL frames from EMLSR clients.
+ * @brief Test the transmission of UL frames from EMLSR clients.
  *
  * This test considers an AP MLD and a non-AP MLD that support EMLSR. The non-AP MLD setups three
  * links, while the set of EMLSR links is configurable. Block ack agreements (for TID 0) for both
@@ -505,6 +572,23 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
  *   not transmitted successfully. Specifically, we check that the main PHY is completing the
  *   channel switch when the (unsuccessful) reception of the CTS ends and that a new RTS/CTS
  *   exchange is carried out to protect the transmission of the last data frame.
+ * - While the main PHY is operating on the same link as an aux PHY (which does not switch
+ *   channel), the aux PHY is put in sleep mode as soon as the main PHY starts operating on the
+ *   link, stays in sleep mode until the TXOP ends and is resumed from sleep mode right after the
+ *   end of the DL/UL TXOP.
+ * - When an aux PHY that is not TX capable gains a TXOP, it checks whether the main PHY can switch
+ *   to the auxiliary link a start an UL TXOP. If the main PHY is switching, the aux PHY waits
+ *   until the channel switch is completed and checks again; if the remaining backoff time on the
+ *   preferred link is greater than the channel switch delay, the main PHY is requested to switch to
+ *   the auxiliary link of the aux PHY. When the channel switch is completed, if the medium is
+ *   idle on the auxiliary link and the backoff is zero, the main PHY starts an UL TXOP after a
+ *   PIFS period; otherwise, the main PHY starts an UL TXOP when the backoff timer counts down to
+ *   zero. The QoS data frame sent by the main PHY is not protected by RTS and the bandwidth it
+ *   occupies is not affected by possible limitations on the aux PHY TX bandwidth capabilities.
+ *
+ * Also, if the PutAuxPhyToSleep attribute is set to true, it is checked that aux PHYs are in
+ * sleep mode a SIFS after receiving the ICF and are still in sleep mode right before receiving
+ * a Block Ack frame, and they are resumed from sleep after receiving the Block Ack frame.
  */
 class EmlsrUlTxopTest : public EmlsrOperationsTestBase
 {
@@ -516,21 +600,30 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
     {
         std::set<uint8_t>
             linksToEnableEmlsrOn;       //!< IDs of links on which EMLSR mode should be enabled
-        uint16_t channelWidth;          //!< width (MHz) of the channels used by MLDs
-        uint16_t auxPhyChannelWidth;    //!< max width (MHz) supported by aux PHYs
+        MHz_u channelWidth;             //!< width of the channels used by MLDs
+        MHz_u auxPhyChannelWidth;       //!< max width supported by aux PHYs
         Time mediumSyncDuration;        //!< duration of the MediumSyncDelay timer
         uint8_t msdMaxNTxops;           //!< Max number of TXOPs that an EMLSR client is allowed
                                         //!< to attempt to initiate while the MediumSyncDelay
                                         //!< timer is running (zero indicates no limit)
-        bool genBackoffIfTxopWithoutTx; //!< whether the backoff should be invoked when the AC
-                                        //!< gains the right to start a TXOP but it does not
-                                        //!< transmit any frame
+        bool genBackoffAndUseAuxPhyCca; //!< this variable controls two boolean values that are
+                                        //!< either both set to true or both set to false;
+                                        //!< the first value controls whether the backoff should be
+                                        //!< invoked when the AC gains the right to start a TXOP
+                                        //!< but it does not transmit any frame, the second value
+                                        //!< controls whether CCA info from aux PHY is used when
+                                        //!< aux PHY is not TX capable
+        uint8_t nSlotsLeftAlert;        //!< value to set the ChannelAccessManager NSlotsLeft
+                                        //!< attribute to
+        bool putAuxPhyToSleep;          //!< whether aux PHYs are put to sleep during DL/UL TXOPs
+        bool switchMainPhyBackDelayTimeout; //!< whether a SwitchMainPhyBackDelay timer expires
+                                            //!< after that the main PHY moved to an aux PHY link
     };
 
     /**
      * Constructor
      *
-     * \param params parameters for the EMLSR UL TXOP test
+     * @param params parameters for the EMLSR UL TXOP test
      */
     EmlsrUlTxopTest(const Params& params);
     ~EmlsrUlTxopTest() override = default;
@@ -553,9 +646,9 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken by the EMLSR client when transmitting an RTS
      * frame on the given link.
      *
-     * \param mpdu the MPDU carrying the RTS frame
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param mpdu the MPDU carrying the RTS frame
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckRtsFrames(Ptr<const WifiMpdu> mpdu, const WifiTxVector& txVector, uint8_t linkId);
 
@@ -563,9 +656,9 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken by the EMLSR client when receiving a CTS
      * frame on the given link.
      *
-     * \param mpdu the MPDU carrying the CTS frame
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param mpdu the MPDU carrying the CTS frame
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckCtsFrames(Ptr<const WifiMpdu> mpdu, const WifiTxVector& txVector, uint8_t linkId);
 
@@ -573,9 +666,9 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken when an MLD transmits a PPDU containing
      * QoS data frames on the given link.
      *
-     * \param psduMap the PSDU(s) carrying QoS data frames
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param psduMap the PSDU(s) carrying QoS data frames
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckQosFrames(const WifiConstPsduMap& psduMap,
                         const WifiTxVector& txVector,
@@ -585,9 +678,9 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken when an MLD transmits a PPDU containing
      * BlockAck frames on the given link.
      *
-     * \param psduMap the PSDU carrying BlockAck frames
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param psduMap the PSDU carrying BlockAck frames
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckBlockAck(const WifiConstPsduMap& psduMap,
                        const WifiTxVector& txVector,
@@ -599,14 +692,14 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
     /**
      * Callback invoked when a new backoff value is generated by the EMLSR client.
      *
-     * \param backoff the generated backoff value
-     * \param linkId the ID of the link for which the backoff value has been generated
+     * @param backoff the generated backoff value
+     * @param linkId the ID of the link for which the backoff value has been generated
      */
     void BackoffGenerated(uint32_t backoff, uint8_t linkId);
 
     std::set<uint8_t> m_emlsrLinks; /**< IDs of the links on which EMLSR mode has to be enabled */
-    uint16_t m_channelWidth;        //!< width (MHz) of the channels used by MLDs
-    uint16_t m_auxPhyChannelWidth;  //!< max width (MHz) supported by aux PHYs
+    MHz_u m_channelWidth;           //!< width of the channels used by MLDs
+    MHz_u m_auxPhyChannelWidth;     //!< max width supported by aux PHYs
     Time m_mediumSyncDuration;      //!< duration of the MediumSyncDelay timer
     uint8_t m_msdMaxNTxops;         //!< Max number of TXOPs that an EMLSR client is allowed
                                     //!< to attempt to initiate while the MediumSyncDelay
@@ -627,14 +720,74 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
     bool m_genBackoffIfTxopWithoutTx;     //!< whether the backoff should be invoked when the AC
                                           //!< gains the right to start a TXOP but it does not
                                           //!< transmit any frame
+    bool m_useAuxPhyCca;                  //!< whether CCA info from aux PHY is used when
+                                          //!< aux PHY is not TX capable
+    uint8_t m_nSlotsLeftAlert;            //!< value for ChannelAccessManager NSlotsLeft attribute
+    bool m_switchMainPhyBackDelayTimeout; //!< whether a SwitchMainPhyBackDelay timer expires
+                                          //!< after that the main PHY moved to an aux PHY link
     std::optional<bool> m_corruptCts;     //!< whether the transmitted CTS must be corrupted
+    Time m_5thQosFrameTxTime;             //!< start transmission time of the 5th QoS data frame
+    MHz_u m_5thQosFrameExpWidth;          //!< expected width of the 5th QoS data frame
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the switching of PHYs on EMLSR clients.
+ * @brief Check UL OFDMA operations with EMLSR clients.
+ *
+ * This test considers an AP MLD and an EMLSR client and a non-AP MLD that setup three links with
+ * the AP MLD. Once block ack agreements (for TID 0) are established for the UL direction, the
+ * AP MLD starts requesting channel access (on all the links) through the Multi-User scheduler.
+ * Given that links are idle, AP MLD accesses the channel on all the links and concurrently sends
+ * Trigger Frames. When the transmission of the first Trigger Frame is over, a client application
+ * on the EMLSR client generates two packets addressed to the AP MLD.
+ *
+ * It is checked that:
+ * - when sending BSRP TF is disabled, the first Trigger Frame sent is an MU-RTS; otherwise, it is
+ *   a BSRP Trigger Frame. In both cases, such Trigger Frame acts as an ICF for the EMLSR client
+ * - the other Trigger Frames sent concurrently with the ICF only solicit the non-EMLSR client
+ *   (AP MLD has blocked transmissions to the EMLSR client upon preparing the first Trigger Frame)
+ * - the buffer status reported in QoS Null frames is as expected
+ * - the EMLSR client sends a QoS Data frame in a TB PPDU
+ */
+class EmlsrUlOfdmaTest : public EmlsrOperationsTestBase
+{
+  public:
+    /**
+     * Constructor
+     *
+     * @param enableBsrp whether MU scheduler sends BSRP TFs
+     */
+    EmlsrUlOfdmaTest(bool enableBsrp);
+
+  protected:
+    void DoSetup() override;
+    void DoRun() override;
+    void Transmit(Ptr<WifiMac> mac,
+                  uint8_t phyId,
+                  WifiConstPsduMap psduMap,
+                  WifiTxVector txVector,
+                  double txPowerW) override;
+
+    /**
+     * Check that the simulation produced the expected results.
+     */
+    void CheckResults();
+
+  private:
+    void StartTraffic() override;
+
+    bool m_enableBsrp;        //!< whether MU scheduler sends BSRP TFs
+    std::size_t m_txPsdusPos; //!< position in the vector of TX PSDUs of the first ICF
+    Time m_startAccessReq;    //!< start time of the first AP MLD access request via MU scheduler
+};
+
+/**
+ * @ingroup wifi-test
+ * @ingroup tests
+ *
+ * @brief Test the switching of PHYs on EMLSR clients.
  *
  * An AP MLD and an EMLSR client setup 3 links, on which EMLSR mode is enabled. The AP MLD
  * transmits 4 QoS data frames (one after another, each protected by ICF):
@@ -642,9 +795,10 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
  * - the first one on the link used for ML setup, hence no PHY switch occurs
  * - the second one on another link, thus causing the main PHY to switch link
  * - the third one on the remaining link, thus causing the main PHY to switch link again
- * - the fourth one on the link used for ML setup; if the aux PHYs switches link, there is
- *   one aux PHY listening on such a link and the main PHY switches to this link, otherwise
- *   no PHY is listening on such a link and there is no response to the ICF sent by the AP MLD
+ * - the fourth one on the link used for ML setup
+ *
+ * Afterwards, the EMLSR client transmits 2 QoS data frames; the first one on the link used for
+ * ML setup (hence, no RTS is sent), the second one on another link.
  */
 class EmlsrLinkSwitchTest : public EmlsrOperationsTestBase
 {
@@ -657,15 +811,20 @@ class EmlsrLinkSwitchTest : public EmlsrOperationsTestBase
         bool
             switchAuxPhy; //!< whether AUX PHY should switch channel to operate on the link on which
                           //!<  the Main PHY was operating before moving to the link of the Aux PHY
-        bool resetCamState; //!< whether to reset the state of the ChannelAccessManager associated
-                            //!< with the link on which the main PHY has just switched to
-        uint16_t auxPhyMaxChWidth; //!< max channel width (MHz) supported by aux PHYs
+        bool resetCamStateAndInterruptSwitch; //!< this variable controls two boolean values that
+                                              //!< are either both set to true or both set to false;
+                                              //!< the first value controls whether to reset the
+                                              //!< state of the ChannelAccessManager associated
+                                              //!< with the link on which the main PHY has just
+                                              //!< switched to, the second value controls whether
+                                              //!< a main PHY channel switch can be interrupted
+        MHz_u auxPhyMaxChWidth;               //!< max channel width supported by aux PHYs
     };
 
     /**
      * Constructor
      *
-     * \param params parameters for the EMLSR link switching test
+     * @param params parameters for the EMLSR link switching test
      */
     EmlsrLinkSwitchTest(const Params& params);
 
@@ -689,9 +848,9 @@ class EmlsrLinkSwitchTest : public EmlsrOperationsTestBase
      * Check that the Main PHY (and possibly the Aux PHY) correctly switches channel when the
      * reception of an ICF ends.
      *
-     * \param psduMap the PSDU carrying the MU-RTS TF
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param psduMap the PSDU carrying the MU-RTS TF
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckInitialControlFrame(const WifiConstPsduMap& psduMap,
                                   const WifiTxVector& txVector,
@@ -701,34 +860,117 @@ class EmlsrLinkSwitchTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken by the AP MLD transmitting a PPDU containing
      * QoS data frames to the EMLSR client on the given link.
      *
-     * \param psduMap the PSDU(s) carrying QoS data frames
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param psduMap the PSDU(s) carrying QoS data frames
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckQosFrames(const WifiConstPsduMap& psduMap,
                         const WifiTxVector& txVector,
                         uint8_t linkId);
 
+    /**
+     * Check that appropriate actions are taken by the EMLSR client transmitting a PPDU containing
+     * an RTS frame to the AP MLD on the given link.
+     *
+     * @param psduMap the PSDU carrying RTS frame
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
+     */
+    void CheckRtsFrame(const WifiConstPsduMap& psduMap,
+                       const WifiTxVector& txVector,
+                       uint8_t linkId);
+
   private:
-    bool m_switchAuxPhy;  /**< whether AUX PHY should switch channel to operate on the link on which
-                               the Main PHY was operating before moving to the link of Aux PHY */
-    bool m_resetCamState; /**< whether to reset the state of the ChannelAccessManager associated
-                               with the link on which the main PHY has just switched to */
-    uint16_t m_auxPhyMaxChWidth;  //!< max channel width (MHz) supported by aux PHYs
-    std::size_t m_countQoSframes; //!< counter for QoS data frames
-    std::size_t m_txPsdusPos;     //!< a position in the vector of TX PSDUs
+    bool m_switchAuxPhy; /**< whether AUX PHY should switch channel to operate on the link on which
+                              the Main PHY was operating before moving to the link of Aux PHY */
+    bool
+        m_resetCamStateAndInterruptSwitch; /**< whether to reset the state of the
+                              ChannelAccessManager associated with the link on which the main PHY
+                              has just switched to and whether main PHY switch can be interrupted */
+    MHz_u m_auxPhyMaxChWidth;              //!< max channel width supported by aux PHYs
+    std::size_t m_countQoSframes;          //!< counter for QoS data frames
+    std::size_t m_countIcfFrames;          //!< counter for ICF frames
+    std::size_t m_countRtsFrames;          //!< counter for RTS frames
+    std::size_t m_txPsdusPos;              //!< position in the vector of TX PSDUs of the first ICF
+    Ptr<ListErrorModel> m_errorModel;      ///< error rate model to corrupt packets at AP MLD
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief wifi EMLSR Test Suite
+ * @brief wifi EMLSR Test Suite
  */
 class WifiEmlsrTestSuite : public TestSuite
 {
   public:
     WifiEmlsrTestSuite();
+};
+
+/**
+ * @ingroup wifi-test
+ * @ingroup tests
+ *
+ * @brief Test CCA busy notifications on EMLSR clients.
+ *
+ * SwitchAuxPhy is set to true, so that the aux PHY starts switching when the main PHY switch is
+ * completed.
+ *
+ * - Main PHY switches to a link on which an aux PHY is operating. Right after the start of the
+ *   channel switch, the AP transmits a frame to another device on the aux PHY link. Verify that,
+ *   once the main PHY is operating on the new link, the channel access manager on that link is
+ *   notified of CCA busy until the end of the transmission
+ * - When the main PHY switch is completed, the aux PHY switches to a link on which no PHY is
+ *   operating. Before the aux PHY starts switching, the AP starts transmitting a frame to another
+ *   device on the link on which no PHY is operating. Verify that, once the aux PHY is operating
+ *   on the new link, the channel access manager on that link is notified of CCA busy until the
+ *   end of the transmission
+ */
+class EmlsrCcaBusyTest : public EmlsrOperationsTestBase
+{
+  public:
+    /**
+     * Constructor
+     *
+     * @param auxPhyMaxChWidth max channel width supported by aux PHYs
+     */
+    EmlsrCcaBusyTest(MHz_u auxPhyMaxChWidth);
+
+    ~EmlsrCcaBusyTest() override = default;
+
+  protected:
+    void DoSetup() override;
+    void DoRun() override;
+
+  private:
+    void StartTraffic() override;
+
+    /**
+     * Make the other MLD transmit a packet to the AP on the given link.
+     *
+     * @param linkId the ID of the given link
+     */
+    void TransmitPacketToAp(uint8_t linkId);
+
+    /**
+     * Perform checks after that the preamble of the first PPDU has been received.
+     */
+    void CheckPoint1();
+
+    /**
+     * Perform checks after that the main PHY completed the link switch.
+     */
+    void CheckPoint2();
+
+    /**
+     * Perform checks after that the aux PHY completed the link switch.
+     */
+    void CheckPoint3();
+
+    MHz_u m_auxPhyMaxChWidth;    //!< max channel width supported by aux PHYs
+    Time m_channelSwitchDelay;   //!< the PHY channel switch delay
+    uint8_t m_currMainPhyLinkId; //!< the ID of the link the main PHY switches from
+    uint8_t m_nextMainPhyLinkId; //!< the ID of the link the main PHY switches to
 };
 
 #endif /* WIFI_EMLSR_TEST_H */

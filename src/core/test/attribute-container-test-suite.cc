@@ -1,32 +1,23 @@
 /*
  * Copyright (c) 2018 Caliola Engineering, LLC.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Jared Dulmage <jared.dulmage@caliola.com>
  */
 
-#include <ns3/attribute-container.h>
-#include <ns3/double.h>
-#include <ns3/integer.h>
-#include <ns3/log.h>
-#include <ns3/object.h>
-#include <ns3/pair.h>
-#include <ns3/ptr.h>
-#include <ns3/string.h>
-#include <ns3/test.h>
-#include <ns3/type-id.h>
+#include "ns3/attribute-container.h"
+#include "ns3/double.h"
+#include "ns3/integer.h"
+#include "ns3/log.h"
+#include "ns3/object.h"
+#include "ns3/pair.h"
+#include "ns3/ptr.h"
+#include "ns3/string.h"
+#include "ns3/test.h"
+#include "ns3/tuple.h"
+#include "ns3/type-id.h"
+#include "ns3/uinteger.h"
 
 #include <algorithm>
 #include <iterator>
@@ -40,13 +31,13 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("AttributeContainerTestSuite");
 
 /**
- * \file
- * \ingroup attribute-tests
+ * @file
+ * @ingroup attribute-tests
  * Attribute container test suite
  */
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  * Attribute container object.
  */
 class AttributeContainerObject : public Object
@@ -61,34 +52,34 @@ class AttributeContainerObject : public Object
     void ReverseDoubleList();
 
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
     /**
      * Set the list of doubles to the given list
      *
-     * \param doubleList the given list
+     * @param doubleList the given list
      */
     void SetDoubleList(const std::list<double>& doubleList);
     /**
      * Get the list of doubles
      *
-     * \return the list of doubles
+     * @return the list of doubles
      */
     std::list<double> GetDoubleList() const;
 
     /**
      * Set the vector of ints to the given vector
      *
-     * \param vec the given vector
+     * @param vec the given vector
      */
     void SetIntVec(std::vector<int> vec);
     /**
      * Get the vector of ints
      *
-     * \return the vector of ints
+     * @return the vector of ints
      */
     std::vector<int> GetIntVec() const;
 
@@ -194,23 +185,7 @@ AttributeContainerObject::GetIntVec() const
 }
 
 /**
- * \ingroup attribute-tests
- *
- * This function handles mixed constness and compatible, yet
- * distinct numerical classes (like int and long)
- * \param x The left operand.
- * \param y The right operand.
- * \return true if the pairs have the same numerical values.
- */
-template <class A, class B, class C, class D>
-bool
-operator==(const std::pair<A, B>& x, const std::pair<C, D>& y)
-{
-    return x.first == y.first && x.second == y.second;
-}
-
-/**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
  * Test AttributeContainer instantiation, initialization, access
  */
@@ -307,7 +282,9 @@ AttributeContainerTestCase::DoRun()
         for (const auto& v : ref)
         {
             NS_TEST_ASSERT_MSG_NE(true, (aciter == ac.End()), "AC iterator reached end");
-            NS_TEST_ASSERT_MSG_EQ(v, (*aciter)->Get(), "Incorrect value");
+            bool valCheck =
+                v.first == (*aciter)->Get().first && v.second == (*aciter)->Get().second;
+            NS_TEST_ASSERT_MSG_EQ(valCheck, true, "Incorrect value");
             ++aciter;
         }
         NS_TEST_ASSERT_MSG_EQ(true, (aciter == ac.End()), "AC iterator did not reach end");
@@ -315,7 +292,7 @@ AttributeContainerTestCase::DoRun()
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
  * Attribute serialization and deserialization TestCase.
  */
@@ -408,12 +385,30 @@ AttributeContainerSerializationTestCase::DoRun()
         NS_TEST_ASSERT_MSG_EQ(attr.GetN(), 3, "Incorrect container size");
 
         std::string reserialized = attr.SerializeToString(checker);
-        NS_TEST_ASSERT_MSG_EQ(reserialized, pairs, "Reserealization failed");
+        NS_TEST_ASSERT_MSG_EQ(reserialized, pairs, "Reserialization failed");
+    }
+
+    {
+        std::string tupleVec = "{-1, 2, 3.4};{-2, 1, 4.3}";
+        AttributeContainerValue<TupleValue<IntegerValue, UintegerValue, DoubleValue>, ';'> attr;
+        auto checker = MakeAttributeContainerChecker(attr);
+        auto acchecker = DynamicCast<AttributeContainerChecker>(checker);
+        acchecker->SetItemChecker(MakeTupleChecker<IntegerValue, UintegerValue, DoubleValue>(
+            MakeIntegerChecker<int8_t>(),
+            MakeUintegerChecker<uint16_t>(),
+            MakeDoubleChecker<double>()));
+        NS_TEST_ASSERT_MSG_EQ(attr.DeserializeFromString(tupleVec, checker),
+                              true,
+                              "Deserialization failed");
+        NS_TEST_ASSERT_MSG_EQ(attr.GetN(), 2, "Incorrect container size");
+
+        std::string reserialized = attr.SerializeToString(checker);
+        NS_TEST_ASSERT_MSG_EQ(reserialized, tupleVec, "Reserialization failed");
     }
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
  * Attribute set and get TestCase.
  */
@@ -542,14 +537,15 @@ AttributeContainerSetGetTestCase::DoRun()
         auto iter = map.begin();
         for (const auto& v : mapstrint)
         {
-            NS_TEST_ASSERT_MSG_EQ(v, *iter, "Incorrect value in mapstrint");
+            bool valCheck = v.first == (*iter).first && v.second == (*iter).second;
+            NS_TEST_ASSERT_MSG_EQ(valCheck, true, "Incorrect value in mapstrint");
             ++iter;
         }
     }
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
  * Attribute attribute container TestCase.
  */
@@ -560,11 +556,11 @@ class AttributeContainerTestSuite : public TestSuite
 };
 
 AttributeContainerTestSuite::AttributeContainerTestSuite()
-    : TestSuite("attribute-container-test-suite", UNIT)
+    : TestSuite("attribute-container-test-suite", Type::UNIT)
 {
-    AddTestCase(new AttributeContainerTestCase(), TestCase::QUICK);
-    AddTestCase(new AttributeContainerSerializationTestCase(), TestCase::QUICK);
-    AddTestCase(new AttributeContainerSetGetTestCase(), TestCase::QUICK);
+    AddTestCase(new AttributeContainerTestCase(), TestCase::Duration::QUICK);
+    AddTestCase(new AttributeContainerSerializationTestCase(), TestCase::Duration::QUICK);
+    AddTestCase(new AttributeContainerSetGetTestCase(), TestCase::Duration::QUICK);
 }
 
 static AttributeContainerTestSuite

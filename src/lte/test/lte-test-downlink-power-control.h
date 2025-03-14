@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2014 Piotr Gawlowicz
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Piotr Gawlowicz <gawlowicz.p@gmail.com>
  *
@@ -21,18 +10,18 @@
 #ifndef LTE_TEST_DOWNLINK_POWER_CONTROL_H
 #define LTE_TEST_DOWNLINK_POWER_CONTROL_H
 
+#include "ns3/lte-rrc-sap.h"
 #include "ns3/lte-spectrum-value-helper.h"
 #include "ns3/spectrum-test.h"
 #include "ns3/spectrum-value.h"
 #include "ns3/test.h"
-#include <ns3/lte-rrc-sap.h>
 
 using namespace ns3;
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test suite for the LteDownlinkPowerControlSpectrumValueTestCase.
+ * @brief Test suite for the LteDownlinkPowerControlSpectrumValueTestCase.
  *
  */
 class LteDownlinkPowerControlTestSuite : public TestSuite
@@ -41,33 +30,33 @@ class LteDownlinkPowerControlTestSuite : public TestSuite
     LteDownlinkPowerControlTestSuite();
 
     /**
-     * \brief Calculate RB transmit power function
-     * \param txPower the transmit power
-     * \param pa the PA
-     * \returns RB transmit power
+     * @brief Calculate RB transmit power function
+     * @param txPower the transmit power
+     * @param pa the PA
+     * @returns RB transmit power
      */
     double CalculateRbTxPower(double txPower, uint8_t pa);
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test SINR calculation in the downlink when power control is used.
+ * @brief Test SINR calculation in the downlink when power control is used.
  * Test if the difference in power levels are corresponding to the estamated values.
  */
 class LteDownlinkPowerControlSpectrumValueTestCase : public TestCase
 {
   public:
     /**
-     * \brief Constructor
+     * @brief Constructor
      *
-     * \param name the reference name
-     * \param earfcn the EARFCN
-     * \param bw the bandwidth
-     * \param powerTx
-     * \param powerTxMap
-     * \param activeRbs
-     * \param expected the expected Tx Power Spectral Density
+     * @param name the reference name
+     * @param earfcn the EARFCN
+     * @param bw the bandwidth
+     * @param powerTx
+     * @param powerTxMap
+     * @param activeRbs
+     * @param expected the expected Tx Power Spectral Density
      */
     LteDownlinkPowerControlSpectrumValueTestCase(std::string name,
                                                  uint16_t earfcn,
@@ -85,9 +74,9 @@ class LteDownlinkPowerControlSpectrumValueTestCase : public TestCase
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test SINR calculation in the downlink when the power control is used.
+ * @brief Test SINR calculation in the downlink when the power control is used.
  * Test the power control by comparing the downlink data and ctrl power
  * difference with the estimated value based on the specified change in power.
  */
@@ -95,11 +84,11 @@ class LteDownlinkPowerControlTestCase : public TestCase
 {
   public:
     /**
-     * \brief Constructor
+     * @brief Constructor
      *
-     * \param changePower
-     * \param pa
-     * \param name the reference name
+     * @param changePower
+     * @param pa
+     * @param name the reference name
      */
     LteDownlinkPowerControlTestCase(bool changePower, uint8_t pa, std::string name);
     ~LteDownlinkPowerControlTestCase() override;
@@ -113,9 +102,9 @@ class LteDownlinkPowerControlTestCase : public TestCase
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test if RRC connection reconfiguration messages are properly
+ * @brief Test if RRC connection reconfiguration messages are properly
  * generated upon the change in the downlink power.
  *
  */
@@ -123,21 +112,21 @@ class LteDownlinkPowerControlRrcConnectionReconfigurationTestCase : public TestC
 {
   public:
     /**
-     * \brief Constructor
+     * @brief Constructor
      *
-     * \param useIdealRrc if true use ideal RRC
-     * \param name the reference name
+     * @param useIdealRrc if true use ideal RRC
+     * @param name the reference name
      */
     LteDownlinkPowerControlRrcConnectionReconfigurationTestCase(bool useIdealRrc, std::string name);
     ~LteDownlinkPowerControlRrcConnectionReconfigurationTestCase() override;
 
     /**
-     * \brief Connection Reconfiguration ENB
+     * @brief Connection Reconfiguration ENB
      *
-     * \param context the context name
-     * \param imsi the IMSI
-     * \param cellid the cell ID
-     * \param rnti the RNTI
+     * @param context the context name
+     * @param imsi the IMSI
+     * @param cellid the cell ID
+     * @param rnti the RNTI
      */
     void ConnectionReconfigurationEnb(std::string context,
                                       uint64_t imsi,
@@ -145,12 +134,12 @@ class LteDownlinkPowerControlRrcConnectionReconfigurationTestCase : public TestC
                                       uint16_t rnti);
 
     /**
-     * \brief Connection Reconfiguration UE
+     * @brief Connection Reconfiguration UE
      *
-     * \param context the context name
-     * \param imsi the IMSI
-     * \param cellid the cell ID
-     * \param rnti the RNTI
+     * @param context the context name
+     * @param imsi the IMSI
+     * @param cellid the cell ID
+     * @param rnti the RNTI
      */
     void ConnectionReconfigurationUe(std::string context,
                                      uint64_t imsi,
@@ -158,10 +147,10 @@ class LteDownlinkPowerControlRrcConnectionReconfigurationTestCase : public TestC
                                      uint16_t rnti);
 
     /**
-     * \brief Change PDSCH config dedicated
+     * @brief Change PDSCH config dedicated
      *
-     * \param rnti the RNTI
-     * \param pa the PA
+     * @param rnti the RNTI
+     * @param pa the PA
      */
     void ChangePdschConfigDedicated(uint16_t rnti, uint8_t pa);
 

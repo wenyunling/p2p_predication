@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2008 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  *          Sébastien Deronne <sebastien.deronne@gmail.com>
@@ -160,7 +149,7 @@ SpectrumWifiPhyHelper::Create(Ptr<Node> node, Ptr<WifiNetDevice> device) const
 void
 SpectrumWifiPhyHelper::InstallPhyInterfaces(uint8_t linkId, Ptr<SpectrumWifiPhy> phy) const
 {
-    if (m_interfacesMap.count(linkId) == 0)
+    if (!m_interfacesMap.contains(linkId))
     {
         // default setup: set all interfaces to this link
         for (const auto& [freqRange, channel] : m_channels)
@@ -195,12 +184,13 @@ SpectrumWifiPhyHelper::SpectrumChannelSwitched(Ptr<SpectrumWifiPhy> phy)
             continue;
         }
         if (const auto& interfaces = spectrumPhy->GetSpectrumPhyInterfaces();
-            interfaces.count(phy->GetCurrentFrequencyRange()) == 0)
+            !interfaces.contains(phy->GetCurrentFrequencyRange()))
         {
             // no interface attached to that channel
             continue;
         }
-        spectrumPhy->ConfigureInterface(phy->GetFrequency(), phy->GetChannelWidth());
+        spectrumPhy->ConfigureInterface(phy->GetOperatingChannel().GetFrequencies(),
+                                        phy->GetChannelWidth());
     }
 }
 

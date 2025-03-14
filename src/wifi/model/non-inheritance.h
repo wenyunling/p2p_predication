@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2023 Universita' degli Studi di Napoli Federico II
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Stefano Avallone <stavallo@unina.it>
  */
@@ -28,7 +17,7 @@ namespace ns3
 {
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * The IEEE 802.11 Non-Inheritance Information Element
  */
@@ -42,15 +31,15 @@ class NonInheritance : public WifiInformationElement
     /**
      * Add the Information Element specified by the given Element ID and Element ID Extension.
      *
-     * \param elemId the given Element ID
-     * \param elemIdExt the given Element ID Extension
+     * @param elemId the given Element ID
+     * @param elemIdExt the given Element ID Extension
      */
     void Add(uint8_t elemId, uint8_t elemIdExt = 0);
 
     /**
-     * \param elemId the given Element ID
-     * \param elemIdExt the given Element ID Extension
-     * \return whether the Information Element specified by the given Element ID and
+     * @param elemId the given Element ID
+     * @param elemIdExt the given Element ID Extension
+     * @return whether the Information Element specified by the given Element ID and
      *         Element ID Extension is present
      */
     bool IsPresent(uint8_t elemId, uint8_t elemIdExt = 0) const;

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2015 Danilo Abrignani
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Danilo Abrignani <danilo.abrignani@unibo.it>
  *
@@ -32,7 +21,7 @@ namespace ns3
 class LteUeCcmRrcSapProvider;
 
 /**
- * \brief Component carrier manager implementation which simply does nothing.
+ * @brief Component carrier manager implementation which simply does nothing.
  *
  * Selecting this component carrier selection algorithm is equivalent to disabling automatic
  * triggering of component carrier selection. This is the default choice.
@@ -47,8 +36,8 @@ class SimpleUeComponentCarrierManager : public LteUeComponentCarrierManager
     ~SimpleUeComponentCarrierManager() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -70,68 +59,68 @@ class SimpleUeComponentCarrierManager : public LteUeComponentCarrierManager
     void DoDispose() override;
     // inherited from LteCcsAlgorithm as a Component Carrier Management SAP implementation
     /**
-     * \brief Report Ue Measure function
-     * \param rnti the RNTI
-     * \param measResults the measure results
+     * @brief Report Ue Measure function
+     * @param rnti the RNTI
+     * @param measResults the measure results
      */
     void DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measResults);
     // forwarded from LteMacSapProvider
     /**
-     * \brief Transmit PDU function
-     * \param params LteMacSapProvider::TransmitPduParameters
+     * @brief Transmit PDU function
+     * @param params LteMacSapProvider::TransmitPduParameters
      */
     void DoTransmitPdu(LteMacSapProvider::TransmitPduParameters params);
     /**
-     * \brief Report buffer status function
-     * \param params LteMacSapProvider::ReportBufferStatusParameters
+     * @brief Report buffer status function
+     * @param params LteMacSapProvider::ReportBufferStatusParameters
      */
     virtual void DoReportBufferStatus(LteMacSapProvider::ReportBufferStatusParameters params);
     /// Notify HARQ deliver failure
     void DoNotifyHarqDeliveryFailure();
     // forwarded from LteMacSapUser
     /**
-     * \brief Notify TX opportunity function
+     * @brief Notify TX opportunity function
      *
-     * \param txOpParams the LteMacSapUser::TxOpportunityParameters
+     * @param txOpParams the LteMacSapUser::TxOpportunityParameters
      */
     void DoNotifyTxOpportunity(LteMacSapUser::TxOpportunityParameters txOpParams);
     /**
-     * \brief Receive PDU function
+     * @brief Receive PDU function
      *
-     * \param rxPduParams the LteMacSapUser::ReceivePduParameters
+     * @param rxPduParams the LteMacSapUser::ReceivePduParameters
      */
     void DoReceivePdu(LteMacSapUser::ReceivePduParameters rxPduParams);
     // forwarded from LteUeCcmRrcSapProvider
     /**
-     * \brief Add LC function
-     * \param lcId the LCID
-     * \param lcConfig the logical channel config
-     * \param msu the MSU
-     * \returns updated LC config list
+     * @brief Add LC function
+     * @param lcId the LCID
+     * @param lcConfig the logical channel config
+     * @param msu the MSU
+     * @returns updated LC config list
      */
     virtual std::vector<LteUeCcmRrcSapProvider::LcsConfig> DoAddLc(
         uint8_t lcId,
         LteUeCmacSapProvider::LogicalChannelConfig lcConfig,
         LteMacSapUser* msu);
     /**
-     * \brief Remove LC function
-     * \param lcid the LCID
-     * \returns updated LC list
+     * @brief Remove LC function
+     * @param lcid the LCID
+     * @returns updated LC list
      */
     std::vector<uint16_t> DoRemoveLc(uint8_t lcid);
     /**
-     * \brief Configure signal bearer function
-     * \param lcId the LCID
-     * \param lcConfig the logical channel config
-     * \param msu the MSU
-     * \returns LteMacSapUser *
+     * @brief Configure signal bearer function
+     * @param lcId the LCID
+     * @param lcConfig the logical channel config
+     * @param msu the MSU
+     * @returns LteMacSapUser *
      */
     virtual LteMacSapUser* DoConfigureSignalBearer(
         uint8_t lcId,
         LteUeCmacSapProvider::LogicalChannelConfig lcConfig,
         LteMacSapUser* msu);
     /**
-     * \brief Reset LC map
+     * @brief Reset LC map
      *
      */
     void DoReset();

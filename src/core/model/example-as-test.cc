@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2020 Lawrence Livermore National Laboratory
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Peter D. Barnes, Jr. <pdbarnes@llnl.gov>
  */
@@ -31,8 +20,8 @@
 #include <string>
 
 /**
- * \file
- * \ingroup testing
+ * @file
+ * @ingroup testing
  * Implementation of classes ns3::ExampleAsTestSuite and ns3::ExampleTestCase.
  */
 
@@ -42,7 +31,6 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("ExampleAsTestCase");
 
 // Running tests as examples currently requires Python.
-#if defined(NS3_ENABLE_EXAMPLES)
 
 ExampleAsTestCase::ExampleAsTestCase(const std::string name,
                                      const std::string program,
@@ -153,14 +141,12 @@ ExampleAsTestSuite::ExampleAsTestSuite(const std::string name,
                                        const std::string program,
                                        const std::string dataDir,
                                        const std::string args /* = "" */,
-                                       const TestDuration duration /* =QUICK */,
+                                       const Duration duration /* =QUICK */,
                                        const bool shouldNotErr /* = true */)
-    : TestSuite(name, EXAMPLE)
+    : TestSuite(name, Type::EXAMPLE)
 {
     NS_LOG_FUNCTION(this << name << program << dataDir << args << duration << shouldNotErr);
     AddTestCase(new ExampleAsTestCase(name, program, dataDir, args, shouldNotErr), duration);
 }
-
-#endif // NS3_ENABLE_EXAMPLES
 
 } // namespace ns3

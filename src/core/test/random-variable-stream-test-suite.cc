@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009-12 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * This file is based on rng-test-suite.cc.
  *
@@ -26,8 +15,10 @@
 #include "ns3/log.h"
 #include "ns3/random-variable-stream.h"
 #include "ns3/rng-seed-manager.h"
+#include "ns3/shuffle.h"
 #include "ns3/string.h"
 #include "ns3/test.h"
+#include "ns3/uinteger.h"
 
 #include <cmath>
 #include <ctime>
@@ -51,13 +42,13 @@ namespace RandomVariable
 {
 
 /**
- * \file
- * \ingroup rng-tests
+ * @file
+ * @ingroup rng-tests
  * Random number generator streams tests.
  */
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Base class for RandomVariableStream test suites.
  */
 class TestCaseBase : public TestCase
@@ -72,7 +63,7 @@ class TestCaseBase : public TestCase
 
     /**
      * Constructor
-     * \param [in] name The test case name.
+     * @param [in] name The test case name.
      */
     TestCaseBase(std::string name)
         : TestCase(name)
@@ -82,12 +73,12 @@ class TestCaseBase : public TestCase
     /**
      * Configure a GSL histogram with uniform bins, with optional
      * under/over-flow bins.
-     * \param [in,out] h The GSL histogram to configure.
-     * \param [in] start The minimum value of the lowest bin.
-     * \param [in] end The maximum value of the last bin.
-     * \param [in] underflow If \c true the lowest bin should contain the underflow,
-     * \param [in] overflow If \c true the highest bin should contain the overflow.
-     * \returns A vector of the bin edges, including the top of the highest bin.
+     * @param [in,out] h The GSL histogram to configure.
+     * @param [in] start The minimum value of the lowest bin.
+     * @param [in] end The maximum value of the last bin.
+     * @param [in] underflow If \c true the lowest bin should contain the underflow,
+     * @param [in] overflow If \c true the highest bin should contain the overflow.
+     * @returns A vector of the bin edges, including the top of the highest bin.
      * This vector has one more entry than the number of bins in the histogram.
      */
     std::vector<double> UniformHistogramBins(gsl_histogram* h,
@@ -123,8 +114,8 @@ class TestCaseBase : public TestCase
 
     /**
      * Compute the average of a random variable.
-     * \param [in] rng The random variable to sample.
-     * \returns The average of \c N_MEASUREMENTS samples.
+     * @param [in] rng The random variable to sample.
+     * @returns The average of \c N_MEASUREMENTS samples.
      */
     double Average(Ptr<RandomVariableStream> rng) const
     {
@@ -139,13 +130,32 @@ class TestCaseBase : public TestCase
         return valueMean;
     }
 
+    /**
+     * Compute the variance of a random variable.
+     * @param [in] rng The random variable to sample.
+     * @param [in] average The previously calculated average value.
+     * @returns The variance of \c N_MEASUREMENTS samples.
+     */
+    double Variance(Ptr<RandomVariableStream> rng, double average) const
+    {
+        NS_LOG_FUNCTION(this << rng);
+        auto sum = 0.0;
+        for (uint32_t i = 0; i < N_MEASUREMENTS; ++i)
+        {
+            const auto value = rng->GetValue();
+            sum += std::pow(value - average, 2);
+        }
+        const auto valueVariance = sum / N_MEASUREMENTS;
+        return valueVariance;
+    }
+
     /** A factory base class to create new instances of a random variable. */
     class RngGeneratorBase
     {
       public:
         /**
          * Create a new instance of a random variable stream
-         * \returns The new random variable stream instance.
+         * @returns The new random variable stream instance.
          */
         virtual Ptr<RandomVariableStream> Create() const = 0;
     };
@@ -153,7 +163,7 @@ class TestCaseBase : public TestCase
     /**
      * Factory class to create new instances of a particular random variable stream.
      *
-     * \tparam RNG The type of random variable generator to create.
+     * @tparam RNG The type of random variable generator to create.
      */
     template <typename RNG>
     class RngGenerator : public RngGeneratorBase
@@ -161,7 +171,7 @@ class TestCaseBase : public TestCase
       public:
         /**
          * Constructor.
-         * \param [in] anti Create antithetic streams if \c true.
+         * @param [in] anti Create antithetic streams if \c true.
          */
         RngGenerator(bool anti = false)
             : m_anti(anti)
@@ -191,10 +201,10 @@ class TestCaseBase : public TestCase
      * The random variable is sampled \c N_MEASUREMENTS times, filling
      * a histogram. The chi square value is formed by comparing to the
      * expected distribution.
-     * \param [in,out] h The histogram, which defines the binning for sampling.
-     * \param [in] expected The expected distribution.
-     * \param [in] rng The random variable to sample.
-     * \returns The chi square value.
+     * @param [in,out] h The histogram, which defines the binning for sampling.
+     * @param [in] expected The expected distribution.
+     * @param [in] rng The random variable to sample.
+     * @returns The chi square value.
      */
     double ChiSquared(gsl_histogram* h,
                       const std::vector<double>& expected,
@@ -253,8 +263,8 @@ class TestCaseBase : public TestCase
      *      return chiSquared;
      *    }
      *
-     * \param [in] rng The random number generator to test.
-     * \returns The chi squared value.
+     * @param [in] rng The random number generator to test.
+     * @returns The chi squared value.
      */
     virtual double ChiSquaredTest(Ptr<RandomVariableStream> rng) const
     {
@@ -264,10 +274,10 @@ class TestCaseBase : public TestCase
     /**
      * Average the chi squared value over some number of runs,
      * each run with a new instance of the random number generator.
-     * \param [in] generator The factory to create instances of the
+     * @param [in] generator The factory to create instances of the
      *             random number generator.
-     * \param [in] nRuns The number of runs to average over.
-     * \returns The average chi square over the number of runs.
+     * @param [in] nRuns The number of runs to average over.
+     * @returns The average chi square over the number of runs.
      */
     double ChiSquaredsAverage(const RngGeneratorBase* generator, std::size_t nRuns) const
     {
@@ -345,7 +355,7 @@ class TestCaseBase : public TestCase
 }; // class TestCaseBase
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for uniform distribution random variable stream generator.
  */
 class UniformTestCase : public TestCaseBase
@@ -467,7 +477,7 @@ UniformTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic uniform distribution random variable stream generator
  */
 class UniformAntitheticTestCase : public TestCaseBase
@@ -542,7 +552,7 @@ UniformAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for constant random variable stream generator
  */
 class ConstantTestCase : public TestCaseBase
@@ -593,7 +603,7 @@ ConstantTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for sequential random variable stream generator
  */
 class SequentialTestCase : public TestCaseBase
@@ -650,7 +660,7 @@ SequentialTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for normal distribution random variable stream generator
  */
 class NormalTestCase : public TestCaseBase
@@ -736,7 +746,7 @@ NormalTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic normal distribution random variable stream generator
  */
 class NormalAntitheticTestCase : public TestCaseBase
@@ -824,7 +834,7 @@ NormalAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for exponential distribution random variable stream generator
  */
 class ExponentialTestCase : public TestCaseBase
@@ -905,7 +915,7 @@ ExponentialTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic exponential distribution random variable stream generator
  */
 class ExponentialAntitheticTestCase : public TestCaseBase
@@ -989,7 +999,7 @@ ExponentialAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for Pareto distribution random variable stream generator
  */
 class ParetoTestCase : public TestCaseBase
@@ -1082,7 +1092,7 @@ ParetoTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic Pareto distribution random variable stream generator
  */
 class ParetoAntitheticTestCase : public TestCaseBase
@@ -1179,7 +1189,7 @@ ParetoAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for Weibull distribution random variable stream generator
  */
 class WeibullTestCase : public TestCaseBase
@@ -1241,12 +1251,12 @@ WeibullTestCase::DoRun()
     SetTestSuiteSeed();
 
     auto generator = RngGenerator<WeibullRandomVariable>();
-    double sum = ChiSquaredsAverage(&generator, N_RUNS);
-    double maxStatistic = gsl_cdf_chisq_Qinv(0.05, N_BINS);
+    const auto sum = ChiSquaredsAverage(&generator, N_RUNS);
+    const auto maxStatistic = gsl_cdf_chisq_Qinv(0.05, N_BINS);
     NS_TEST_ASSERT_MSG_LT(sum, maxStatistic, "Chi-squared statistic out of range");
 
-    double scale = 5.0;
-    double shape = 1.0;
+    const auto scale = 5.0;
+    const auto shape = 1.0;
 
     // Create the RNG with the specified range.
     Ptr<WeibullRandomVariable> x = CreateObject<WeibullRandomVariable>();
@@ -1254,7 +1264,7 @@ WeibullTestCase::DoRun()
     x->SetAttribute("Shape", DoubleValue(shape));
 
     // Calculate the mean of these values.
-    double valueMean = Average(x);
+    const auto measuredMean = Average(x);
 
     // The expected value for the mean of the values returned by a
     // Weibull distributed random variable is
@@ -1278,17 +1288,21 @@ WeibullTestCase::DoRun()
     //
     //     E[value]  =  scale  .
     //
-    double expectedMean = scale;
+    const auto expectedMean = scale;
+
+    // Test calculated and expected mean values are identical.
+    const auto valueMean = x->GetMean();
+    NS_TEST_ASSERT_MSG_EQ(valueMean, expectedMean, "Wrong calculated mean value.");
 
     // Test that values have approximately the right mean value.
-    NS_TEST_ASSERT_MSG_EQ_TOL(valueMean,
+    NS_TEST_ASSERT_MSG_EQ_TOL(measuredMean,
                               expectedMean,
                               expectedMean * TOLERANCE,
-                              "Wrong mean value.");
+                              "Wrong measured mean value.");
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic Weibull distribution random variable stream generator
  */
 class WeibullAntitheticTestCase : public TestCaseBase
@@ -1399,7 +1413,7 @@ WeibullAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for log-normal distribution random variable stream generator
  */
 class LogNormalTestCase : public TestCaseBase
@@ -1489,7 +1503,7 @@ LogNormalTestCase::DoRun()
     // Test that values have approximately the right mean value.
     //
     /**
-     * \todo This test fails sometimes if the required tolerance is less
+     * @todo This test fails sometimes if the required tolerance is less
      * than 3%, which may be because there is a bug in the
      * implementation or that the mean of this distribution is more
      * sensitive to its parameters than the others are.
@@ -1501,7 +1515,7 @@ LogNormalTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic log-normal distribution random variable stream generator
  */
 class LogNormalAntitheticTestCase : public TestCaseBase
@@ -1593,7 +1607,7 @@ LogNormalAntitheticTestCase::DoRun()
     // Test that values have approximately the right mean value.
     //
     /**
-     * \todo This test fails sometimes if the required tolerance is less
+     * @todo This test fails sometimes if the required tolerance is less
      * than 3%, which may be because there is a bug in the
      * implementation or that the mean of this distribution is more
      * sensitive to its parameters than the others are.
@@ -1605,7 +1619,7 @@ LogNormalAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for gamma distribution random variable stream generator
  */
 class GammaTestCase : public TestCaseBase
@@ -1697,7 +1711,7 @@ GammaTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic gamma distribution random variable stream generator
  */
 class GammaAntitheticTestCase : public TestCaseBase
@@ -1793,7 +1807,7 @@ GammaAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for Erlang distribution random variable stream generator
  */
 class ErlangTestCase : public TestCaseBase
@@ -1888,7 +1902,7 @@ ErlangTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic Erlang distribution random variable stream generator
  */
 class ErlangAntitheticTestCase : public TestCaseBase
@@ -1987,7 +2001,7 @@ ErlangAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for Zipf distribution random variable stream generator
  */
 class ZipfTestCase : public TestCaseBase
@@ -2067,7 +2081,7 @@ ZipfTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic Zipf distribution random variable stream generator
  */
 class ZipfAntitheticTestCase : public TestCaseBase
@@ -2150,7 +2164,7 @@ ZipfAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for Zeta distribution random variable stream generator
  */
 class ZetaTestCase : public TestCaseBase
@@ -2213,7 +2227,7 @@ ZetaTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic Zeta distribution random variable stream generator
  */
 class ZetaAntitheticTestCase : public TestCaseBase
@@ -2279,7 +2293,7 @@ ZetaAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for deterministic random variable stream generator
  */
 class DeterministicTestCase : public TestCaseBase
@@ -2354,7 +2368,7 @@ DeterministicTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for empirical distribution random variable stream generator
  */
 class EmpiricalTestCase : public TestCaseBase
@@ -2454,7 +2468,7 @@ EmpiricalTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic empirical distribution random variable stream generator
  */
 class EmpiricalAntitheticTestCase : public TestCaseBase
@@ -2533,7 +2547,7 @@ EmpiricalAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for caching of Normal RV parameters (see issue #302)
  */
 class NormalCachingTestCase : public TestCaseBase
@@ -2567,7 +2581,7 @@ NormalCachingTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for bernoulli distribution random variable stream generator
  */
 class BernoulliTestCase : public TestCaseBase
@@ -2638,7 +2652,7 @@ BernoulliTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic bernoulli distribution random variable stream generator
  */
 class BernoulliAntitheticTestCase : public TestCaseBase
@@ -2712,7 +2726,7 @@ BernoulliAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for binomial distribution random variable stream generator
  */
 class BinomialTestCase : public TestCaseBase
@@ -2791,7 +2805,7 @@ BinomialTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  * Test case for antithetic binomial distribution random variable stream generator
  */
 class BinomialAntitheticTestCase : public TestCaseBase
@@ -2873,7 +2887,208 @@ BinomialAntitheticTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-test
+ * @ingroup tests
+ *
+ * @brief Test the Shuffle function
+ *
+ * Check that the Shuffle function actually shuffles the elements and does so in a portable way.
+ */
+class ShuffleElementsTest : public TestCase
+{
+  public:
+    ShuffleElementsTest();
+
+  private:
+    void DoRun() override;
+};
+
+ShuffleElementsTest::ShuffleElementsTest()
+    : TestCase("Check correct operation of the Shuffle function")
+{
+}
+
+void
+ShuffleElementsTest::DoRun()
+{
+    RngSeedManager::SetSeed(1);
+    RngSeedManager::SetRun(1);
+
+    auto rv = CreateObject<UniformRandomVariable>();
+    rv->SetStream(1);
+
+    // test empty vector
+    std::vector<uint8_t> vec{};
+
+    Shuffle(vec.begin(), vec.end(), rv);
+
+    NS_TEST_EXPECT_MSG_EQ(vec.empty(), true, "Expected an empty vector");
+
+    // test vector with one value
+    vec.push_back(3);
+
+    Shuffle(vec.begin(), vec.end(), rv);
+
+    NS_TEST_EXPECT_MSG_EQ((vec == std::vector<uint8_t>{3}), true, "Expected vector {3}");
+
+    // test vector with two values
+    vec.push_back(1);
+
+    Shuffle(vec.begin(), vec.end(), rv);
+
+    NS_TEST_EXPECT_MSG_EQ((vec == std::vector<uint8_t>{1, 3}), true, "Expected vector {1, 3}");
+
+    // test vector with multiple values
+    vec.push_back(7);
+    vec.push_back(2);
+    vec.push_back(4);
+    vec.push_back(9);
+
+    Shuffle(vec.begin(), vec.end(), rv);
+
+    NS_TEST_EXPECT_MSG_EQ((vec == std::vector<uint8_t>{4, 1, 9, 3, 2, 7}),
+                          true,
+                          "Expected vector {4, 1, 9, 3, 2, 7}");
+}
+
+/**
+ * @ingroup rng-tests
+ * Test case for laplacian distribution random variable stream generator
+ */
+class LaplacianTestCase : public TestCaseBase
+{
+  public:
+    LaplacianTestCase();
+
+  private:
+    void DoRun() override;
+
+    /**
+     * Tolerance for testing rng values against expectation,
+     * as a fraction of mean value.
+     */
+    static constexpr double TOLERANCE{1e-2};
+};
+
+LaplacianTestCase::LaplacianTestCase()
+    : TestCaseBase("Laplacian Random Variable Stream Generator")
+{
+}
+
+void
+LaplacianTestCase::DoRun()
+{
+    NS_LOG_FUNCTION(this);
+    SetTestSuiteSeed();
+
+    double mu = -5.0;
+    double scale = 4.0;
+    double bound = 20.0;
+
+    // Create unbounded RNG with the specified range.
+    auto x1 = CreateObject<LaplacianRandomVariable>();
+    x1->SetAttribute("Location", DoubleValue(mu));
+    x1->SetAttribute("Scale", DoubleValue(scale));
+
+    // Calculate the mean of these values.
+    auto valueMean = Average(x1);
+
+    // Calculate the variance of these values.
+    auto valueVariance = Variance(x1, valueMean);
+
+    // Test that values have approximately the right mean value.
+    const auto expectedMean = mu;
+    NS_TEST_ASSERT_MSG_EQ_TOL(valueMean, expectedMean, TOLERANCE, "Wrong mean value.");
+
+    // Test that values have approximately the right variance value.
+    const auto expectedVariance = LaplacianRandomVariable::GetVariance(scale);
+    NS_TEST_ASSERT_MSG_EQ_TOL(valueVariance,
+                              expectedVariance,
+                              TOLERANCE * expectedVariance,
+                              "Wrong variance value.");
+
+    // Create bounded RNG with the specified range.
+    auto x2 = CreateObject<LaplacianRandomVariable>();
+    x2->SetAttribute("Location", DoubleValue(mu));
+    x2->SetAttribute("Scale", DoubleValue(scale));
+    x2->SetAttribute("Bound", DoubleValue(bound));
+
+    // Calculate the mean of these values.
+    valueMean = Average(x2);
+
+    // Test that values have approximately the right mean value.
+    NS_TEST_ASSERT_MSG_EQ_TOL(valueMean, expectedMean, TOLERANCE, "Wrong mean value.");
+
+    // Check that only the correct values are returned
+    const auto lowerBound = mu - bound;
+    const auto upperBound = mu + bound;
+    for (uint32_t i = 0; i < N_MEASUREMENTS; ++i)
+    {
+        const auto value = x2->GetValue();
+        NS_TEST_EXPECT_MSG_EQ((value >= lowerBound) || (value <= upperBound),
+                              true,
+                              "Value not in expected boundaries.");
+    }
+}
+
+/**
+ * @ingroup rng-tests
+ * Test case for largest extreme value distribution random variable stream generator
+ */
+class LargestExtremeValueTestCase : public TestCaseBase
+{
+  public:
+    LargestExtremeValueTestCase();
+
+  private:
+    void DoRun() override;
+
+    /**
+     * Tolerance for testing rng values against expectation,
+     * as a fraction of mean value.
+     */
+    static constexpr double TOLERANCE{1e-2};
+};
+
+LargestExtremeValueTestCase::LargestExtremeValueTestCase()
+    : TestCaseBase("Largest Extreme Value Random Variable Stream Generator")
+{
+}
+
+void
+LargestExtremeValueTestCase::DoRun()
+{
+    NS_LOG_FUNCTION(this);
+    SetTestSuiteSeed();
+
+    double mu = 2.0;
+    double scale = 1.0;
+
+    // Create RNG with the specified range.
+    auto x = CreateObject<LargestExtremeValueRandomVariable>();
+    x->SetAttribute("Location", DoubleValue(mu));
+    x->SetAttribute("Scale", DoubleValue(scale));
+
+    // Calculate the mean of these values.
+    auto valueMean = Average(x);
+
+    // Calculate the variance of these values.
+    auto valueVariance = Variance(x, valueMean);
+
+    // Test that values have approximately the right mean value.
+    const auto expectedMean = LargestExtremeValueRandomVariable::GetMean(mu, scale);
+    NS_TEST_ASSERT_MSG_EQ_TOL(valueMean, expectedMean, TOLERANCE, "Wrong mean value.");
+
+    // Test that values have approximately the right variance value.
+    const auto expectedVariance = LargestExtremeValueRandomVariable::GetVariance(scale);
+    NS_TEST_ASSERT_MSG_EQ_TOL(valueVariance,
+                              expectedVariance,
+                              TOLERANCE * expectedVariance,
+                              "Wrong variance value.");
+}
+
+/**
+ * @ingroup rng-tests
  * RandomVariableStream test suite, covering all random number variable
  * stream generator types.
  */
@@ -2885,7 +3100,7 @@ class RandomVariableSuite : public TestSuite
 };
 
 RandomVariableSuite::RandomVariableSuite()
-    : TestSuite("random-variable-stream-generators", UNIT)
+    : TestSuite("random-variable-stream-generators", Type::UNIT)
 {
     AddTestCase(new UniformTestCase);
     AddTestCase(new UniformAntitheticTestCase);
@@ -2900,14 +3115,14 @@ RandomVariableSuite::RandomVariableSuite()
     AddTestCase(new WeibullTestCase);
     AddTestCase(new WeibullAntitheticTestCase);
     AddTestCase(new LogNormalTestCase);
-    /// \todo This test is currently disabled because it fails sometimes.
+    /// @todo This test is currently disabled because it fails sometimes.
     /// A possible reason for the failure is that the antithetic code is
     /// not implemented properly for this log-normal case.
     /*
     AddTestCase (new LogNormalAntitheticTestCase);
     */
     AddTestCase(new GammaTestCase);
-    /// \todo This test is currently disabled because it fails sometimes.
+    /// @todo This test is currently disabled because it fails sometimes.
     /// A possible reason for the failure is that the antithetic code is
     /// not implemented properly for this gamma case.
     /*
@@ -2928,6 +3143,9 @@ RandomVariableSuite::RandomVariableSuite()
     AddTestCase(new BernoulliAntitheticTestCase);
     AddTestCase(new BinomialTestCase);
     AddTestCase(new BinomialAntitheticTestCase);
+    AddTestCase(new ShuffleElementsTest);
+    AddTestCase(new LaplacianTestCase);
+    AddTestCase(new LargestExtremeValueTestCase);
 }
 
 static RandomVariableSuite randomVariableSuite; //!< Static variable for test initialization

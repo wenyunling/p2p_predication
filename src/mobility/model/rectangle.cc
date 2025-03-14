@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
@@ -187,11 +176,11 @@ Rectangle::CalculateIntersection(const Vector& current, const Vector& speed) con
 ATTRIBUTE_HELPER_CPP(Rectangle);
 
 /**
- * \brief Stream insertion operator.
+ * @brief Stream insertion operator.
  *
- * \param os the stream
- * \param rectangle the rectangle
- * \returns a reference to the stream
+ * @param os the stream
+ * @param rectangle the rectangle
+ * @returns a reference to the stream
  */
 std::ostream&
 operator<<(std::ostream& os, const Rectangle& rectangle)
@@ -201,11 +190,11 @@ operator<<(std::ostream& os, const Rectangle& rectangle)
 }
 
 /**
- * \brief Stream extraction operator.
+ * @brief Stream extraction operator.
  *
- * \param is the stream
- * \param rectangle the rectangle
- * \returns a reference to the stream
+ * @param is the stream
+ * @param rectangle the rectangle
+ * @returns a reference to the stream
  */
 std::istream&
 operator>>(std::istream& is, Rectangle& rectangle)
@@ -222,11 +211,11 @@ operator>>(std::istream& is, Rectangle& rectangle)
 }
 
 /**
- * \brief Stream insertion operator.
+ * @brief Stream insertion operator.
  *
- * \param os the stream
- * \param side the rectangle side
- * \returns a reference to the stream
+ * @param os the stream
+ * @param side the rectangle side
+ * @returns a reference to the stream
  */
 std::ostream&
 operator<<(std::ostream& os, const Rectangle::Side& side)

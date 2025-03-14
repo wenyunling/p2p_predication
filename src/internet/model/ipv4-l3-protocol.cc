@@ -1,18 +1,7 @@
 //
 // Copyright (c) 2006 Georgia Tech Research Corporation
 //
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// SPDX-License-Identifier: GPL-2.0-only
 //
 // Author: George F. Riley<riley@ece.gatech.edu>
 //
@@ -46,8 +35,6 @@ namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE("Ipv4L3Protocol");
-
-const uint16_t Ipv4L3Protocol::PROT_NUMBER = 0x0800;
 
 NS_OBJECT_ENSURE_REGISTERED(Ipv4L3Protocol);
 
@@ -210,16 +197,12 @@ Ipv4L3Protocol::Remove(Ptr<IpL4Protocol> protocol, uint32_t interfaceIndex)
 Ptr<IpL4Protocol>
 Ipv4L3Protocol::GetProtocol(int protocolNumber) const
 {
-    NS_LOG_FUNCTION(this << protocolNumber);
-
     return GetProtocol(protocolNumber, -1);
 }
 
 Ptr<IpL4Protocol>
 Ipv4L3Protocol::GetProtocol(int protocolNumber, int32_t interfaceIndex) const
 {
-    NS_LOG_FUNCTION(this << protocolNumber << interfaceIndex);
-
     if (interfaceIndex >= 0)
     {
         // try the interface-specific protocol.
@@ -306,7 +289,6 @@ Ipv4L3Protocol::SetRoutingProtocol(Ptr<Ipv4RoutingProtocol> routingProtocol)
 Ptr<Ipv4RoutingProtocol>
 Ipv4L3Protocol::GetRoutingProtocol() const
 {
-    NS_LOG_FUNCTION(this);
     return m_routingProtocol;
 }
 
@@ -338,12 +320,12 @@ Ipv4L3Protocol::DoDispose()
 
     m_fragments.clear();
     m_timeoutEventList.clear();
-    if (m_timeoutEvent.IsRunning())
+    if (m_timeoutEvent.IsPending())
     {
         m_timeoutEvent.Cancel();
     }
 
-    if (m_cleanDpd.IsRunning())
+    if (m_cleanDpd.IsPending())
     {
         m_cleanDpd.Cancel();
     }
@@ -442,7 +424,6 @@ Ipv4L3Protocol::AddIpv4Interface(Ptr<Ipv4Interface> interface)
 Ptr<Ipv4Interface>
 Ipv4L3Protocol::GetInterface(uint32_t index) const
 {
-    NS_LOG_FUNCTION(this << index);
     if (index < m_interfaces.size())
     {
         return m_interfaces[index];
@@ -453,14 +434,12 @@ Ipv4L3Protocol::GetInterface(uint32_t index) const
 uint32_t
 Ipv4L3Protocol::GetNInterfaces() const
 {
-    NS_LOG_FUNCTION(this);
     return m_interfaces.size();
 }
 
 int32_t
 Ipv4L3Protocol::GetInterfaceForAddress(Ipv4Address address) const
 {
-    NS_LOG_FUNCTION(this << address);
     int32_t interface = 0;
     for (auto i = m_interfaces.begin(); i != m_interfaces.end(); i++, interface++)
     {
@@ -479,7 +458,6 @@ Ipv4L3Protocol::GetInterfaceForAddress(Ipv4Address address) const
 int32_t
 Ipv4L3Protocol::GetInterfaceForPrefix(Ipv4Address address, Ipv4Mask mask) const
 {
-    NS_LOG_FUNCTION(this << address << mask);
     int32_t interface = 0;
     for (auto i = m_interfaces.begin(); i != m_interfaces.end(); i++, interface++)
     {
@@ -498,8 +476,6 @@ Ipv4L3Protocol::GetInterfaceForPrefix(Ipv4Address address, Ipv4Mask mask) const
 int32_t
 Ipv4L3Protocol::GetInterfaceForDevice(Ptr<const NetDevice> device) const
 {
-    NS_LOG_FUNCTION(this << device);
-
     auto iter = m_reverseInterfacesContainer.find(device);
     if (iter != m_reverseInterfacesContainer.end())
     {
@@ -512,7 +488,6 @@ Ipv4L3Protocol::GetInterfaceForDevice(Ptr<const NetDevice> device) const
 bool
 Ipv4L3Protocol::IsDestinationAddress(Ipv4Address address, uint32_t iif) const
 {
-    NS_LOG_FUNCTION(this << address << iif);
     // First check the incoming interface for a unicast address match
     for (uint32_t i = 0; i < GetNAddresses(iif); i++)
     {
@@ -681,7 +656,6 @@ Ipv4L3Protocol::Receive(Ptr<NetDevice> device,
 Ptr<Icmpv4L4Protocol>
 Ipv4L3Protocol::GetIcmp() const
 {
-    NS_LOG_FUNCTION(this);
     Ptr<IpL4Protocol> prot = GetProtocol(Icmpv4L4Protocol::GetStaticProtocolNumber());
     if (prot)
     {
@@ -696,8 +670,6 @@ Ipv4L3Protocol::GetIcmp() const
 bool
 Ipv4L3Protocol::IsUnicast(Ipv4Address ad) const
 {
-    NS_LOG_FUNCTION(this << ad);
-
     if (ad.IsBroadcast() || ad.IsMulticast())
     {
         return false;
@@ -726,7 +698,6 @@ Ipv4L3Protocol::IsUnicast(Ipv4Address ad) const
 bool
 Ipv4L3Protocol::IsUnicast(Ipv4Address ad, Ipv4Mask interfaceMask) const
 {
-    NS_LOG_FUNCTION(this << ad << interfaceMask);
     return !ad.IsMulticast() && !ad.IsSubnetDirectedBroadcast(interfaceMask);
 }
 
@@ -1044,13 +1015,13 @@ Ipv4L3Protocol::IpMulticastForward(Ptr<Ipv4MulticastRoute> mrtentry,
 
         Ptr<Packet> packet = p->Copy();
         Ipv4Header ipHeader = header;
-        ipHeader.SetTtl(header.GetTtl() - 1);
-        if (ipHeader.GetTtl() == 0)
+        if (ipHeader.GetTtl() <= 1)
         {
             NS_LOG_WARN("TTL exceeded.  Drop.");
             m_dropTrace(header, packet, DROP_TTL_EXPIRED, this, interface);
             return;
         }
+        ipHeader.SetTtl(header.GetTtl() - 1);
         NS_LOG_LOGIC("Forward multicast via interface " << interface);
         Ptr<Ipv4Route> rtentry = Create<Ipv4Route>();
         rtentry->SetSource(ipHeader.GetSource());
@@ -1073,8 +1044,7 @@ Ipv4L3Protocol::IpForward(Ptr<Ipv4Route> rtentry, Ptr<const Packet> p, const Ipv
     Ipv4Header ipHeader = header;
     Ptr<Packet> packet = p->Copy();
     int32_t interface = GetInterfaceForDevice(rtentry->GetOutputDevice());
-    ipHeader.SetTtl(ipHeader.GetTtl() - 1);
-    if (ipHeader.GetTtl() == 0)
+    if (ipHeader.GetTtl() <= 1)
     {
         // Do not reply to multicast/broadcast IP address
         if (!ipHeader.GetDestination().IsBroadcast() && !ipHeader.GetDestination().IsMulticast())
@@ -1086,6 +1056,7 @@ Ipv4L3Protocol::IpForward(Ptr<Ipv4Route> rtentry, Ptr<const Packet> p, const Ipv
         m_dropTrace(header, packet, DROP_TTL_EXPIRED, this, interface);
         return;
     }
+    ipHeader.SetTtl(ipHeader.GetTtl() - 1);
     // in case the packet still has a priority tag attached, remove it
     SocketPriorityTag priorityTag;
     packet->RemovePacketTag(priorityTag);
@@ -1180,7 +1151,6 @@ Ipv4L3Protocol::AddAddress(uint32_t i, Ipv4InterfaceAddress address)
 Ipv4InterfaceAddress
 Ipv4L3Protocol::GetAddress(uint32_t interfaceIndex, uint32_t addressIndex) const
 {
-    NS_LOG_FUNCTION(this << interfaceIndex << addressIndex);
     Ptr<Ipv4Interface> interface = GetInterface(interfaceIndex);
     return interface->GetAddress(addressIndex);
 }
@@ -1188,7 +1158,6 @@ Ipv4L3Protocol::GetAddress(uint32_t interfaceIndex, uint32_t addressIndex) const
 uint32_t
 Ipv4L3Protocol::GetNAddresses(uint32_t interface) const
 {
-    NS_LOG_FUNCTION(this << interface);
     Ptr<Ipv4Interface> iface = GetInterface(interface);
     return iface->GetNAddresses();
 }
@@ -1333,7 +1302,6 @@ Ipv4L3Protocol::SetMetric(uint32_t i, uint16_t metric)
 uint16_t
 Ipv4L3Protocol::GetMetric(uint32_t i) const
 {
-    NS_LOG_FUNCTION(this << i);
     Ptr<Ipv4Interface> interface = GetInterface(i);
     return interface->GetMetric();
 }
@@ -1341,7 +1309,6 @@ Ipv4L3Protocol::GetMetric(uint32_t i) const
 uint16_t
 Ipv4L3Protocol::GetMtu(uint32_t i) const
 {
-    NS_LOG_FUNCTION(this << i);
     Ptr<Ipv4Interface> interface = GetInterface(i);
     return interface->GetDevice()->GetMtu();
 }
@@ -1349,7 +1316,6 @@ Ipv4L3Protocol::GetMtu(uint32_t i) const
 bool
 Ipv4L3Protocol::IsUp(uint32_t i) const
 {
-    NS_LOG_FUNCTION(this << i);
     Ptr<Ipv4Interface> interface = GetInterface(i);
     return interface->IsUp();
 }
@@ -1398,7 +1364,6 @@ Ipv4L3Protocol::SetDown(uint32_t ifaceIndex)
 bool
 Ipv4L3Protocol::IsForwarding(uint32_t i) const
 {
-    NS_LOG_FUNCTION(this << i);
     Ptr<Ipv4Interface> interface = GetInterface(i);
     NS_LOG_LOGIC("Forwarding state: " << interface->IsForwarding());
     return interface->IsForwarding();
@@ -1415,7 +1380,6 @@ Ipv4L3Protocol::SetForwarding(uint32_t i, bool val)
 Ptr<NetDevice>
 Ipv4L3Protocol::GetNetDevice(uint32_t i)
 {
-    NS_LOG_FUNCTION(this << i);
     return GetInterface(i)->GetDevice();
 }
 
@@ -1433,7 +1397,6 @@ Ipv4L3Protocol::SetIpForward(bool forward)
 bool
 Ipv4L3Protocol::GetIpForward() const
 {
-    NS_LOG_FUNCTION(this);
     return m_ipForward;
 }
 
@@ -1447,7 +1410,6 @@ Ipv4L3Protocol::SetWeakEsModel(bool model)
 bool
 Ipv4L3Protocol::GetWeakEsModel() const
 {
-    NS_LOG_FUNCTION(this);
     return !m_strongEndSystemModel;
 }
 
@@ -1461,7 +1423,6 @@ Ipv4L3Protocol::SetStrongEndSystemModel(bool model)
 bool
 Ipv4L3Protocol::GetStrongEndSystemModel() const
 {
-    NS_LOG_FUNCTION(this);
     return m_strongEndSystemModel;
 }
 
@@ -1487,7 +1448,7 @@ Ipv4L3Protocol::DoFragmentation(Ptr<Packet> packet,
     // BEWARE: here we do assume that the header options are not present.
     // a much more complex handling is necessary in case there are options.
     // If (when) IPv4 option headers will be implemented, the following code shall be changed.
-    // Of course also the reassemby code shall be changed as well.
+    // Of course also the reassembly code shall be changed as well.
 
     NS_LOG_FUNCTION(this << *packet << outIfaceMtu << &listFragments);
 
@@ -1826,7 +1787,7 @@ Ipv4L3Protocol::UpdateDuplicate(Ptr<const Packet> p, const Ipv4Header& header)
     }
 
     // set cleanup job for new duplicate entries
-    if (!m_cleanDpd.IsRunning() && m_purge.IsStrictlyPositive())
+    if (!m_cleanDpd.IsPending() && m_purge.IsStrictlyPositive())
     {
         m_cleanDpd = Simulator::Schedule(m_expire, &Ipv4L3Protocol::RemoveDuplicates, this);
     }

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  */
@@ -51,7 +40,7 @@ class LteRlcSapProvider
      * Send a PDCP PDU to the RLC for transmission
      * This method is to be called
      * when upper PDCP entity has a PDCP PDU ready to send
-     * \param params the TransmitPdcpPduParameters
+     * @param params the TransmitPdcpPduParameters
      */
     virtual void TransmitPdcpPdu(TransmitPdcpPduParameters params) = 0;
 };
@@ -71,7 +60,7 @@ class LteRlcSapUser
     /**
      * Called by the RLC entity to notify the PDCP entity of the reception of a new PDCP PDU
      *
-     * \param p the PDCP PDU
+     * @param p the PDCP PDU
      */
     virtual void ReceivePdcpPdu(Ptr<Packet> p) = 0;
 };
@@ -84,7 +73,7 @@ class LteRlcSpecificLteRlcSapProvider : public LteRlcSapProvider
     /**
      * Constructor
      *
-     * \param rlc the RLC
+     * @param rlc the RLC
      */
     LteRlcSpecificLteRlcSapProvider(C* rlc);
 
@@ -93,7 +82,7 @@ class LteRlcSpecificLteRlcSapProvider : public LteRlcSapProvider
 
     /**
      * Interface implemented from LteRlcSapProvider
-     * \param params the TransmitPdcpPduParameters
+     * @param params the TransmitPdcpPduParameters
      */
     void TransmitPdcpPdu(TransmitPdcpPduParameters params) override;
 
@@ -122,7 +111,7 @@ class LteRlcSpecificLteRlcSapUser : public LteRlcSapUser
     /**
      * Constructor
      *
-     * \param pdcp the PDCP
+     * @param pdcp the PDCP
      */
     LteRlcSpecificLteRlcSapUser(C* pdcp);
 

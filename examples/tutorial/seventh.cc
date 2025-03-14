@@ -1,16 +1,5 @@
 /*
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #include "tutorial-app.h"
@@ -69,9 +58,9 @@ NS_LOG_COMPONENT_DEFINE("SeventhScriptExample");
 /**
  * Congestion window change callback
  *
- * \param stream The output stream file.
- * \param oldCwnd Old congestion window.
- * \param newCwnd New congestion window.
+ * @param stream The output stream file.
+ * @param oldCwnd Old congestion window.
+ * @param newCwnd New congestion window.
  */
 static void
 CwndChange(Ptr<OutputStreamWrapper> stream, uint32_t oldCwnd, uint32_t newCwnd)
@@ -84,8 +73,8 @@ CwndChange(Ptr<OutputStreamWrapper> stream, uint32_t oldCwnd, uint32_t newCwnd)
 /**
  * Rx drop callback
  *
- * \param file The output PCAP file.
- * \param p The dropped packet.
+ * @param file The output PCAP file.
+ * @param p The dropped packet.
  */
 static void
 RxDrop(Ptr<PcapFileWrapper> file, Ptr<const Packet> p)

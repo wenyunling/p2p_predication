@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2006,2007 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
@@ -32,8 +21,8 @@ namespace ns3
 {
 
 /**
- * \ingroup mobility
- * \brief 2D random walk mobility model.
+ * @ingroup mobility
+ * @brief 2D random walk mobility model.
  *
  * Each instance moves with a speed and direction chosen at random
  * with the user-provided random variables until
@@ -53,9 +42,11 @@ class RandomWalk2dMobilityModel : public MobilityModel
   public:
     /**
      * Register this type with the TypeId system.
-     * \return the object TypeId
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
+
+    ~RandomWalk2dMobilityModel() override;
 
     /** An enum representing the different working modes of this module. */
     enum Mode
@@ -66,20 +57,20 @@ class RandomWalk2dMobilityModel : public MobilityModel
 
   private:
     /**
-     * \brief Performs the rebound of the node if it reaches a boundary
-     * \param timeLeft The remaining time of the walk
+     * @brief Performs the rebound of the node if it reaches a boundary
+     * @param timeLeft The remaining time of the walk
      */
     void Rebound(Time timeLeft);
     /**
      * Walk according to position and velocity, until distance is reached,
      * time is reached, or intersection with the bounding box
-     * \param timeLeft The remaining time of the walk
+     * @param timeLeft The remaining time of the walk
      */
     void DoWalk(Time timeLeft);
     /**
-     * Perform initialization of the object before MobilityModel::DoInitialize ()
+     * Draw a new random velocity and distance to travel, and call DoWalk()
      */
-    void DoInitializePrivate();
+    void DrawRandomVelocityAndDistance();
     void DoDispose() override;
     void DoInitialize() override;
     Vector DoGetPosition() const override;

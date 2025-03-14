@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 The Boeing Company
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author:
  *  Gary Pei <guangyu.pei@boeing.com>
@@ -27,27 +16,28 @@
 #include "lr-wpan-spectrum-signal-parameters.h"
 #include "lr-wpan-spectrum-value-helper.h"
 
-#include <ns3/abort.h>
-#include <ns3/antenna-model.h>
-#include <ns3/double.h>
-#include <ns3/error-model.h>
-#include <ns3/log.h>
-#include <ns3/mobility-model.h>
-#include <ns3/net-device.h>
-#include <ns3/node.h>
-#include <ns3/packet-burst.h>
-#include <ns3/packet.h>
-#include <ns3/pointer.h>
-#include <ns3/random-variable-stream.h>
-#include <ns3/simulator.h>
-#include <ns3/spectrum-channel.h>
-#include <ns3/spectrum-value.h>
+#include "ns3/abort.h"
+#include "ns3/antenna-model.h"
+#include "ns3/double.h"
+#include "ns3/error-model.h"
+#include "ns3/log.h"
+#include "ns3/mobility-model.h"
+#include "ns3/net-device.h"
+#include "ns3/node.h"
+#include "ns3/packet-burst.h"
+#include "ns3/packet.h"
+#include "ns3/pointer.h"
+#include "ns3/random-variable-stream.h"
+#include "ns3/simulator.h"
+#include "ns3/spectrum-channel.h"
+#include "ns3/spectrum-value.h"
 
 namespace ns3
 {
+namespace lrwpan
+{
 
 NS_LOG_COMPONENT_DEFINE("LrWpanPhy");
-
 NS_OBJECT_ENSURE_REGISTERED(LrWpanPhy);
 
 /**
@@ -56,7 +46,7 @@ NS_OBJECT_ENSURE_REGISTERED(LrWpanPhy);
  * Bit rate is in kbit/s.  Symbol rate is in ksymbol/s.
  * The index follows LrWpanPhyOption (kb/s and ksymbol/s)
  */
-static const LrWpanPhyDataAndSymbolRates dataSymbolRates[IEEE_802_15_4_INVALID_PHY_OPTION]{
+static const PhyDataAndSymbolRates dataSymbolRates[IEEE_802_15_4_INVALID_PHY_OPTION]{
     {20.0, 20.0},
     {40.0, 40.0},
     {20.0, 20.0},
@@ -75,7 +65,7 @@ static const LrWpanPhyDataAndSymbolRates dataSymbolRates[IEEE_802_15_4_INVALID_P
  * The PHR is 1 octet and it follows phySymbolsPerOctet in Table 23.
  * The index follows LrWpanPhyOption.
  */
-const LrWpanPhyPpduHeaderSymbolNumber ppduHeaderSymbolNumbers[IEEE_802_15_4_INVALID_PHY_OPTION]{
+const PhyPpduHeaderSymbolNumber ppduHeaderSymbolNumbers[IEEE_802_15_4_INVALID_PHY_OPTION]{
     {32.0, 8.0, 8.0},
     {32.0, 8.0, 8.0},
     {32.0, 8.0, 8.0},
@@ -88,65 +78,66 @@ const LrWpanPhyPpduHeaderSymbolNumber ppduHeaderSymbolNumbers[IEEE_802_15_4_INVA
 };
 
 std::ostream&
-operator<<(std::ostream& os, const LrWpanPhyEnumeration& state)
+operator<<(std::ostream& os, const PhyEnumeration& state)
 {
     switch (state)
     {
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_BUSY:
+    case PhyEnumeration::IEEE_802_15_4_PHY_BUSY:
         os << "BUSY";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_BUSY_RX:
+    case PhyEnumeration::IEEE_802_15_4_PHY_BUSY_RX:
         os << "BUSY_RX";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_BUSY_TX:
+    case PhyEnumeration::IEEE_802_15_4_PHY_BUSY_TX:
         os << "BUSY_TX";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_FORCE_TRX_OFF:
+    case PhyEnumeration::IEEE_802_15_4_PHY_FORCE_TRX_OFF:
         os << "FORCE_TRX_OFF";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_IDLE:
+    case PhyEnumeration::IEEE_802_15_4_PHY_IDLE:
         os << "IDLE";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_INVALID_PARAMETER:
+    case PhyEnumeration::IEEE_802_15_4_PHY_INVALID_PARAMETER:
         os << "INVALID_PARAMETER";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_RX_ON:
+    case PhyEnumeration::IEEE_802_15_4_PHY_RX_ON:
         os << "RX_ON";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_SUCCESS:
+    case PhyEnumeration::IEEE_802_15_4_PHY_SUCCESS:
         os << "SUCCESS";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_TRX_OFF:
+    case PhyEnumeration::IEEE_802_15_4_PHY_TRX_OFF:
         os << "TRX_OFF";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_TX_ON:
+    case PhyEnumeration::IEEE_802_15_4_PHY_TX_ON:
         os << "TX_ON";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_UNSUPPORTED_ATTRIBUTE:
+    case PhyEnumeration::IEEE_802_15_4_PHY_UNSUPPORTED_ATTRIBUTE:
         os << "UNSUPPORTED";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_READ_ONLY:
+    case PhyEnumeration::IEEE_802_15_4_PHY_READ_ONLY:
         os << "READ_ONLY";
         break;
-    case LrWpanPhyEnumeration::IEEE_802_15_4_PHY_UNSPECIFIED:
+    case PhyEnumeration::IEEE_802_15_4_PHY_UNSPECIFIED:
         os << "UNSPECIFIED";
         break;
     }
     return os;
-};
+}
 
 std::ostream&
-operator<<(std::ostream& os, const TracedValue<LrWpanPhyEnumeration>& state)
+operator<<(std::ostream& os, const TracedValue<PhyEnumeration>& state)
 {
-    LrWpanPhyEnumeration s = state;
+    PhyEnumeration s = state;
     return os << s;
-};
+}
 
 TypeId
 LrWpanPhy::GetTypeId()
 {
     static TypeId tid =
-        TypeId("ns3::LrWpanPhy")
+        TypeId("ns3::lrwpan::LrWpanPhy")
+            .AddDeprecatedName("ns3::LrWpanPhy")
             .SetParent<SpectrumPhy>()
             .SetGroupName("LrWpan")
             .AddConstructor<LrWpanPhy>()
@@ -165,7 +156,7 @@ LrWpanPhy::GetTypeId()
             .AddTraceSource("TrxState",
                             "The state of the transceiver",
                             MakeTraceSourceAccessor(&LrWpanPhy::m_trxStateLogger),
-                            "ns3::LrWpanPhy::StateTracedCallback")
+                            "ns3::lrwpan::LrWpanPhy::StateTracedCallback")
             .AddTraceSource("PhyTxBegin",
                             "Trace source indicating a packet has "
                             "begun transmitting over the channel medium",
@@ -279,16 +270,14 @@ LrWpanPhy::DoDispose()
 
     m_random = nullptr;
     m_pdDataIndicationCallback = MakeNullCallback<void, uint32_t, Ptr<Packet>, uint8_t>();
-    m_pdDataConfirmCallback = MakeNullCallback<void, LrWpanPhyEnumeration>();
-    m_plmeCcaConfirmCallback = MakeNullCallback<void, LrWpanPhyEnumeration>();
-    m_plmeEdConfirmCallback = MakeNullCallback<void, LrWpanPhyEnumeration, uint8_t>();
-    m_plmeGetAttributeConfirmCallback = MakeNullCallback<void,
-                                                         LrWpanPhyEnumeration,
-                                                         LrWpanPibAttributeIdentifier,
-                                                         Ptr<LrWpanPhyPibAttributes>>();
-    m_plmeSetTRXStateConfirmCallback = MakeNullCallback<void, LrWpanPhyEnumeration>();
+    m_pdDataConfirmCallback = MakeNullCallback<void, PhyEnumeration>();
+    m_plmeCcaConfirmCallback = MakeNullCallback<void, PhyEnumeration>();
+    m_plmeEdConfirmCallback = MakeNullCallback<void, PhyEnumeration, uint8_t>();
+    m_plmeGetAttributeConfirmCallback =
+        MakeNullCallback<void, PhyEnumeration, PhyPibAttributeIdentifier, Ptr<PhyPibAttributes>>();
+    m_plmeSetTRXStateConfirmCallback = MakeNullCallback<void, PhyEnumeration>();
     m_plmeSetAttributeConfirmCallback =
-        MakeNullCallback<void, LrWpanPhyEnumeration, LrWpanPibAttributeIdentifier>();
+        MakeNullCallback<void, PhyEnumeration, PhyPibAttributeIdentifier>();
 
     SpectrumPhy::DoDispose();
 }
@@ -404,7 +393,7 @@ LrWpanPhy::StartRx(Ptr<SpectrumSignalParameters> spectrumRxParams)
     NS_ASSERT(p);
 
     // Prevent PHY from receiving another packet while switching the transceiver state.
-    if (m_trxState == IEEE_802_15_4_PHY_RX_ON && !m_setTRXState.IsRunning())
+    if (m_trxState == IEEE_802_15_4_PHY_RX_ON && !m_setTRXState.IsPending())
     {
         // The specification doesn't seem to refer to BUSY_RX, but vendor
         // data sheets suggest that this is a substate of the RX_ON state
@@ -647,7 +636,7 @@ LrWpanPhy::PdDataRequest(const uint32_t psduLength, Ptr<Packet> p)
     }
 
     // Prevent PHY from sending a packet while switching the transceiver state.
-    if (!m_setTRXState.IsRunning())
+    if (!m_setTRXState.IsPending())
     {
         if (m_trxState == IEEE_802_15_4_PHY_TX_ON)
         {
@@ -755,7 +744,7 @@ LrWpanPhy::PlmeEdRequest()
     }
     else
     {
-        LrWpanPhyEnumeration result = m_trxState;
+        PhyEnumeration result = m_trxState;
         if (m_trxState == IEEE_802_15_4_PHY_BUSY_TX)
         {
             result = IEEE_802_15_4_PHY_TX_ON;
@@ -769,11 +758,11 @@ LrWpanPhy::PlmeEdRequest()
 }
 
 void
-LrWpanPhy::PlmeGetAttributeRequest(LrWpanPibAttributeIdentifier id)
+LrWpanPhy::PlmeGetAttributeRequest(PhyPibAttributeIdentifier id)
 {
     NS_LOG_FUNCTION(this << id);
-    LrWpanPhyEnumeration status = IEEE_802_15_4_PHY_SUCCESS;
-    Ptr<LrWpanPhyPibAttributes> attributes = Create<LrWpanPhyPibAttributes>();
+    PhyEnumeration status = IEEE_802_15_4_PHY_SUCCESS;
+    Ptr<PhyPibAttributes> attributes = Create<PhyPibAttributes>();
 
     switch (id)
     {
@@ -802,7 +791,7 @@ LrWpanPhy::PlmeGetAttributeRequest(LrWpanPibAttributeIdentifier id)
 
 // Section 6.2.2.7.3
 void
-LrWpanPhy::PlmeSetTRXStateRequest(LrWpanPhyEnumeration state)
+LrWpanPhy::PlmeSetTRXStateRequest(PhyEnumeration state)
 {
     NS_LOG_FUNCTION(this << state);
 
@@ -1031,12 +1020,11 @@ LrWpanPhy::PageSupported(uint8_t page)
 }
 
 void
-LrWpanPhy::PlmeSetAttributeRequest(LrWpanPibAttributeIdentifier id,
-                                   Ptr<LrWpanPhyPibAttributes> attribute)
+LrWpanPhy::PlmeSetAttributeRequest(PhyPibAttributeIdentifier id, Ptr<PhyPibAttributes> attribute)
 {
     NS_LOG_FUNCTION(this << id << attribute);
     NS_ASSERT(attribute);
-    LrWpanPhyEnumeration status = IEEE_802_15_4_PHY_SUCCESS;
+    PhyEnumeration status = IEEE_802_15_4_PHY_SUCCESS;
 
     switch (id)
     {
@@ -1354,7 +1342,7 @@ LrWpanPhy::SetPlmeSetAttributeConfirmCallback(PlmeSetAttributeConfirmCallback c)
 }
 
 void
-LrWpanPhy::ChangeTrxState(LrWpanPhyEnumeration newState)
+LrWpanPhy::ChangeTrxState(PhyEnumeration newState)
 {
     NS_LOG_LOGIC(this << " state: " << m_trxState << " -> " << newState);
 
@@ -1371,7 +1359,7 @@ LrWpanPhy::PhyIsBusy() const
 }
 
 void
-LrWpanPhy::CancelEd(LrWpanPhyEnumeration state)
+LrWpanPhy::CancelEd(PhyEnumeration state)
 {
     NS_LOG_FUNCTION(this);
     NS_ASSERT(state == IEEE_802_15_4_PHY_TRX_OFF || state == IEEE_802_15_4_PHY_TX_ON);
@@ -1426,7 +1414,7 @@ void
 LrWpanPhy::EndCca()
 {
     NS_LOG_FUNCTION(this);
-    LrWpanPhyEnumeration sensedChannelState = IEEE_802_15_4_PHY_UNSPECIFIED;
+    PhyEnumeration sensedChannelState = IEEE_802_15_4_PHY_UNSPECIFIED;
 
     // Update peak power.
     double power = LrWpanSpectrumValueHelper::TotalAvgPower(m_signal->GetSignalPsd(),
@@ -1549,7 +1537,7 @@ LrWpanPhy::EndTx()
     {
         // Only change the state immediately, if the transceiver is not already
         // switching the state.
-        if (!m_setTRXState.IsRunning())
+        if (!m_setTRXState.IsPending())
         {
             NS_LOG_LOGIC("Apply pending state change to " << m_trxStatePending);
             ChangeTrxState(m_trxStatePending);
@@ -1631,7 +1619,7 @@ LrWpanPhy::GetPpduHeaderTxTime()
 }
 
 void
-LrWpanPhy::SetPhyOption(LrWpanPhyOption phyOption)
+LrWpanPhy::SetPhyOption(PhyOption phyOption)
 {
     NS_LOG_FUNCTION(this);
 
@@ -1717,8 +1705,8 @@ LrWpanPhy::SetPhyOption(LrWpanPhyOption phyOption)
     }
 
     m_edPower.averagePower = 0.0;
-    m_edPower.lastUpdate = Seconds(0.0);
-    m_edPower.measurementLength = Seconds(0.0);
+    m_edPower.lastUpdate = Seconds(0);
+    m_edPower.measurementLength = Seconds(0);
 
     // TODO: Change the limits  Rx sensitivity when other modulations are supported
     // Currently, only O-QPSK 250kbps is supported and its maximum possible sensitivity is
@@ -1786,7 +1774,7 @@ LrWpanPhy::GetRxSensitivity()
     return WToDbm(m_rxSensitivity);
 }
 
-LrWpanPhyOption
+PhyOption
 LrWpanPhy::GetMyPhyOption()
 {
     NS_LOG_FUNCTION(this);
@@ -1910,4 +1898,5 @@ LrWpanPhy::SetPostReceptionErrorModel(const Ptr<ErrorModel> em)
     m_postReceptionErrorModel = em;
 }
 
+} // namespace lrwpan
 } // namespace ns3

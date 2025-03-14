@@ -2,18 +2,7 @@
  * Copyright (c) 2011, 2012 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  * Copyright (c) 2013 Budiarto Herman
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Original work authors (from lte-enb-rrc.cc):
  *   Nicola Baldo <nbaldo@cttc.es>
@@ -31,8 +20,8 @@
 #include "lte-handover-management-sap.h"
 #include "lte-rrc-sap.h"
 
-#include <ns3/ptr.h>
-#include <ns3/simple-ref-count.h>
+#include "ns3/ptr.h"
+#include "ns3/simple-ref-count.h"
 
 #include <map>
 
@@ -40,7 +29,7 @@ namespace ns3
 {
 
 /**
- * \brief Handover algorithm implementation based on RSRQ measurements, Event
+ * @brief Handover algorithm implementation based on RSRQ measurements, Event
  *        A2 and Event A4.
  *
  * Handover decision made by this algorithm is primarily based on Event A2
@@ -74,7 +63,7 @@ namespace ns3
  *                                               UintegerValue (1));
  *     NetDeviceContainer enbLteDevs = lteHelper->InstallEnbDevice (enbNodes);
  *
- * \note Setting the handover algorithm type and attributes after the call to
+ * @note Setting the handover algorithm type and attributes after the call to
  *       LteHelper::InstallEnbDevice does not have any effect to the devices
  *       that have already been installed.
  */
@@ -87,8 +76,8 @@ class A2A4RsrqHandoverAlgorithm : public LteHandoverAlgorithm
     ~A2A4RsrqHandoverAlgorithm() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -111,8 +100,8 @@ class A2A4RsrqHandoverAlgorithm : public LteHandoverAlgorithm
     /**
      * Called when Event A2 is detected, then trigger a handover if needed.
      *
-     * \param rnti The RNTI of the UE who reported the event.
-     * \param servingCellRsrq The RSRQ of this cell as reported by the UE.
+     * @param rnti The RNTI of the UE who reported the event.
+     * @param servingCellRsrq The RSRQ of this cell as reported by the UE.
      */
     void EvaluateHandover(uint16_t rnti, uint8_t servingCellRsrq);
 
@@ -120,8 +109,8 @@ class A2A4RsrqHandoverAlgorithm : public LteHandoverAlgorithm
      * Determines if a neighbour cell is a valid destination for handover.
      * Currently always return true.
      *
-     * \param cellId The cell ID of the neighbour cell.
-     * \return True if the cell is a valid destination for handover.
+     * @param cellId The cell ID of the neighbour cell.
+     * @return True if the cell is a valid destination for handover.
      */
     bool IsValidNeighbour(uint16_t cellId);
 
@@ -131,9 +120,9 @@ class A2A4RsrqHandoverAlgorithm : public LteHandoverAlgorithm
      * entry will be created. Only the latest measurements are stored in the
      * table.
      *
-     * \param rnti The RNTI of the UE who reported the event.
-     * \param cellId The cell ID of the measured cell.
-     * \param rsrq The RSRQ of the cell as measured by the UE.
+     * @param rnti The RNTI of the UE who reported the event.
+     * @param cellId The cell ID of the measured cell.
+     * @param rsrq The RSRQ of the cell as measured by the UE.
      */
     void UpdateNeighbourMeasurements(uint16_t rnti, uint16_t cellId, uint8_t rsrq);
 

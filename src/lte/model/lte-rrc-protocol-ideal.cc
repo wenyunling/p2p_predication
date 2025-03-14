@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -24,12 +13,12 @@
 #include "lte-ue-net-device.h"
 #include "lte-ue-rrc.h"
 
-#include <ns3/fatal-error.h>
-#include <ns3/log.h>
-#include <ns3/node-list.h>
-#include <ns3/node.h>
-#include <ns3/nstime.h>
-#include <ns3/simulator.h>
+#include "ns3/fatal-error.h"
+#include "ns3/log.h"
+#include "ns3/node-list.h"
+#include "ns3/node.h"
+#include "ns3/nstime.h"
+#include "ns3/simulator.h"
 
 namespace ns3
 {
@@ -37,12 +26,12 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("LteRrcProtocolIdeal");
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  */
 
 /// RRC ideal message delay
-static const Time RRC_IDEAL_MSG_DELAY = MilliSeconds(0);
+static const Time RRC_IDEAL_MSG_DELAY;
 
 NS_OBJECT_ENSURE_REGISTERED(LteUeRrcProtocolIdeal);
 
@@ -472,18 +461,18 @@ class IdealHandoverPreparationInfoHeader : public Header
     /**
      * Get the message ID function
      *
-     * \returns the message ID
+     * @returns the message ID
      */
     uint32_t GetMsgId() const;
     /**
      * Set the message ID function
      *
-     * \param id the message ID
+     * @param id the message ID
      */
     void SetMsgId(uint32_t id);
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -596,18 +585,18 @@ class IdealHandoverCommandHeader : public Header
     /**
      * Get the message ID function
      *
-     * \returns the message ID
+     * @returns the message ID
      */
     uint32_t GetMsgId() const;
     /**
      * Set the message ID function
      *
-     * \param id the message ID
+     * @param id the message ID
      */
     void SetMsgId(uint32_t id);
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;

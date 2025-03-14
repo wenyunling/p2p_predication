@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  *         Nicola Baldo <nbaldo@cttc.es>
@@ -27,9 +16,9 @@
 using namespace ns3;
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test suite for interference test.
+ * @brief Test suite for interference test.
  */
 class LteInterferenceTestSuite : public TestSuite
 {
@@ -38,9 +27,9 @@ class LteInterferenceTestSuite : public TestSuite
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test that SINR calculation and MCS selection works fine in a
+ * @brief Test that SINR calculation and MCS selection works fine in a
  * multi-cell interference scenario.
  */
 class LteInterferenceTestCase : public TestCase
@@ -49,15 +38,15 @@ class LteInterferenceTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param name the reference name
-     * \param d1 distance between ENB and UE
-     * \param d2 distance between ENB and other UE
-     * \param dlSinr the DL SINR
-     * \param ulSinr the UL SINR
-     * \param dlSe the DL se
-     * \param ulSe the UL se
-     * \param dlMcs the DL MCS
-     * \param ulMcs the UL MCS
+     * @param name the reference name
+     * @param d1 distance between ENB and UE
+     * @param d2 distance between ENB and other UE
+     * @param dlSinr the DL SINR
+     * @param ulSinr the UL SINR
+     * @param dlSe the DL se
+     * @param ulSe the UL se
+     * @param dlMcs the DL MCS
+     * @param ulMcs the UL MCS
      */
     LteInterferenceTestCase(std::string name,
                             double d1,
@@ -72,17 +61,17 @@ class LteInterferenceTestCase : public TestCase
 
     /**
      * DL scheduling function
-     * \param dlInfo the DL info
+     * @param dlInfo the DL info
      */
     void DlScheduling(DlSchedulingCallbackInfo dlInfo);
 
     /**
      * UL scheduling function
-     * \param frameNo the frame number
-     * \param subframeNo the subframe number
-     * \param rnti the RNTI
-     * \param mcs the MCS
-     * \param sizeTb
+     * @param frameNo the frame number
+     * @param subframeNo the subframe number
+     * @param rnti the RNTI
+     * @param mcs the MCS
+     * @param sizeTb
      */
     void UlScheduling(uint32_t frameNo,
                       uint32_t subframeNo,

@@ -3,7 +3,7 @@ include(ExternalProject)
 ExternalProject_Add(
   brite_dep
   GIT_REPOSITORY https://gitlab.com/nsnam/BRITE.git
-  GIT_TAG 29c301e828d2a4f303b3d0c69360c987b02d0745
+  GIT_TAG 2a665ae11740a11afec1b068c2a45f21d901cf55
   PREFIX brite_dep
   BUILD_IN_SOURCE TRUE
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_OUTPUT_DIRECTORY}
@@ -85,9 +85,4 @@ macro(add_dependency_to_optional_modules_dependencies)
   add_dependencies(${libbrite} brite_dep)
   add_dependencies(${libclick} click_dep)
   add_dependencies(${libopenflow} openflow_dep)
-  if(NOT ${XCODE})
-    add_dependencies(${libbrite}-obj brite_dep)
-    add_dependencies(${libclick}-obj click_dep)
-    add_dependencies(${libopenflow}-obj openflow_dep)
-  endif()
 endmacro()

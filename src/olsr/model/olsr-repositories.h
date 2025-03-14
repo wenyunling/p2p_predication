@@ -2,18 +2,7 @@
  * Copyright (c) 2004 Francisco J. Ros
  * Copyright (c) 2007 INESC Porto
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Francisco J. Ros  <fjrm@dif.um.es>
  *          Gustavo J. A. M. Carneiro <gjc@inescporto.pt>
@@ -35,7 +24,7 @@ namespace olsr
 {
 
 /**
- * \ingroup olsr
+ * @ingroup olsr
  *
  * Willingness for forwarding packets from other nodes.
  * The standard defines the following set of values.
@@ -55,9 +44,9 @@ enum Willingness : uint8_t
 /**
  * Stream insertion operator for OLSR willingness.
  *
- * \param os Output stream.
- * \param willingness Willingness.
- * \return A reference to the output stream.
+ * @param os Output stream.
+ * @param willingness Willingness.
+ * @return A reference to the output stream.
  */
 inline std::ostream&
 operator<<(std::ostream& os, Willingness willingness)
@@ -80,7 +69,7 @@ operator<<(std::ostream& os, Willingness willingness)
     return os;
 }
 
-/// \ingroup olsr
+/// @ingroup olsr
 /// An Interface Association Tuple.
 struct IfaceAssocTuple
 {
@@ -106,7 +95,7 @@ operator<<(std::ostream& os, const IfaceAssocTuple& tuple)
     return os;
 }
 
-/// \ingroup olsr
+/// @ingroup olsr
 /// A Link Tuple.
 struct LinkTuple
 {
@@ -137,7 +126,7 @@ operator<<(std::ostream& os, const LinkTuple& tuple)
     return os;
 }
 
-/// \ingroup olsr
+/// @ingroup olsr
 /// A Neighbor Tuple.
 struct NeighborTuple
 {
@@ -175,7 +164,7 @@ operator<<(std::ostream& os, const NeighborTuple& tuple)
     return os;
 }
 
-/// \ingroup olsr
+/// @ingroup olsr
 /// A 2-hop Tuple.
 struct TwoHopNeighborTuple
 {
@@ -203,7 +192,7 @@ operator==(const TwoHopNeighborTuple& a, const TwoHopNeighborTuple& b)
             a.twoHopNeighborAddr == b.twoHopNeighborAddr);
 }
 
-/// \ingroup olsr
+/// @ingroup olsr
 /// An MPR-Selector Tuple.
 struct MprSelectorTuple
 {
@@ -222,7 +211,7 @@ operator==(const MprSelectorTuple& a, const MprSelectorTuple& b)
 // The type "list of interface addresses"
 // typedef std::vector<nsaddr_t> addr_list_t;
 
-/// \ingroup olsr
+/// @ingroup olsr
 /// A Duplicate Tuple
 struct DuplicateTuple
 {
@@ -244,7 +233,7 @@ operator==(const DuplicateTuple& a, const DuplicateTuple& b)
     return (a.address == b.address && a.sequenceNumber == b.sequenceNumber);
 }
 
-/// \ingroup olsr
+/// @ingroup olsr
 /// A Topology Tuple
 struct TopologyTuple
 {
@@ -274,7 +263,7 @@ operator<<(std::ostream& os, const TopologyTuple& tuple)
     return os;
 }
 
-/// \ingroup olsr
+/// @ingroup olsr
 /// Association
 struct Association
 {
@@ -295,7 +284,7 @@ operator<<(std::ostream& os, const Association& tuple)
     return os;
 }
 
-/// \ingroup olsr
+/// @ingroup olsr
 /// An Association Tuple
 struct AssociationTuple
 {

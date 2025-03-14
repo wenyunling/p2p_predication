@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2014 Universidad de la República - Uruguay
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Matías Richart <mrichart@fing.edu.uy>
  */
@@ -23,7 +12,9 @@
 #include "ns3/frame-exchange-manager.h"
 #include "ns3/interference-helper.h"
 #include "ns3/node.h"
+#include "ns3/pointer.h"
 #include "ns3/simulator.h"
+#include "ns3/string.h"
 #include "ns3/test.h"
 #include "ns3/wifi-default-ack-manager.h"
 #include "ns3/wifi-default-protection-manager.h"
@@ -34,10 +25,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Power Rate Adaptation Test
+ * @brief Power Rate Adaptation Test
  */
 class PowerRateAdaptationTest : public TestCase
 {
@@ -55,7 +46,7 @@ class PowerRateAdaptationTest : public TestCase
     void TestRrpaa();
     /**
      * Configure nde function
-     * \returns the node
+     * @returns the node
      */
     Ptr<Node> ConfigureNode();
 
@@ -103,8 +94,8 @@ PowerRateAdaptationTest::ConfigureNode()
      * Configure power control parameters.
      */
     phy->SetNTxPower(18);
-    phy->SetTxPowerStart(0);
-    phy->SetTxPowerEnd(17);
+    phy->SetTxPowerStart(dBm_u{0});
+    phy->SetTxPowerEnd(dBm_u{17});
 
     /*
      * Create manager.
@@ -115,11 +106,15 @@ PowerRateAdaptationTest::ConfigureNode()
     /*
      * Create mac layer. We use Adhoc because association is not needed to get supported rates.
      */
-    Ptr<AdhocWifiMac> mac = CreateObject<AdhocWifiMac>();
+    auto mac = CreateObjectWithAttributes<AdhocWifiMac>(
+        "Txop",
+        PointerValue(CreateObjectWithAttributes<Txop>("AcIndex", StringValue("AC_BE_NQOS"))));
     mac->SetDevice(dev);
     mac->SetAddress(Mac48Address::Allocate());
     dev->SetMac(mac);
-    mac->ConfigureStandard(WIFI_STANDARD_80211a);
+    mac->SetChannelAccessManagers({CreateObject<ChannelAccessManager>()});
+    mac->SetFrameExchangeManagers({CreateObject<FrameExchangeManager>()});
+    mac->GetFrameExchangeManager(SINGLE_LINK_OP_ID)->SetAddress(mac->GetAddress());
     mac->SetMacQueueScheduler(CreateObject<FcfsWifiQueueScheduler>());
     Ptr<FrameExchangeManager> fem = mac->GetFrameExchangeManager();
 
@@ -1141,7 +1136,7 @@ PowerRateAdaptationTest::TestRrpaa()
         "RRPAA: Incorrect vale of data rate");
     NS_TEST_ASSERT_MSG_EQ(power, 0, "RRPAA: Incorrect value of power level");
 
-    Simulator::Stop(Seconds(10.0));
+    Simulator::Stop(Seconds(10));
 
     Simulator::Run();
     Simulator::Destroy();
@@ -1156,10 +1151,10 @@ PowerRateAdaptationTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Power Rate Adaptation Test Suite
+ * @brief Power Rate Adaptation Test Suite
  */
 class PowerRateAdaptationTestSuite : public TestSuite
 {
@@ -1168,9 +1163,9 @@ class PowerRateAdaptationTestSuite : public TestSuite
 };
 
 PowerRateAdaptationTestSuite::PowerRateAdaptationTestSuite()
-    : TestSuite("wifi-power-rate-adaptation", UNIT)
+    : TestSuite("wifi-power-rate-adaptation", Type::UNIT)
 {
-    AddTestCase(new PowerRateAdaptationTest, TestCase::QUICK);
+    AddTestCase(new PowerRateAdaptationTest, TestCase::Duration::QUICK);
 }
 
 static PowerRateAdaptationTestSuite g_powerRateAdaptationTestSuite; ///< the test suite

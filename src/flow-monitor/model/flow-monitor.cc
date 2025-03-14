@@ -1,18 +1,7 @@
 //
 // Copyright (c) 2009 INESC Porto
 //
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// SPDX-License-Identifier: GPL-2.0-only
 //
 // Author: Gustavo J. A. M. Carneiro  <gjc@inescporto.pt> <gjcarneiro@gmail.com>
 //
@@ -24,6 +13,7 @@
 #include "ns3/simulator.h"
 
 #include <fstream>
+#include <limits>
 #include <sstream>
 
 #define PERIODIC_CHECK_INTERVAL (Seconds(1))
@@ -47,12 +37,12 @@ FlowMonitor::GetTypeId()
                 "MaxPerHopDelay",
                 ("The maximum per-hop delay that should be considered.  "
                  "Packets still not received after this delay are to be considered lost."),
-                TimeValue(Seconds(10.0)),
+                TimeValue(Seconds(10)),
                 MakeTimeAccessor(&FlowMonitor::m_maxPerHopDelay),
                 MakeTimeChecker())
             .AddAttribute("StartTime",
                           ("The time when the monitoring starts."),
-                          TimeValue(Seconds(0.0)),
+                          TimeValue(Seconds(0)),
                           MakeTimeAccessor(&FlowMonitor::Start),
                           MakeTimeChecker())
             .AddAttribute("DelayBinWidth",
@@ -125,6 +115,8 @@ FlowMonitor::GetStatsForFlow(FlowId flowId)
         ref.delaySum = Seconds(0);
         ref.jitterSum = Seconds(0);
         ref.lastDelay = Seconds(0);
+        ref.maxDelay = Seconds(0);
+        ref.minDelay = Time::Max();
         ref.txBytes = 0;
         ref.rxBytes = 0;
         ref.txPackets = 0;
@@ -233,7 +225,7 @@ FlowMonitor::ReportLastRx(Ptr<FlowProbe> probe,
     if (stats.rxPackets > 0)
     {
         Time jitter = stats.lastDelay - delay;
-        if (jitter > Seconds(0))
+        if (jitter.IsStrictlyPositive())
         {
             stats.jitterSum += jitter;
             stats.jitterHistogram.AddValue(jitter.GetSeconds());
@@ -245,6 +237,14 @@ FlowMonitor::ReportLastRx(Ptr<FlowProbe> probe,
         }
     }
     stats.lastDelay = delay;
+    if (delay > stats.maxDelay)
+    {
+        stats.maxDelay = delay;
+    }
+    if (delay < stats.minDelay)
+    {
+        stats.minDelay = delay;
+    }
 
     stats.rxBytes += packetSize;
     stats.packetSizeHistogram.AddValue((double)packetSize);
@@ -443,15 +443,14 @@ FlowMonitor::SerializeToXmlStream(std::ostream& os,
     for (auto flowI = m_flowStats.begin(); flowI != m_flowStats.end(); flowI++)
     {
         os << std::string(indent, ' ');
-#define ATTRIB(name) << " " #name "=\"" << flowI->second.name << "\""
-#define ATTRIB_TIME(name) << " " #name "=\"" << flowI->second.name.As(Time::NS) << "\""
-        os << "<Flow flowId=\"" << flowI->first
-           << "\"" ATTRIB_TIME(timeFirstTxPacket) ATTRIB_TIME(timeFirstRxPacket)
-                  ATTRIB_TIME(timeLastTxPacket) ATTRIB_TIME(timeLastRxPacket) ATTRIB_TIME(delaySum)
-                      ATTRIB_TIME(jitterSum) ATTRIB_TIME(lastDelay) ATTRIB(txBytes) ATTRIB(rxBytes)
-                          ATTRIB(txPackets) ATTRIB(rxPackets) ATTRIB(lostPackets)
-                              ATTRIB(timesForwarded)
-           << ">\n";
+#define ATTRIB(name) " " #name "=\"" << flowI->second.name << "\""
+#define ATTRIB_TIME(name) " " #name "=\"" << flowI->second.name.As(Time::NS) << "\""
+        os << "<Flow flowId=\"" << flowI->first << "\"" << ATTRIB_TIME(timeFirstTxPacket)
+           << ATTRIB_TIME(timeFirstRxPacket) << ATTRIB_TIME(timeLastTxPacket)
+           << ATTRIB_TIME(timeLastRxPacket) << ATTRIB_TIME(delaySum) << ATTRIB_TIME(jitterSum)
+           << ATTRIB_TIME(lastDelay) << ATTRIB_TIME(maxDelay) << ATTRIB_TIME(minDelay)
+           << ATTRIB(txBytes) << ATTRIB(rxBytes) << ATTRIB(txPackets) << ATTRIB(rxPackets)
+           << ATTRIB(lostPackets) << ATTRIB(timesForwarded) << ">\n";
 #undef ATTRIB_TIME
 #undef ATTRIB
 
@@ -539,6 +538,8 @@ FlowMonitor::ResetAllStats()
         flowStat.delaySum = Seconds(0);
         flowStat.jitterSum = Seconds(0);
         flowStat.lastDelay = Seconds(0);
+        flowStat.maxDelay = Seconds(0);
+        flowStat.minDelay = Seconds(std::numeric_limits<double>::max());
         flowStat.txBytes = 0;
         flowStat.rxBytes = 0;
         flowStat.txPackets = 0;

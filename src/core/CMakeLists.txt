@@ -1,6 +1,17 @@
 # Set lib core link dependencies
 set(libraries_to_link)
 
+set(config_headers
+    ${CMAKE_HEADER_OUTPUT_DIRECTORY}/core-config.h
+)
+if(${ENABLE_BUILD_VERSION})
+  list(
+    APPEND
+    config_headers
+    ${CMAKE_HEADER_OUTPUT_DIRECTORY}/version-defines.h
+  )
+endif()
+
 set(gsl_test_sources)
 if(${GSL_FOUND})
   set(libraries_to_link
@@ -137,7 +148,6 @@ set(source_files
     model/timer.cc
     model/watchdog.cc
     model/synchronizer.cc
-    model/make-event.cc
     model/environment-variable.cc
     model/log.cc
     model/breakpoint.cc
@@ -184,10 +194,12 @@ set(source_files
     model/realtime-simulator-impl.cc
     model/wall-clock-synchronizer.cc
     model/matrix-array.cc
+    model/demangle.cc
 )
 
 # Define core lib headers
 set(header_files
+    ${config_headers}
     ${int64x64_headers}
     ${example_as_test_headers}
     ${embedded_version_headers}
@@ -212,6 +224,7 @@ set(header_files
     model/config.h
     model/default-deleter.h
     model/default-simulator-impl.h
+    model/demangle.h
     model/deprecated.h
     model/des-metrics.h
     model/double.h
@@ -228,7 +241,6 @@ set(header_files
     model/hash-murmur3.h
     model/hash.h
     model/heap-scheduler.h
-    model/int-to-type.h
     model/int64x64-double.h
     model/int64x64.h
     model/integer.h
@@ -258,6 +270,7 @@ set(header_files
     model/rng-stream.h
     model/scheduler.h
     model/show-progress.h
+    model/shuffle.h
     model/simple-ref-count.h
     model/simulation-singleton.h
     model/simulator-impl.h

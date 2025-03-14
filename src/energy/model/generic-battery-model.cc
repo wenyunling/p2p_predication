@@ -3,18 +3,7 @@
  * Copyright (c) 2023 Tokushima University, Japan:
  * NiMh,NiCd,LeaAcid batteries and preset and multicell extensions.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Andrea Sacco <andrea.sacco85@gmail.com>
  *         Alberto Gallegos Ramonet <alramonet@is.tokushima-u.ac.jp>
@@ -22,26 +11,28 @@
 
 #include "generic-battery-model.h"
 
-#include <ns3/assert.h>
-#include <ns3/double.h>
-#include <ns3/log.h>
-#include <ns3/simulator.h>
-#include <ns3/trace-source-accessor.h>
+#include "ns3/assert.h"
+#include "ns3/double.h"
+#include "ns3/log.h"
+#include "ns3/simulator.h"
+#include "ns3/trace-source-accessor.h"
 
 #include <cmath>
 
 namespace ns3
 {
+namespace energy
+{
 
 NS_LOG_COMPONENT_DEFINE("GenericBatteryModel");
-
 NS_OBJECT_ENSURE_REGISTERED(GenericBatteryModel);
 
 TypeId
 GenericBatteryModel::GetTypeId()
 {
     static TypeId tid =
-        TypeId("ns3::GenericBatteryModel")
+        TypeId("ns3::energy::GenericBatteryModel")
+            .AddDeprecatedName("ns3::GenericBatteryModel")
             .SetParent<EnergySource>()
             .SetGroupName("Energy")
             .AddConstructor<GenericBatteryModel>()
@@ -86,7 +77,7 @@ GenericBatteryModel::GetTypeId()
                           MakeDoubleAccessor(&GenericBatteryModel::m_internalResistance),
                           MakeDoubleChecker<double>())
             .AddAttribute("TypicalDischargeCurrent",
-                          "Typical discharge current used in manufacters datasheets (A)",
+                          "Typical discharge current used in manufacturers datasheets (A)",
                           DoubleValue(2.33),
                           MakeDoubleAccessor(&GenericBatteryModel::m_typicalCurrent),
                           MakeDoubleChecker<double>())
@@ -97,7 +88,7 @@ GenericBatteryModel::GetTypeId()
                           MakeDoubleChecker<double>())
             .AddAttribute("PeriodicEnergyUpdateInterval",
                           "Time between two consecutive periodic energy updates.",
-                          TimeValue(Seconds(1.0)),
+                          TimeValue(Seconds(1)),
                           MakeTimeAccessor(&GenericBatteryModel::SetEnergyUpdateInterval,
                                            &GenericBatteryModel::GetEnergyUpdateInterval),
                           MakeTimeChecker())
@@ -123,7 +114,7 @@ GenericBatteryModel::GenericBatteryModel()
       m_currentFiltered(0),
       m_entn(0),
       m_expZone(0),
-      m_lastUpdateTime(Seconds(0.0))
+      m_lastUpdateTime()
 {
     NS_LOG_FUNCTION(this);
 }
@@ -435,4 +426,5 @@ GenericBatteryModel::GetVoltage(double i)
     return V;
 }
 
+} // namespace energy
 } // namespace ns3

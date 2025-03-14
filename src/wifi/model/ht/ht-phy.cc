@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2020 Orange Labs
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Rediet <getachew.redieteab@orange.com>
  *          Sébastien Deronne <sebastien.deronne@gmail.com> (for logic ported from wifi-phy)
@@ -28,6 +17,9 @@
 #include "ns3/wifi-phy.h"
 #include "ns3/wifi-psdu.h"
 #include "ns3/wifi-utils.h"
+
+#undef NS_LOG_APPEND_CONTEXT
+#define NS_LOG_APPEND_CONTEXT WIFI_PHY_NS_LOG_APPEND_CONTEXT(m_wifiPhy)
 
 namespace ns3
 {
@@ -363,16 +355,17 @@ HtPhy::GetNumberBccEncoders(const WifiTxVector& txVector) const
      * were obtained by observing the rates for which Nes was incremented in tables
      * 19-27 to 19-41 of IEEE 802.11-2016.
      */
-    double maxRatePerCoder = (txVector.GetGuardInterval() == 800) ? 320e6 : 350e6;
+    double maxRatePerCoder = (txVector.GetGuardInterval().GetNanoSeconds() == 800) ? 320e6 : 350e6;
     return ceil(txVector.GetMode().GetDataRate(txVector) / maxRatePerCoder);
 }
 
 Time
 HtPhy::GetSymbolDuration(const WifiTxVector& txVector) const
 {
-    uint16_t gi = txVector.GetGuardInterval();
+    const auto guardInterval = txVector.GetGuardInterval();
+    [[maybe_unused]] const auto gi = guardInterval.GetNanoSeconds();
     NS_ASSERT(gi == 400 || gi == 800);
-    return NanoSeconds(3200 + gi);
+    return GetSymbolDuration(guardInterval);
 }
 
 Ptr<WifiPpdu>
@@ -457,17 +450,18 @@ HtPhy::IsConfigSupported(Ptr<const WifiPpdu> ppdu) const
 }
 
 Ptr<SpectrumValue>
-HtPhy::GetTxPowerSpectralDensity(double txPowerW, Ptr<const WifiPpdu> ppdu) const
+HtPhy::GetTxPowerSpectralDensity(Watt_u txPower, Ptr<const WifiPpdu> ppdu) const
 {
+    const auto& centerFrequencies = ppdu->GetTxCenterFreqs();
+    NS_ASSERT(centerFrequencies.size() == 1);
     const auto& txVector = ppdu->GetTxVector();
-    uint16_t centerFrequency = GetCenterFrequencyForChannelWidth(txVector);
-    uint16_t channelWidth = txVector.GetChannelWidth();
-    NS_LOG_FUNCTION(this << centerFrequency << channelWidth << txPowerW);
+    const auto channelWidth = txVector.GetChannelWidth();
+    NS_LOG_FUNCTION(this << centerFrequencies.front() << channelWidth << txPower);
     const auto& txMaskRejectionParams = GetTxMaskRejectionParams();
-    Ptr<SpectrumValue> v = WifiSpectrumValueHelper::CreateHtOfdmTxPowerSpectralDensity(
-        centerFrequency,
+    auto v = WifiSpectrumValueHelper::CreateHtOfdmTxPowerSpectralDensity(
+        centerFrequencies,
         channelWidth,
-        txPowerW,
+        txPower,
         GetGuardBandwidth(channelWidth),
         std::get<0>(txMaskRejectionParams),
         std::get<1>(txMaskRejectionParams),
@@ -646,10 +640,10 @@ HtPhy::GetConstellationSize(uint8_t mcsValue)
 }
 
 uint64_t
-HtPhy::GetPhyRate(uint8_t mcsValue, uint16_t channelWidth, uint16_t guardInterval, uint8_t nss)
+HtPhy::GetPhyRate(uint8_t mcsValue, MHz_u channelWidth, Time guardInterval, uint8_t nss)
 {
-    WifiCodeRate codeRate = GetHtCodeRate(mcsValue);
-    uint64_t dataRate = GetDataRate(mcsValue, channelWidth, guardInterval, nss);
+    const auto codeRate = GetHtCodeRate(mcsValue);
+    const auto dataRate = GetDataRate(mcsValue, channelWidth, guardInterval, nss);
     return CalculatePhyRate(codeRate, dataRate);
 }
 
@@ -690,11 +684,12 @@ HtPhy::GetDataRateFromTxVector(const WifiTxVector& txVector, uint16_t /* staId *
 }
 
 uint64_t
-HtPhy::GetDataRate(uint8_t mcsValue, uint16_t channelWidth, uint16_t guardInterval, uint8_t nss)
+HtPhy::GetDataRate(uint8_t mcsValue, MHz_u channelWidth, Time guardInterval, uint8_t nss)
 {
-    NS_ASSERT(guardInterval == 800 || guardInterval == 400);
+    [[maybe_unused]] const auto gi = guardInterval.GetNanoSeconds();
+    NS_ASSERT((gi == 800) || (gi == 400));
     NS_ASSERT(nss <= 4);
-    return CalculateDataRate(GetSymbolDuration(NanoSeconds(guardInterval)),
+    return CalculateDataRate(GetSymbolDuration(guardInterval),
                              GetUsableSubcarriers(channelWidth),
                              static_cast<uint16_t>(log2(GetHtConstellationSize(mcsValue))),
                              GetCodeRatio(GetHtCodeRate(mcsValue)),
@@ -715,9 +710,9 @@ HtPhy::CalculateDataRate(Time symbolDuration,
 }
 
 uint16_t
-HtPhy::GetUsableSubcarriers(uint16_t channelWidth)
+HtPhy::GetUsableSubcarriers(MHz_u channelWidth)
 {
-    return (channelWidth == 40) ? 108 : 52;
+    return (channelWidth == MHz_u{40}) ? 108 : 52;
 }
 
 Time
@@ -729,8 +724,8 @@ HtPhy::GetSymbolDuration(Time guardInterval)
 uint64_t
 HtPhy::GetNonHtReferenceRate(uint8_t mcsValue)
 {
-    WifiCodeRate codeRate = GetHtCodeRate(mcsValue);
-    uint16_t constellationSize = GetHtConstellationSize(mcsValue);
+    const auto codeRate = GetHtCodeRate(mcsValue);
+    const auto constellationSize = GetHtConstellationSize(mcsValue);
     return CalculateNonHtReferenceRate(codeRate, constellationSize);
 }
 
@@ -821,13 +816,12 @@ HtPhy::GetMaxPsduSize() const
 PhyEntity::CcaIndication
 HtPhy::GetCcaIndication(const Ptr<const WifiPpdu> ppdu)
 {
-    NS_LOG_FUNCTION(this);
-    if (m_wifiPhy->GetChannelWidth() < 40)
+    if (m_wifiPhy->GetChannelWidth() < MHz_u{40})
     {
         return OfdmPhy::GetCcaIndication(ppdu);
     }
-    double ccaThresholdDbm = GetCcaThreshold(ppdu, WIFI_CHANLIST_PRIMARY);
-    Time delayUntilCcaEnd = GetDelayUntilCcaEnd(ccaThresholdDbm, GetPrimaryBand(20));
+    auto ccaThreshold = GetCcaThreshold(ppdu, WIFI_CHANLIST_PRIMARY);
+    auto delayUntilCcaEnd = GetDelayUntilCcaEnd(ccaThreshold, GetPrimaryBand(MHz_u{20}));
     if (delayUntilCcaEnd.IsStrictlyPositive())
     {
         return std::make_pair(
@@ -836,11 +830,11 @@ HtPhy::GetCcaIndication(const Ptr<const WifiPpdu> ppdu)
     }
     if (ppdu)
     {
-        const uint16_t primaryWidth = 20;
-        uint16_t p20MinFreq =
+        const MHz_u primaryWidth{20};
+        const MHz_u p20MinFreq =
             m_wifiPhy->GetOperatingChannel().GetPrimaryChannelCenterFrequency(primaryWidth) -
             (primaryWidth / 2);
-        uint16_t p20MaxFreq =
+        const MHz_u p20MaxFreq =
             m_wifiPhy->GetOperatingChannel().GetPrimaryChannelCenterFrequency(primaryWidth) +
             (primaryWidth / 2);
         if (ppdu->DoesOverlapChannel(p20MinFreq, p20MaxFreq))
@@ -853,17 +847,17 @@ HtPhy::GetCcaIndication(const Ptr<const WifiPpdu> ppdu)
         }
     }
 
-    const uint16_t secondaryWidth = 20;
-    uint16_t s20MinFreq =
+    const MHz_u secondaryWidth{20};
+    const MHz_u s20MinFreq =
         m_wifiPhy->GetOperatingChannel().GetSecondaryChannelCenterFrequency(secondaryWidth) -
         (secondaryWidth / 2);
-    uint16_t s20MaxFreq =
+    const MHz_u s20MaxFreq =
         m_wifiPhy->GetOperatingChannel().GetSecondaryChannelCenterFrequency(secondaryWidth) +
         (secondaryWidth / 2);
     if (!ppdu || ppdu->DoesOverlapChannel(s20MinFreq, s20MaxFreq))
     {
-        ccaThresholdDbm = GetCcaThreshold(ppdu, WIFI_CHANLIST_SECONDARY);
-        delayUntilCcaEnd = GetDelayUntilCcaEnd(ccaThresholdDbm, GetSecondaryBand(20));
+        ccaThreshold = GetCcaThreshold(ppdu, WIFI_CHANLIST_SECONDARY);
+        delayUntilCcaEnd = GetDelayUntilCcaEnd(ccaThreshold, GetSecondaryBand(MHz_u{20}));
         if (delayUntilCcaEnd.IsStrictlyPositive())
         {
             return std::make_pair(delayUntilCcaEnd, WIFI_CHANLIST_SECONDARY);

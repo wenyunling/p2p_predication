@@ -2,18 +2,7 @@
  * Copyright (c) 2019 SIGNET Lab, Department of Information Engineering,
  * University of Padova
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #include "ns3/abort.h"
@@ -34,8 +23,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("OutdoorRandomWalkTest");
 
 /**
- * \ingroup building-test
- * \ingroup tests
+ * @ingroup building-test
  *
  * Test case for the class OutdoorRandomWalkTestCase. It checks if the
  * positions visited by the user are outside buildings
@@ -51,7 +39,7 @@ class OutdoorRandomWalkTestCase : public TestCase
 
     /**
      * Check that the position is the expected one
-     * \param model Mobility model
+     * @param model Mobility model
      */
     void CheckPositionOutdoor(Ptr<RandomWalk2dOutdoorMobilityModel> model);
 
@@ -163,8 +151,7 @@ OutdoorRandomWalkTestCase::DoRun()
 }
 
 /**
- * \ingroup building-test
- * \ingroup tests
+ * @ingroup building-test
  *
  * Test suite for the buildings channel condition model
  */
@@ -175,9 +162,9 @@ class OutdoorRandomWalkTestSuite : public TestSuite
 };
 
 OutdoorRandomWalkTestSuite::OutdoorRandomWalkTestSuite()
-    : TestSuite("outdoor-random-walk-model", UNIT)
+    : TestSuite("outdoor-random-walk-model", Type::UNIT)
 {
-    AddTestCase(new OutdoorRandomWalkTestCase, TestCase::QUICK);
+    AddTestCase(new OutdoorRandomWalkTestCase, TestCase::Duration::QUICK);
 }
 
 /// Static variable for test initialization

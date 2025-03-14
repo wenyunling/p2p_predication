@@ -2,18 +2,7 @@
  * Copyright (c) 2022 Universita' degli Studi di Napoli Federico II
 
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Stefano Avallone <stavallo@unina.it>
  */
@@ -182,7 +171,7 @@ WifiAssocManager::StartScanning(WifiScanParams&& scanParams)
     for (auto ap = m_apList.begin(); ap != m_apList.end();)
     {
         if (!MatchScanParams(*ap) ||
-            (!m_allowedLinks.empty() && m_allowedLinks.count(ap->m_linkId) == 0))
+            (!m_allowedLinks.empty() && !m_allowedLinks.contains(ap->m_linkId)))
         {
             // remove AP info from list
             m_apListIt.erase(ap->m_bssid);
@@ -203,7 +192,7 @@ WifiAssocManager::NotifyApInfo(const StaWifiMac::ApInfo&& apInfo)
     NS_LOG_FUNCTION(this << apInfo);
 
     if (!CanBeInserted(apInfo) || !MatchScanParams(apInfo) ||
-        (!m_allowedLinks.empty() && m_allowedLinks.count(apInfo.m_linkId) == 0))
+        (!m_allowedLinks.empty() && !m_allowedLinks.contains(apInfo.m_linkId)))
     {
         return;
     }
@@ -305,8 +294,6 @@ WifiAssocManager::CanSetupMultiLink(OptMleConstRef& mle, OptRnrConstRef& rnr)
     {
         auto ehtConfig = m_mac->GetEhtConfiguration();
         NS_ASSERT(ehtConfig);
-        EnumValue<WifiTidToLinkMappingNegSupport> negSupport;
-        ehtConfig->GetAttributeFailSafe("TidToLinkMappingNegSupport", negSupport);
 
         // A non-AP MLD that performs multi-link (re)setup on at least two links with an AP MLD
         // that sets the TID-To-Link Mapping Negotiation Support subfield of the MLD Capabilities
@@ -314,7 +301,8 @@ WifiAssocManager::CanSetupMultiLink(OptMleConstRef& mle, OptRnrConstRef& rnr)
         // mapping negotiation with the TID-To-Link Mapping Negotiation Support subfield of the
         // MLD Capabilities field of the Basic Multi-Link element it transmits to at least 1.
         // (Sec. 35.3.7.1.1 of 802.11be D3.1)
-        if (mldCapabilities->tidToLinkMappingSupport > 0 && negSupport.Get() == 0)
+        if (mldCapabilities->tidToLinkMappingSupport > 0 &&
+            ehtConfig->m_tidLinkMappingSupport == WifiTidToLinkMappingNegSupport::NOT_SUPPORTED)
         {
             NS_LOG_DEBUG("AP MLD supports TID-to-Link Mapping negotiation, while we don't");
             return false;
@@ -340,7 +328,7 @@ WifiAssocManager::GetNextAffiliatedAp(const ReducedNeighborReport& rnr, std::siz
 
         std::size_t tbttInfoFieldIndex = 0;
         while (tbttInfoFieldIndex < rnr.GetNTbttInformationFields(nbrApInfoId) &&
-               rnr.GetMldId(nbrApInfoId, tbttInfoFieldIndex) != 0)
+               rnr.GetMldParameters(nbrApInfoId, tbttInfoFieldIndex).apMldId != 0)
         {
             tbttInfoFieldIndex++;
         }

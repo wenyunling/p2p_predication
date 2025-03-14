@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  * (Based on lte-ue-phy code)
@@ -28,9 +17,9 @@ namespace ns3
 {
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Defines a simplified LtePhy class that is used for testing purposes
+ * @brief Defines a simplified LtePhy class that is used for testing purposes
  * of downlink and uplink SINR generation. Used in LteDownlinkDataSinrTestCase
  * and LteUplinkDataSinrTestCase as simplified LTE PHY.
  */
@@ -43,8 +32,8 @@ class LteTestUePhy : public LtePhy
     LteTestUePhy();
 
     /**
-     * \param dlPhy the downlink LteSpectrumPhy instance
-     * \param ulPhy the uplink LteSpectrumPhy instance
+     * @param dlPhy the downlink LteSpectrumPhy instance
+     * @param ulPhy the uplink LteSpectrumPhy instance
      */
     LteTestUePhy(Ptr<LteSpectrumPhy> dlPhy, Ptr<LteSpectrumPhy> ulPhy);
 
@@ -52,20 +41,20 @@ class LteTestUePhy : public LtePhy
 
     void DoDispose() override;
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
     /**
-     * \brief Queue the MAC PDU to be sent
-     * \param p the MAC PDU to sent
+     * @brief Queue the MAC PDU to be sent
+     * @param p the MAC PDU to sent
      */
     void DoSendMacPdu(Ptr<Packet> p) override;
 
     /**
-     * \brief Create the PSD for the TX
-     * \return the pointer to the PSD
+     * @brief Create the PSD for the TX
+     * @return the pointer to the PSD
      */
     Ptr<SpectrumValue> CreateTxPowerSpectralDensity() override;
 
@@ -78,14 +67,14 @@ class LteTestUePhy : public LtePhy
     void ReportRsReceivedPower(const SpectrumValue& power) override;
 
     /**
-     * \brief Reeive LTE Control Message
-     * \param msg the control message
+     * @brief Reeive LTE Control Message
+     * @param msg the control message
      */
     virtual void ReceiveLteControlMessage(Ptr<LteControlMessage> msg);
 
     /**
-     * \brief Get the SINR
-     * \return the SINR
+     * @brief Get the SINR
+     * @return the SINR
      */
     SpectrumValue GetSinr();
 

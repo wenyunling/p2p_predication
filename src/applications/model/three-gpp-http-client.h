@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2013 Magister Solutions
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Budiarto Herman <budiarto.herman@magister.fi>
  *
@@ -21,11 +10,13 @@
 #ifndef THREE_GPP_HTTP_CLIENT_H
 #define THREE_GPP_HTTP_CLIENT_H
 
+#include "source-application.h"
 #include "three-gpp-http-header.h"
 
-#include <ns3/address.h>
-#include <ns3/application.h>
-#include <ns3/traced-callback.h>
+#include "ns3/address.h"
+#include "ns3/traced-callback.h"
+
+#include <optional>
 
 namespace ns3
 {
@@ -35,8 +26,8 @@ class Packet;
 class ThreeGppHttpVariables;
 
 /**
- * \ingroup applications
- * \defgroup http ThreeGppHttpClientServer
+ * @ingroup applications
+ * @defgroup http ThreeGppHttpClientServer
  *
  * This traffic generator simulates web browsing traffic using the Hypertext
  * Transfer Protocol (HTTP). It consists of one or more ThreeGppHttpClient
@@ -69,7 +60,7 @@ class ThreeGppHttpVariables;
  */
 
 /**
- * \ingroup http
+ * @ingroup http
  * Model application which simulates the traffic of a web browser. This
  * application works in conjunction with an ThreeGppHttpServer application.
  *
@@ -103,7 +94,7 @@ class ThreeGppHttpVariables;
  * and the timestamp when the packet is transmitted (which will be used to
  * compute the delay and RTT of the packet).
  */
-class ThreeGppHttpClient : public Application
+class ThreeGppHttpClient : public SourceApplication
 {
   public:
     /**
@@ -114,16 +105,17 @@ class ThreeGppHttpClient : public Application
      * ThreeGppHttpClientHelper.
      */
     ThreeGppHttpClient();
+    void SetRemote(const Address& addr) override;
 
     /**
      * Returns the object TypeId.
-     * \return The object TypeId.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
     /**
      * Returns a pointer to the associated socket.
-     * \return Pointer to the associated socket.
+     * @return Pointer to the associated socket.
      */
     Ptr<Socket> GetSocket() const;
 
@@ -148,39 +140,39 @@ class ThreeGppHttpClient : public Application
 
     /**
      * Returns the current state of the application.
-     * \return The current state of the application.
+     * @return The current state of the application.
      */
     State_t GetState() const;
 
     /**
      * Returns the current state of the application in string format.
-     * \return The current state of the application in string format.
+     * @return The current state of the application in string format.
      */
     std::string GetStateString() const;
 
     /**
      * Returns the given state in string format.
-     * \param state An arbitrary state of an application.
-     * \return The given state equivalently expressed in string format.
+     * @param state An arbitrary state of an application.
+     * @return The given state equivalently expressed in string format.
      */
     static std::string GetStateString(State_t state);
 
     /**
      * Common callback signature for `ConnectionEstablished`, `RxMainObject`, and
      * `RxEmbeddedObject` trace sources.
-     * \param httpClient Pointer to this instance of ThreeGppHttpClient,
+     * @param httpClient Pointer to this instance of ThreeGppHttpClient,
      *                               which is where the trace originated.
      */
     typedef void (*TracedCallback)(Ptr<const ThreeGppHttpClient> httpClient);
 
     /**
      * Callback signature for `RxPage` trace sources.
-     * \param httpClient Pointer to this instance of ThreeGppHttpClient,
+     * @param httpClient Pointer to this instance of ThreeGppHttpClient,
      *                               which is where the trace originated.
-     * \param time Elapsed time from the start to the end of the request.
-     * \param numObjects Number of objects downloaded, including main and
+     * @param time Elapsed time from the start to the end of the request.
+     * @param numObjects Number of objects downloaded, including main and
      *                                                  embedded objects.
-     * \param numBytes Total number of bytes included in the page.
+     * @param numBytes Total number of bytes included in the page.
      */
     typedef void (*RxPageTracedCallback)(Ptr<const ThreeGppHttpClient> httpClient,
                                          const Time& time,
@@ -188,44 +180,48 @@ class ThreeGppHttpClient : public Application
                                          uint32_t numBytes);
 
   protected:
-    // Inherited from Object base class.
     void DoDispose() override;
 
-    // Inherited from Application base class.
+  private:
     void StartApplication() override;
     void StopApplication() override;
 
-  private:
+    /**
+     * @brief set the remote port (temporary function until deprecated attributes are removed)
+     * @param port remote port
+     */
+    void SetPort(uint16_t port);
+
     // SOCKET CALLBACK METHODS
 
     /**
      * Invoked when a connection is established successfully on #m_socket. This
      * triggers a request for a main object.
-     * \param socket Pointer to the socket where the event originates from.
+     * @param socket Pointer to the socket where the event originates from.
      */
     void ConnectionSucceededCallback(Ptr<Socket> socket);
     /**
      * Invoked when #m_socket cannot establish a connection with the web server.
      * Simulation will stop and error will be raised.
-     * \param socket Pointer to the socket where the event originates from.
+     * @param socket Pointer to the socket where the event originates from.
      */
     void ConnectionFailedCallback(Ptr<Socket> socket);
     /**
      * Invoked when connection between #m_socket and the web sever is terminated.
      * Error will be logged, but simulation continues.
-     * \param socket Pointer to the socket where the event originates from.
+     * @param socket Pointer to the socket where the event originates from.
      */
     void NormalCloseCallback(Ptr<Socket> socket);
     /**
      * Invoked when connection between #m_socket and the web sever is terminated.
      * Error will be logged, but simulation continues.
-     * \param socket Pointer to the socket where the event originates from.
+     * @param socket Pointer to the socket where the event originates from.
      */
     void ErrorCloseCallback(Ptr<Socket> socket);
     /**
      * Invoked when #m_socket receives some packet data. Fires the `Rx` trace
      * source and triggers ReceiveMainObject() or ReceiveEmbeddedObject().
-     * \param socket Pointer to the socket where the event originates from.
+     * @param socket Pointer to the socket where the event originates from.
      */
     void ReceivedDataCallback(Ptr<Socket> socket);
 
@@ -233,7 +229,7 @@ class ThreeGppHttpClient : public Application
 
     /**
      * Initialize #m_socket to connect to the destination web server at
-     * #m_remoteServerAddress and #m_remoteServerPort and set up callbacks to
+     * #m_peer and #m_peerPort and set up callbacks to
      * listen to its event. Invoked upon the start of the application.
      */
     void OpenConnection();
@@ -277,8 +273,8 @@ class ThreeGppHttpClient : public Application
      * fires the `RxMainObject`, `RxDelay`, and `RxRtt` trace sources. The client
      * then triggers EnterParsingTime().
      *
-     * \param packet The received packet.
-     * \param from Address of the sender.
+     * @param packet The received packet.
+     * @param from Address of the sender.
      */
     void ReceiveMainObject(Ptr<Packet> packet, const Address& from);
     /**
@@ -300,8 +296,8 @@ class ThreeGppHttpClient : public Application
      * (#m_embeddedObjectsToBeRequested) the client can either trigger
      * RequestEmbeddedObject() or EnterReadingTime().
      *
-     * \param packet The received packet.
-     * \param from Address of the sender.
+     * @param packet The received packet.
+     * @param from Address of the sender.
      */
     void ReceiveEmbeddedObject(Ptr<Packet> packet, const Address& from);
     /**
@@ -313,7 +309,7 @@ class ThreeGppHttpClient : public Application
      * This method is invoked as a sub-procedure of ReceiveMainObject() and
      * ReceiveEmbeddedObject().
      *
-     * \param packet The received packet. If it is the first packet of the object,
+     * @param packet The received packet. If it is the first packet of the object,
      *               then it must have a ThreeGppHttpHeader attached to it.
      */
     void Receive(Ptr<Packet> packet);
@@ -354,7 +350,7 @@ class ThreeGppHttpClient : public Application
 
     /**
      * Change the state of the client. Fires the `StateTransition` trace source.
-     * \param state The new state.
+     * @param state The new state.
      */
     void SwitchToState(State_t state);
 
@@ -389,10 +385,8 @@ class ThreeGppHttpClient : public Application
 
     /// The `Variables` attribute.
     Ptr<ThreeGppHttpVariables> m_httpVariables;
-    /// The `RemoteServerAddress` attribute. The address of the web server.
-    Address m_remoteServerAddress;
     /// The `RemoteServerPort` attribute.
-    uint16_t m_remoteServerPort;
+    std::optional<uint16_t> m_peerPort;
 
     // TRACE SOURCES
 

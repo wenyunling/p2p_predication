@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2008 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
@@ -28,14 +17,21 @@
 #include "ns3/core-config.h"
 
 /**
- * \file
- * \ingroup object
+ * @file
+ * @ingroup object
  * ns3::ObjectBase class implementation.
  */
 
 namespace ns3
 {
 // Explicit instantiation declaration
+
+/**
+ * @ingroup callback
+ * Explicit instantiation for ObjectBase
+ * @return A wrapper Callback
+ * \sa ns3::MakeCallback
+ */
 template Callback<ObjectBase*> MakeCallback<ObjectBase*>(ObjectBase* (*)());
 template Callback<ObjectBase*>::Callback();
 template class CallbackImpl<ObjectBase*>;
@@ -48,9 +44,9 @@ NS_OBJECT_ENSURE_REGISTERED(ObjectBase);
  * Ensure the TypeId for ObjectBase gets fully configured
  * to anchor the inheritance tree properly.
  *
- * \relates ns3::ObjectBase
+ * @relates ns3::ObjectBase
  *
- * \return The TypeId for ObjectBase.
+ * @return The TypeId for ObjectBase.
  */
 static TypeId
 GetObjectIid()
@@ -241,12 +237,12 @@ ObjectBase::SetAttributeFailSafe(std::string name, const AttributeValue& value)
 }
 
 void
-ObjectBase::GetAttribute(std::string name, AttributeValue& value) const
+ObjectBase::GetAttribute(std::string name, AttributeValue& value, bool permissive) const
 {
     NS_LOG_FUNCTION(this << name << &value);
     TypeId::AttributeInformation info;
     TypeId tid = GetInstanceTypeId();
-    if (!tid.LookupAttributeByName(name, &info))
+    if (!tid.LookupAttributeByName(name, &info, permissive))
     {
         NS_FATAL_ERROR(
             "Attribute name=" << name << " does not exist for this object: tid=" << tid.GetName());
@@ -319,6 +315,7 @@ ObjectBase::TraceConnectWithoutContext(std::string name, const CallbackBase& cb)
     Ptr<const TraceSourceAccessor> accessor = tid.LookupTraceSourceByName(name);
     if (!accessor)
     {
+        NS_LOG_DEBUG("Cannot connect trace " << name << " on object of type " << tid.GetName());
         return false;
     }
     bool ok = accessor->ConnectWithoutContext(this, cb);
@@ -333,6 +330,7 @@ ObjectBase::TraceConnect(std::string name, std::string context, const CallbackBa
     Ptr<const TraceSourceAccessor> accessor = tid.LookupTraceSourceByName(name);
     if (!accessor)
     {
+        NS_LOG_DEBUG("Cannot connect trace " << name << " on object of type " << tid.GetName());
         return false;
     }
     bool ok = accessor->Connect(this, context, cb);

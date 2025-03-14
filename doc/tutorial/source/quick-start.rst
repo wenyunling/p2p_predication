@@ -33,7 +33,7 @@ does not cover those aspects.
 Prerequisites
 *************
 |ns3| has various optional extensions, but the main features just require
-a C++ compiler (g++ or clang++), Python (version 3.6 or above), CMake and
+a C++ compiler (g++ or clang++), Python (version 3.8 or above), CMake and
 a build-system (e.g. make, ninja, Xcode).
 We focus in this chapter only on getting |ns3| up and running on a system
 supported by a recent C++ compiler and Python runtime support.
@@ -64,13 +64,13 @@ Downloading the Latest Release
 
    ::
 
-    $ tar xjf ns-allinone-3.41.tar.bz2
+    $ tar xjf ns-allinone-3.44.tar.bz2
 
 3) Change into the |ns3| directory directly; e.g.
 
    ::
 
-    $ cd ns-allinone-3.41/ns-3.41
+    $ cd ns-allinone-3.44/ns-3.44
 
 The ns-allinone directory has some additional components but we are skipping
 over them here; one can work directly from the |ns3| source code directory.
@@ -92,12 +92,12 @@ only to `cd` into ns-3-dev; the `master` branch is checked out by default.
 
   $ cd ns-3-dev
 
-If instead you want to try the most recent release (version 3.41 as of this
+If instead you want to try the most recent release (version 3.44 as of this
 writing), you can checkout a branch corresponding to that git tag:
 
 ::
 
-  $ git checkout -b ns-3.41-branch ns-3.41
+  $ git checkout -b ns-3.44-branch ns-3.44
 
 Building and testing ns-3
 *************************

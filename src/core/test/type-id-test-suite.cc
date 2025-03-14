@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012 Lawrence Livermore National Laboratory
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Peter D. Barnes, Jr. <pdbarnes@llnl.gov>
  */
@@ -31,22 +20,22 @@
 
 using namespace ns3;
 
-/// \return A const string used to build the test name.
+/// @return A const string used to build the test name.
 const std::string suite("type-id: ");
 
 /**
- * \file
- * \ingroup typeid-tests
+ * @file
+ * @ingroup typeid-tests
  * TypeId test suite
  */
 
 /**
- * \ingroup core-tests
- * \defgroup typeid-tests TypeId class tests
+ * @ingroup core-tests
+ * @defgroup typeid-tests TypeId class tests
  */
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * Test for uniqueness of all TypeIds.
  */
@@ -120,7 +109,7 @@ UniqueTypeIdTestCase::DoRun()
 }
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * Collision test.
  */
@@ -201,7 +190,7 @@ CollisionTestCase::DoRun()
 }
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * Class used to test deprecated Attributes.
  */
@@ -227,8 +216,8 @@ class DeprecatedAttribute : public Object
     }
 
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -248,7 +237,7 @@ class DeprecatedAttribute : public Object
                               IntegerValue(1),
                               MakeIntegerAccessor(&DeprecatedAttribute::m_attr),
                               MakeIntegerChecker<int>(),
-                              TypeId::DEPRECATED,
+                              TypeId::SupportLevel::DEPRECATED,
                               "use 'attribute' instead")
                 // Obsolete attribute, as an example
                 .AddAttribute("obsoleteAttribute",
@@ -256,7 +245,7 @@ class DeprecatedAttribute : public Object
                               EmptyAttributeValue(),
                               MakeEmptyAttributeAccessor(),
                               MakeEmptyAttributeChecker(),
-                              TypeId::OBSOLETE,
+                              TypeId::SupportLevel::OBSOLETE,
                               "refactor to use 'attribute'")
 
                 // The new trace source
@@ -269,14 +258,14 @@ class DeprecatedAttribute : public Object
                                 "the old trace source",
                                 MakeTraceSourceAccessor(&DeprecatedAttribute::m_trace),
                                 "ns3::TracedValueCallback::Double",
-                                TypeId::DEPRECATED,
+                                TypeId::SupportLevel::DEPRECATED,
                                 "use 'trace' instead")
                 // Obsolete trace source, as an example
                 .AddTraceSource("obsoleteTraceSource",
                                 "the obsolete trace source",
                                 MakeEmptyTraceSourceAccessor(),
                                 "ns3::TracedValueCallback::Void",
-                                TypeId::OBSOLETE,
+                                TypeId::SupportLevel::OBSOLETE,
                                 "refactor to use 'trace'");
 
         return tid;
@@ -284,7 +273,7 @@ class DeprecatedAttribute : public Object
 };
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * Check deprecated Attributes and TraceSources.
  */
@@ -322,29 +311,33 @@ DeprecatedAttributeTestCase::DoRun()
                           true,
                           "lookup new attribute");
     std::cerr << suite << "lookup new attribute:"
-              << (ainfo.supportLevel == TypeId::SUPPORTED ? "supported" : "error") << std::endl;
+              << (ainfo.supportLevel == TypeId::SupportLevel::SUPPORTED ? "supported" : "error")
+              << std::endl;
 
     NS_TEST_ASSERT_MSG_EQ(tid.LookupAttributeByName("oldAttribute", &ainfo),
                           true,
                           "lookup old attribute");
     std::cerr << suite << "lookup old attribute:"
-              << (ainfo.supportLevel == TypeId::DEPRECATED ? "deprecated" : "error") << std::endl;
+              << (ainfo.supportLevel == TypeId::SupportLevel::DEPRECATED ? "deprecated" : "error")
+              << std::endl;
 
     TypeId::TraceSourceInformation tinfo;
     Ptr<const TraceSourceAccessor> acc;
     acc = tid.LookupTraceSourceByName("trace", &tinfo);
     NS_TEST_ASSERT_MSG_NE(acc, nullptr, "lookup new trace source");
     std::cerr << suite << "lookup new trace source:"
-              << (tinfo.supportLevel == TypeId::SUPPORTED ? "supported" : "error") << std::endl;
+              << (tinfo.supportLevel == TypeId::SupportLevel::SUPPORTED ? "supported" : "error")
+              << std::endl;
 
     acc = tid.LookupTraceSourceByName("oldTrace", &tinfo);
     NS_TEST_ASSERT_MSG_NE(acc, nullptr, "lookup old trace source");
     std::cerr << suite << "lookup old trace source:"
-              << (tinfo.supportLevel == TypeId::DEPRECATED ? "deprecated" : "error") << std::endl;
+              << (tinfo.supportLevel == TypeId::SupportLevel::DEPRECATED ? "deprecated" : "error")
+              << std::endl;
 }
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * Performance test: measure average lookup time.
  */
@@ -359,8 +352,8 @@ class LookupTimeTestCase : public TestCase
     void DoSetup() override;
     /**
      * Report the performance test results.
-     * \param how How the TypeId is searched (name or hash).
-     * \param delta The time required for the lookup.
+     * @param how How the TypeId is searched (name or hash).
+     * @param delta The time required for the lookup.
      */
     void Report(const std::string how, const uint32_t delta) const;
 
@@ -432,7 +425,7 @@ LookupTimeTestCase::Report(const std::string how, const uint32_t delta) const
 }
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * TypeId test suites.
  */
@@ -443,7 +436,7 @@ class TypeIdTestSuite : public TestSuite
 };
 
 TypeIdTestSuite::TypeIdTestSuite()
-    : TestSuite("type-id", UNIT)
+    : TestSuite("type-id", Type::UNIT)
 {
     // Turn on logging, so we see the result of collisions
     LogComponentEnable("TypeId", ns3::LogLevel(LOG_ERROR | LOG_PREFIX_FUNC));
@@ -452,16 +445,16 @@ TypeIdTestSuite::TypeIdTestSuite()
     // UniqueIdTestCase, the artificial collisions added by
     // CollisionTestCase will show up in the list of TypeIds
     // as chained.
-    AddTestCase(new UniqueTypeIdTestCase, QUICK);
-    AddTestCase(new CollisionTestCase, QUICK);
-    AddTestCase(new DeprecatedAttributeTestCase, QUICK);
+    AddTestCase(new UniqueTypeIdTestCase, Duration::QUICK);
+    AddTestCase(new CollisionTestCase, Duration::QUICK);
+    AddTestCase(new DeprecatedAttributeTestCase, Duration::QUICK);
 }
 
 /// Static variable for test initialization.
 static TypeIdTestSuite g_TypeIdTestSuite;
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * TypeId performance test suites.
  */
@@ -472,9 +465,9 @@ class TypeIdPerformanceSuite : public TestSuite
 };
 
 TypeIdPerformanceSuite::TypeIdPerformanceSuite()
-    : TestSuite("type-id-perf", PERFORMANCE)
+    : TestSuite("type-id-perf", Type::PERFORMANCE)
 {
-    AddTestCase(new LookupTimeTestCase, QUICK);
+    AddTestCase(new LookupTimeTestCase, Duration::QUICK);
 }
 
 /// Static variable for test initialization.

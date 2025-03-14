@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011, 2012 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  *         Nicola Baldo <nbaldo@cttc.es>
@@ -23,6 +12,7 @@
 #include "ns3/enum.h"
 #include "ns3/ff-mac-scheduler.h"
 #include "ns3/log.h"
+#include "ns3/lte-chunk-processor.h"
 #include "ns3/lte-enb-net-device.h"
 #include "ns3/lte-enb-phy.h"
 #include "ns3/lte-global-pathloss-database.h"
@@ -33,16 +23,15 @@
 #include "ns3/simulator.h"
 #include "ns3/string.h"
 #include "ns3/test.h"
-#include <ns3/lte-chunk-processor.h>
 
 using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("LteAntennaTest");
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Tests that the propagation model and the antenna parameters are
+ * @brief Tests that the propagation model and the antenna parameters are
  * generate the correct values. Different test cases are created by specifying different
  * antenna configurations and it is tested if for the given information the pathloss
  * value is as expected.
@@ -52,11 +41,11 @@ class LteEnbAntennaTestCase : public TestCase
   public:
     /**
      * Build name string
-     * \param orientationDegrees the orientation in degrees
-     * \param beamwidthDegrees the beam width in degrees
-     * \param x position of UE
-     * \param y position of UE
-     * \returns the name string
+     * @param orientationDegrees the orientation in degrees
+     * @param beamwidthDegrees the beam width in degrees
+     * @param x position of UE
+     * @param y position of UE
+     * @returns the name string
      */
     static std::string BuildNameString(double orientationDegrees,
                                        double beamwidthDegrees,
@@ -65,11 +54,11 @@ class LteEnbAntennaTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param orientationDegrees the orientation in degrees
-     * \param beamwidthDegrees the beam width in degrees
-     * \param x position of UE
-     * \param y position of UE
-     * \param antennaGainDb the antenna gain in dB
+     * @param orientationDegrees the orientation in degrees
+     * @param beamwidthDegrees the beam width in degrees
+     * @param x position of UE
+     * @param y position of UE
+     * @param antennaGainDb the antenna gain in dB
      */
     LteEnbAntennaTestCase(double orientationDegrees,
                           double beamwidthDegrees,
@@ -262,9 +251,9 @@ LteEnbAntennaTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Lte Enb Antenna Test Suite
+ * @brief Lte Enb Antenna Test Suite
  */
 class LteAntennaTestSuite : public TestSuite
 {
@@ -273,43 +262,55 @@ class LteAntennaTestSuite : public TestSuite
 };
 
 LteAntennaTestSuite::LteAntennaTestSuite()
-    : TestSuite("lte-antenna", SYSTEM)
+    : TestSuite("lte-antenna", Type::SYSTEM)
 {
     NS_LOG_FUNCTION(this);
 
     //                                      orientation beamwidth     x            y         gain
-    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, 1.0, 0.0, 0.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, 1.0, 1.0, -3.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, 1.0, -1.0, -3.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, -1.0, -1.0, -36.396), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, -1.0, -0.0, -1414.6), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, -1.0, 1.0, -36.396), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(45.0, 90.0, 1.0, 1.0, 0.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(-45.0, 90.0, 1.0, -1.0, 0.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(90.0, 90.0, 1.0, 1.0, -3.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(-90.0, 90.0, 1.0, -1.0, -3.0), TestCase::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, 1.0, 0.0, 0.0), TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, 1.0, 1.0, -3.0), TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, 1.0, -1.0, -3.0), TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, -1.0, -1.0, -36.396),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, -1.0, -0.0, -1414.6),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(0.0, 90.0, -1.0, 1.0, -36.396),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(45.0, 90.0, 1.0, 1.0, 0.0), TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(-45.0, 90.0, 1.0, -1.0, 0.0), TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(90.0, 90.0, 1.0, 1.0, -3.0), TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(-90.0, 90.0, 1.0, -1.0, -3.0), TestCase::Duration::QUICK);
 
-    AddTestCase(new LteEnbAntennaTestCase(0.0, 120.0, 1.0, 0.0, 0.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(0.0, 120.0, 0.5, sin(M_PI / 3), -3.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(0.0, 120.0, 0.5, -sin(M_PI / 3), -3.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(0.0, 120.0, -1.0, -2.0, -13.410), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(0.0, 120.0, -1.0, 1.0, -20.034), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(60.0, 120.0, 0.5, sin(M_PI / 3), 0.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(-60.0, 120.0, 0.5, -sin(M_PI / 3), 0.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(-60.0, 120.0, 0.5, -sin(M_PI / 3), 0.0), TestCase::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(0.0, 120.0, 1.0, 0.0, 0.0), TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(0.0, 120.0, 0.5, sin(M_PI / 3), -3.0),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(0.0, 120.0, 0.5, -sin(M_PI / 3), -3.0),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(0.0, 120.0, -1.0, -2.0, -13.410),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(0.0, 120.0, -1.0, 1.0, -20.034),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(60.0, 120.0, 0.5, sin(M_PI / 3), 0.0),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(-60.0, 120.0, 0.5, -sin(M_PI / 3), 0.0),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(-60.0, 120.0, 0.5, -sin(M_PI / 3), 0.0),
+                TestCase::Duration::QUICK);
     AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, -0.5, -sin(M_PI / 3), 0.0),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, 0.5, -sin(M_PI / 3), -3.0),
-                TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, -1, 0, -3.0), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, -1, 2, -15.578), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, 1, 0, -14.457), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, 1, 2, -73.154), TestCase::QUICK);
-    AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, 1, -0.1, -12.754), TestCase::QUICK);
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, -1, 0, -3.0), TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, -1, 2, -15.578),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, 1, 0, -14.457), TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, 1, 2, -73.154), TestCase::Duration::QUICK);
+    AddTestCase(new LteEnbAntennaTestCase(-120.0, 120.0, 1, -0.1, -12.754),
+                TestCase::Duration::QUICK);
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteAntennaTestSuite g_lteAntennaTestSuite;

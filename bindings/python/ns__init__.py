@@ -82,11 +82,18 @@ def _search_libraries() -> dict:
         filter(lambda x: x not in SYSTEM_LIBRARY_DIRECTORIES, set(library_search_paths))
     )
 
+    # Exclude injected windows paths in case of WSL
+    # BTW, why Microsoft? Who had this brilliant idea?
+    library_search_paths = list(filter(lambda x: "/mnt/c/" not in x, library_search_paths))
+
     # Search for the core library in the search paths
     libraries = []
     for search_path in library_search_paths:
         if os.path.exists(search_path):
-            libraries += glob.glob("%s/**/*.%s*" % (search_path, LIBRARY_EXTENSION), recursive=True)
+            libraries += glob.glob(
+                "%s/**/*.%s*" % (search_path, LIBRARY_EXTENSION),
+                recursive=not os.path.exists(os.path.join(search_path, "ns3")),
+            )
 
     # Search system library directories (too slow for recursive search)
     for search_path in SYSTEM_LIBRARY_DIRECTORIES:
@@ -108,7 +115,7 @@ def _search_libraries() -> dict:
             library_map[library_infix] = set()
 
         # Append the directory
-        library_map[library_infix].add(library)
+        library_map[library_infix].add(os.path.realpath(library))
 
     # Replace sets with lists
     for key, values in library_map.items():
@@ -238,11 +245,24 @@ def find_ns3_from_lock_file(lock_file: str) -> (str, list, str):
     # Should be the case when running from the source directory
     exec(open(lock_file).read(), {}, values)
     suffix = "-" + values["BUILD_PROFILE"] if values["BUILD_PROFILE"] != "release" else ""
-    modules = [module.replace("ns3-", "") for module in values["NS3_ENABLED_MODULES"]]
+    modules = list(
+        map(
+            lambda x: x.replace("ns3-", ""),
+            values["NS3_ENABLED_MODULES"] + values["NS3_ENABLED_CONTRIBUTED_MODULES"],
+        )
+    )
+
     prefix = values["out_dir"]
-    libraries = {
-        os.path.splitext(os.path.basename(x))[0]: x for x in os.listdir(os.path.join(prefix, "lib"))
-    }
+    path_to_lib = None
+    for variant in ["lib", "lib64"]:
+        path_candidate = os.path.join(prefix, variant)
+        if os.path.isdir(path_candidate):
+            path_to_lib = path_candidate
+            break
+    if path_to_lib is None:
+        raise Exception(f"Directory {prefix} does not contain subdirectory lib/ (nor lib64/).")
+    libraries = {os.path.splitext(os.path.basename(x))[0]: x for x in os.listdir(path_to_lib)}
+
     version = values["VERSION"]
 
     # Filter out test libraries and incorrect versions
@@ -508,11 +528,6 @@ def load_modules():
     # We expose cppyy to consumers of this module as ns.cppyy
     setattr(cppyy.gbl.ns3, "cppyy", cppyy)
 
-    # To maintain compatibility with pybindgen scripts,
-    # we set an attribute per module that just redirects to the upper object
-    for module in modules:
-        setattr(cppyy.gbl.ns3, module.replace("-", "_"), cppyy.gbl.ns3)
-
     # Set up a few tricks
     cppyy.cppdef(
         """
@@ -558,81 +573,6 @@ def load_modules():
     )
     setattr(cppyy.gbl.ns3, "LookupByNameFailSafe", cppyy.gbl.LookupByNameFailSafe)
 
-    def CreateObject(className):
-        try:
-            try:
-                func = "CreateObject%s" % re.sub("[<|>]", "_", className)
-                return getattr(cppyy.gbl, func)()
-            except AttributeError:
-                pass
-            try:
-                func = "Create%s" % re.sub("[<|>]", "_", className)
-                return getattr(cppyy.gbl, func)()
-            except AttributeError:
-                pass
-            raise AttributeError
-        except AttributeError:
-            try:
-                func = "CreateObject%s" % re.sub("[<|>]", "_", className)
-                cppyy.cppdef(
-                    """
-                            using namespace ns3;
-                            Ptr<%s> %s(){
-                                Ptr<%s> object = CreateObject<%s>();
-                                return object;
-                            }
-                            """
-                    % (className, func, className, className)
-                )
-            except Exception as e:
-                try:
-                    func = "Create%s" % re.sub("[<|>]", "_", className)
-                    cppyy.cppdef(
-                        """
-                                using namespace ns3;
-                                %s %s(){
-                                    %s object = %s();
-                                    return object;
-                                }
-                                """
-                        % (className, func, className, className)
-                    )
-                except Exception as e:
-                    exit(-1)
-        return getattr(cppyy.gbl, func)()
-
-    setattr(cppyy.gbl.ns3, "CreateObject", CreateObject)
-
-    def GetObject(parentObject, aggregatedObject):
-        # Objects have __cpp_name__ attributes, so parentObject
-        # should not have it while aggregatedObject can
-        if hasattr(parentObject, "__cpp_name__"):
-            raise Exception("Class was passed instead of an instance in parentObject")
-
-        aggregatedIsClass = hasattr(aggregatedObject, "__cpp_name__")
-        aggregatedIsString = type(aggregatedObject) == str
-        aggregatedIsInstance = not aggregatedIsClass and not aggregatedIsString
-
-        if aggregatedIsClass:
-            aggregatedType = aggregatedObject.__cpp_name__
-        if aggregatedIsInstance:
-            aggregatedType = aggregatedObject.__class__.__cpp_name__
-        if aggregatedIsString:
-            aggregatedType = aggregatedObject
-
-        cppyy.cppdef(
-            """using namespace ns3; template <> Ptr<%s> getAggregatedObject<%s>(Ptr<Object> parentPtr, %s param)
-               {
-                    return parentPtr->GetObject<%s>();
-               }
-            """
-            % (aggregatedType, aggregatedType, aggregatedType, aggregatedType)
-        )
-        return cppyy.gbl.getAggregatedObject(
-            parentObject, aggregatedObject if aggregatedIsClass else aggregatedObject.__class__
-        )
-
-    setattr(cppyy.gbl.ns3, "GetObject", GetObject)
     return cppyy.gbl.ns3
 
 

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2022 Universita' degli Studi di Napoli Federico II
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Stefano Avallone <stavallo@unina.it>
  */
@@ -38,10 +27,10 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("WifiEhtInfoElemsTest");
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test Multi-Link Element (Basic variant) serialization and deserialization
+ * @brief Test Multi-Link Element (Basic variant) serialization and deserialization
  */
 class BasicMultiLinkElementTest : public HeaderSerializationTestCase
 {
@@ -56,9 +45,9 @@ class BasicMultiLinkElementTest : public HeaderSerializationTestCase
      * Get a Multi-Link Element including the given Common Info field and the
      * given Per-STA Profile Subelements
      *
-     * \param commonInfo the given Common Info field
-     * \param subelements the given set of Per-STA Profile Subelements
-     * \return a Multi-Link Element
+     * @param commonInfo the given Common Info field
+     * @param subelements the given set of Per-STA Profile Subelements
+     * @return a Multi-Link Element
      */
     MultiLinkElement GetMultiLinkElement(
         const CommonInfoBasicMle& commonInfo,
@@ -594,10 +583,10 @@ BasicMultiLinkElementTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test Reduced Neighbor Report serialization and deserialization
+ * @brief Test Reduced Neighbor Report serialization and deserialization
  */
 class ReducedNeighborReportTest : public HeaderSerializationTestCase
 {
@@ -614,10 +603,10 @@ class ReducedNeighborReportTest : public HeaderSerializationTestCase
     /**
      * Get a Reduced Neighbor Report element including the given operating channels
      *
-     * \param channel2_4It a channel in the 2.4 GHz band
-     * \param channel5It a channel in the 5 GHz band
-     * \param channel6It a channel in the 6 GHz band
-     * \return a Reduced Neighbor Report element
+     * @param channel2_4It a channel in the 2.4 GHz band
+     * @param channel5It a channel in the 5 GHz band
+     * @param channel6It a channel in the 6 GHz band
+     * @return a Reduced Neighbor Report element
      */
     ReducedNeighborReport GetReducedNeighborReport(PhyOpChannelIt channel2_4It,
                                                    PhyOpChannelIt channel5It,
@@ -660,7 +649,7 @@ ReducedNeighborReportTest::GetReducedNeighborReport(PhyOpChannelIt channel2_4It,
         rnr.SetShortSsid(nbrId, 0, 0);
         rnr.SetBssParameters(nbrId, 0, 10);
         rnr.SetPsd20MHz(nbrId, 0, 50);
-        rnr.SetMldParameters(nbrId, 0, 0, 2, 3);
+        rnr.SetMldParameters(nbrId, 0, {0, 2, 3, 1, 1});
     }
 
     if (channel5It != WifiPhyOperatingChannel::m_frequencyChannels.cend())
@@ -677,14 +666,14 @@ ReducedNeighborReportTest::GetReducedNeighborReport(PhyOpChannelIt channel2_4It,
         rnr.SetShortSsid(nbrId, 0, 0);
         rnr.SetBssParameters(nbrId, 0, 20);
         rnr.SetPsd20MHz(nbrId, 0, 60);
-        rnr.SetMldParameters(nbrId, 0, 0, 3, 4);
+        rnr.SetMldParameters(nbrId, 0, {0, 3, 4, 0, 1});
         // Add another TBTT Information Field
         rnr.AddTbttInformationField(nbrId);
         rnr.SetBssid(nbrId, 1, Mac48Address("00:00:00:00:01:05"));
         rnr.SetShortSsid(nbrId, 1, 0);
         rnr.SetBssParameters(nbrId, 1, 30);
         rnr.SetPsd20MHz(nbrId, 1, 70);
-        rnr.SetMldParameters(nbrId, 1, 0, 4, 5);
+        rnr.SetMldParameters(nbrId, 1, {0, 4, 5, 1, 0});
     }
 
     if (channel6It != WifiPhyOperatingChannel::m_frequencyChannels.cend())
@@ -701,7 +690,7 @@ ReducedNeighborReportTest::GetReducedNeighborReport(PhyOpChannelIt channel2_4It,
         rnr.SetShortSsid(nbrId, 0, 0);
         rnr.SetBssParameters(nbrId, 0, 40);
         rnr.SetPsd20MHz(nbrId, 0, 80);
-        rnr.SetMldParameters(nbrId, 0, 0, 5, 6);
+        rnr.SetMldParameters(nbrId, 0, {0, 5, 6, 0, 0});
     }
 
     NS_LOG_DEBUG(info.str());
@@ -724,8 +713,8 @@ ReducedNeighborReportTest::DoRun()
         if (channel2_4It != WifiPhyOperatingChannel::m_frequencyChannels.cend())
         {
             channel2_4It = WifiPhyOperatingChannel::FindFirst(0,
-                                                              0,
-                                                              0,
+                                                              MHz_u{0},
+                                                              MHz_u{0},
                                                               WIFI_STANDARD_80211be,
                                                               WIFI_PHY_BAND_2_4GHZ,
                                                               channel2_4It);
@@ -733,8 +722,8 @@ ReducedNeighborReportTest::DoRun()
         if (channel5It != WifiPhyOperatingChannel::m_frequencyChannels.cend())
         {
             channel5It = WifiPhyOperatingChannel::FindFirst(0,
-                                                            0,
-                                                            0,
+                                                            MHz_u{0},
+                                                            MHz_u{0},
                                                             WIFI_STANDARD_80211be,
                                                             WIFI_PHY_BAND_5GHZ,
                                                             channel5It);
@@ -742,8 +731,8 @@ ReducedNeighborReportTest::DoRun()
         if (channel6It != WifiPhyOperatingChannel::m_frequencyChannels.cend())
         {
             channel6It = WifiPhyOperatingChannel::FindFirst(0,
-                                                            0,
-                                                            0,
+                                                            MHz_u{0},
+                                                            MHz_u{0},
                                                             WIFI_STANDARD_80211be,
                                                             WIFI_PHY_BAND_6GHZ,
                                                             channel6It);
@@ -768,36 +757,36 @@ ReducedNeighborReportTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test serialization and deserialization of EHT capabilities IE
+ * @brief Test serialization and deserialization of EHT capabilities IE
  */
 class WifiEhtCapabilitiesIeTest : public HeaderSerializationTestCase
 {
   public:
     /**
      * Constructor
-     * \param is2_4Ghz whether the PHY is operating in 2.4 GHz
-     * \param channelWidth the supported channel width in MHz
+     * @param is2_4Ghz whether the PHY is operating in 2.4 GHz
+     * @param channelWidth the supported channel width
      */
-    WifiEhtCapabilitiesIeTest(bool is2_4Ghz, uint16_t channelWidth);
+    WifiEhtCapabilitiesIeTest(bool is2_4Ghz, MHz_u channelWidth);
     ~WifiEhtCapabilitiesIeTest() override = default;
 
     /**
      * Generate the HE capabilities IE.
      *
-     * \return the generated HE capabilities IE
+     * @return the generated HE capabilities IE
      */
     HeCapabilities GetHeCapabilities() const;
 
     /**
      * Generate the EHT capabilities IE.
      *
-     * \param maxMpduLength the maximum MPDU length in bytes
-     * \param maxAmpduSize the maximum A-MPDU size in bytes
-     * \param maxSupportedMcs the maximum EHT MCS supported by the PHY
-     * \return the generated EHT capabilities IE
+     * @param maxMpduLength the maximum MPDU length in bytes
+     * @param maxAmpduSize the maximum A-MPDU size in bytes
+     * @param maxSupportedMcs the maximum EHT MCS supported by the PHY
+     * @return the generated EHT capabilities IE
      */
     EhtCapabilities GetEhtCapabilities(uint16_t maxMpduLength,
                                        uint32_t maxAmpduSize,
@@ -806,52 +795,52 @@ class WifiEhtCapabilitiesIeTest : public HeaderSerializationTestCase
     /**
      * Serialize the EHT capabilities in a buffer.
      *
-     * \param ehtCapabilities the EHT capabilities
-     * \return the buffer in which the EHT capabilities has been serialized
+     * @param ehtCapabilities the EHT capabilities
+     * @return the buffer in which the EHT capabilities has been serialized
      */
     Buffer SerializeIntoBuffer(const EhtCapabilities& ehtCapabilities);
 
     /**
      * Check that the given buffer contains the given value at the given position.
      *
-     * \param buffer the given buffer
-     * \param position the given position (starting at 0)
-     * \param value the given value
+     * @param buffer the given buffer
+     * @param position the given position (starting at 0)
+     * @param value the given value
      */
     void CheckSerializedByte(const Buffer& buffer, uint32_t position, uint8_t value);
 
     /**
      * Check the content of the EHT MAC Capabilities Information subfield.
      *
-     * \param buffer the buffer containing the serialized EHT capabilities
-     * \param expectedValueFirstByte the expected value for the first byte
+     * @param buffer the buffer containing the serialized EHT capabilities
+     * @param expectedValueFirstByte the expected value for the first byte
      */
     void CheckEhtMacCapabilitiesInformation(const Buffer& buffer, uint8_t expectedValueFirstByte);
 
     /**
      * Check the content of the EHT PHY Capabilities Information subfield.
      *
-     * \param buffer the buffer containing the serialized EHT capabilities
-     * \param expectedValueSixthByte the expected value for the sixth byte
+     * @param buffer the buffer containing the serialized EHT capabilities
+     * @param expectedValueSixthByte the expected value for the sixth byte
      */
     void CheckEhtPhyCapabilitiesInformation(const Buffer& buffer, uint8_t expectedValueSixthByte);
 
     /**
      * Check the content of the Supported EHT-MCS And NSS Set subfield.
-     * \param maxSupportedMcs the maximum EHT MCS supported by the PHY
+     * @param maxSupportedMcs the maximum EHT MCS supported by the PHY
      *
-     * \param buffer the buffer containing the serialized EHT capabilities
+     * @param buffer the buffer containing the serialized EHT capabilities
      */
     void CheckSupportedEhtMcsAndNssSet(const Buffer& buffer, uint8_t maxSupportedMcs);
 
   private:
     void DoRun() override;
 
-    bool m_is2_4Ghz;         //!< whether the PHY is operating in 2.4 GHz
-    uint16_t m_channelWidth; //!< Supported channel width by the PHY (in MHz)
+    bool m_is2_4Ghz;      //!< whether the PHY is operating in 2.4 GHz
+    MHz_u m_channelWidth; //!< Supported channel width by the PHY
 };
 
-WifiEhtCapabilitiesIeTest ::WifiEhtCapabilitiesIeTest(bool is2_4Ghz, uint16_t channelWidth)
+WifiEhtCapabilitiesIeTest ::WifiEhtCapabilitiesIeTest(bool is2_4Ghz, MHz_u channelWidth)
     : HeaderSerializationTestCase{"Check serialization and deserialization of EHT capabilities IE"},
       m_is2_4Ghz{is2_4Ghz},
       m_channelWidth{channelWidth}
@@ -863,15 +852,15 @@ WifiEhtCapabilitiesIeTest::GetHeCapabilities() const
 {
     HeCapabilities capabilities;
     uint8_t channelWidthSet = 0;
-    if ((m_channelWidth >= 40) && m_is2_4Ghz)
+    if ((m_channelWidth >= MHz_u{40}) && m_is2_4Ghz)
     {
         channelWidthSet |= 0x01;
     }
-    if ((m_channelWidth >= 80) && !m_is2_4Ghz)
+    if ((m_channelWidth >= MHz_u{80}) && !m_is2_4Ghz)
     {
         channelWidthSet |= 0x02;
     }
-    if ((m_channelWidth >= 160) && !m_is2_4Ghz)
+    if ((m_channelWidth >= MHz_u{160}) && !m_is2_4Ghz)
     {
         channelWidthSet |= 0x04;
     }
@@ -899,7 +888,7 @@ WifiEhtCapabilitiesIeTest::GetEhtCapabilities(uint16_t maxMpduLength,
         (maxSupportedMcs >= 12) ? 1 : 0;
     capabilities.m_phyCapabilities.supportRx1024And4096QamForRuSmallerThan242Tones =
         (maxSupportedMcs >= 12) ? 1 : 0;
-    if (m_channelWidth == 20)
+    if (m_channelWidth == MHz_u{20})
     {
         for (auto maxMcs : {7, 9, 11, 13})
         {
@@ -925,7 +914,7 @@ WifiEhtCapabilitiesIeTest::GetEhtCapabilities(uint16_t maxMpduLength,
                 maxMcs <= maxSupportedMcs ? 4 : 0);
         }
     }
-    if (m_channelWidth >= 160)
+    if (m_channelWidth >= MHz_u{160})
     {
         for (auto maxMcs : {9, 11, 13})
         {
@@ -937,7 +926,7 @@ WifiEhtCapabilitiesIeTest::GetEhtCapabilities(uint16_t maxMpduLength,
                                                     maxMcs <= maxSupportedMcs ? 1 : 0);
         }
     }
-    if (m_channelWidth == 320)
+    if (m_channelWidth == MHz_u{320})
     {
         capabilities.m_phyCapabilities.support320MhzIn6Ghz = 1;
         for (auto maxMcs : {9, 11, 13})
@@ -990,7 +979,7 @@ void
 WifiEhtCapabilitiesIeTest::CheckEhtPhyCapabilitiesInformation(const Buffer& buffer,
                                                               uint8_t expectedValueSixthByte)
 {
-    CheckSerializedByte(buffer, 5, (m_channelWidth == 320) ? 0x02 : 0x00);
+    CheckSerializedByte(buffer, 5, (m_channelWidth == MHz_u{320}) ? 0x02 : 0x00);
     CheckSerializedByte(buffer, 6, 0x00);
     CheckSerializedByte(buffer, 7, 0x00);
     CheckSerializedByte(buffer, 8, 0x00);
@@ -1005,7 +994,7 @@ void
 WifiEhtCapabilitiesIeTest::CheckSupportedEhtMcsAndNssSet(const Buffer& buffer,
                                                          uint8_t maxSupportedMcs)
 {
-    if (m_channelWidth == 20)
+    if (m_channelWidth == MHz_u{20})
     {
         CheckSerializedByte(buffer, 14, 0x21); // first byte of Supported EHT-MCS And NSS Set
         CheckSerializedByte(
@@ -1033,7 +1022,7 @@ WifiEhtCapabilitiesIeTest::CheckSupportedEhtMcsAndNssSet(const Buffer& buffer,
             16,
             maxSupportedMcs >= 12 ? 0x43 : 0x00); // third byte of Supported EHT-MCS And NSS Set
     }
-    if (m_channelWidth >= 160)
+    if (m_channelWidth >= MHz_u{160})
     {
         CheckSerializedByte(buffer, 17, 0x12); // first byte of EHT-MCS Map (BW = 160 MHz)
         CheckSerializedByte(
@@ -1045,7 +1034,7 @@ WifiEhtCapabilitiesIeTest::CheckSupportedEhtMcsAndNssSet(const Buffer& buffer,
             19,
             maxSupportedMcs >= 12 ? 0x12 : 0x00); // third byte of EHT-MCS Map (BW = 160 MHz)
     }
-    if (m_channelWidth == 320)
+    if (m_channelWidth == MHz_u{320})
     {
         CheckSerializedByte(buffer, 20, 0x34); // first byte of EHT-MCS Map (BW = 320 MHz)
         CheckSerializedByte(
@@ -1064,7 +1053,7 @@ WifiEhtCapabilitiesIeTest::DoRun()
 {
     uint8_t maxMcs = 0;
     uint16_t expectedEhtMcsAndNssSetSize = 0;
-    switch (m_channelWidth)
+    switch (static_cast<uint16_t>(m_channelWidth))
     {
     case 20:
         expectedEhtMcsAndNssSetSize = 4;
@@ -1090,8 +1079,9 @@ WifiEhtCapabilitiesIeTest::DoRun()
                             9 +                          // EHT PHY Capabilities Information
                             expectedEhtMcsAndNssSetSize; // Supported EHT-MCS And NSS Set
 
-    auto mapType = m_channelWidth == 20 ? EhtMcsAndNssSet::EHT_MCS_MAP_TYPE_20_MHZ_ONLY
-                                        : EhtMcsAndNssSet::EHT_MCS_MAP_TYPE_NOT_LARGER_THAN_80_MHZ;
+    auto mapType = m_channelWidth == MHz_u{20}
+                       ? EhtMcsAndNssSet::EHT_MCS_MAP_TYPE_20_MHZ_ONLY
+                       : EhtMcsAndNssSet::EHT_MCS_MAP_TYPE_NOT_LARGER_THAN_80_MHZ;
 
     {
         maxMcs = 11;
@@ -1198,10 +1188,10 @@ WifiEhtCapabilitiesIeTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test TID-To-Link Mapping information element serialization and deserialization
+ * @brief Test TID-To-Link Mapping information element serialization and deserialization
  */
 class TidToLinkMappingElementTest : public HeaderSerializationTestCase
 {
@@ -1209,10 +1199,10 @@ class TidToLinkMappingElementTest : public HeaderSerializationTestCase
     /**
      * Constructor
      *
-     * \param direction The direction for the TID-to-link mapping
-     * \param mappingSwitchTime the Mapping Switching Time
-     * \param expectedDuration the Expected Duration
-     * \param mappings A TID-indexed map of the link sets the TIDs are mapped to
+     * @param direction The direction for the TID-to-link mapping
+     * @param mappingSwitchTime the Mapping Switching Time
+     * @param expectedDuration the Expected Duration
+     * @param mappings A TID-indexed map of the link sets the TIDs are mapped to
      */
     TidToLinkMappingElementTest(WifiDirection direction,
                                 std::optional<Time> mappingSwitchTime,
@@ -1287,10 +1277,10 @@ TidToLinkMappingElementTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test EHT Operation information element serialization and deserialization
+ * @brief Test EHT Operation information element serialization and deserialization
  */
 class EhtOperationElementTest : public HeaderSerializationTestCase
 {
@@ -1298,16 +1288,16 @@ class EhtOperationElementTest : public HeaderSerializationTestCase
     /**
      * Constructor
      *
-     * \param params the EHT Operation Parameters field
-     * \param rxMaxNss0_7 RX max NSS that supports EHT MCS 0-7
-     * \param txMaxNss0_7 TX max NSS that supports EHT MCS 0-7
-     * \param rxMaxNss8_9 RX max NSS that supports EHT MCS 8-9
-     * \param txMaxNss8_9 TX max NSS that supports EHT MCS 8-9
-     * \param rxMaxNss10_11 RX max NSS that supports EHT MCS 10-11
-     * \param txMaxNss10_11 TX max NSS that supports EHT MCS 10-11
-     * \param rxMaxNss12_13 RX max NSS that supports EHT MCS 12-13
-     * \param txMaxNss12_13 TX max NSS that supports EHT MCS 12-13
-     * \param opInfo the EHT Operation Information field
+     * @param params the EHT Operation Parameters field
+     * @param rxMaxNss0_7 RX max NSS that supports EHT MCS 0-7
+     * @param txMaxNss0_7 TX max NSS that supports EHT MCS 0-7
+     * @param rxMaxNss8_9 RX max NSS that supports EHT MCS 8-9
+     * @param txMaxNss8_9 TX max NSS that supports EHT MCS 8-9
+     * @param rxMaxNss10_11 RX max NSS that supports EHT MCS 10-11
+     * @param txMaxNss10_11 TX max NSS that supports EHT MCS 10-11
+     * @param rxMaxNss12_13 RX max NSS that supports EHT MCS 12-13
+     * @param txMaxNss12_13 TX max NSS that supports EHT MCS 12-13
+     * @param opInfo the EHT Operation Information field
      */
     EhtOperationElementTest(const EhtOperation::EhtOpParams& params,
                             uint8_t rxMaxNss0_7,
@@ -1360,10 +1350,10 @@ EhtOperationElementTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief wifi EHT Information Elements Test Suite
+ * @brief wifi EHT Information Elements Test Suite
  */
 class WifiEhtInfoElemsTestSuite : public TestSuite
 {
@@ -1372,31 +1362,31 @@ class WifiEhtInfoElemsTestSuite : public TestSuite
 };
 
 WifiEhtInfoElemsTestSuite::WifiEhtInfoElemsTestSuite()
-    : TestSuite("wifi-eht-info-elems", UNIT)
+    : TestSuite("wifi-eht-info-elems", Type::UNIT)
 {
-    AddTestCase(new BasicMultiLinkElementTest(), TestCase::QUICK);
-    AddTestCase(new ReducedNeighborReportTest(), TestCase::QUICK);
-    AddTestCase(new WifiEhtCapabilitiesIeTest(false, 20), TestCase::QUICK);
-    AddTestCase(new WifiEhtCapabilitiesIeTest(true, 20), TestCase::QUICK);
-    AddTestCase(new WifiEhtCapabilitiesIeTest(false, 80), TestCase::QUICK);
-    AddTestCase(new WifiEhtCapabilitiesIeTest(true, 40), TestCase::QUICK);
-    AddTestCase(new WifiEhtCapabilitiesIeTest(true, 80), TestCase::QUICK);
-    AddTestCase(new WifiEhtCapabilitiesIeTest(false, 160), TestCase::QUICK);
-    AddTestCase(new WifiEhtCapabilitiesIeTest(false, 320), TestCase::QUICK);
+    AddTestCase(new BasicMultiLinkElementTest(), TestCase::Duration::QUICK);
+    AddTestCase(new ReducedNeighborReportTest(), TestCase::Duration::QUICK);
+    AddTestCase(new WifiEhtCapabilitiesIeTest(false, MHz_u{20}), TestCase::Duration::QUICK);
+    AddTestCase(new WifiEhtCapabilitiesIeTest(true, MHz_u{20}), TestCase::Duration::QUICK);
+    AddTestCase(new WifiEhtCapabilitiesIeTest(false, MHz_u{80}), TestCase::Duration::QUICK);
+    AddTestCase(new WifiEhtCapabilitiesIeTest(true, MHz_u{40}), TestCase::Duration::QUICK);
+    AddTestCase(new WifiEhtCapabilitiesIeTest(true, MHz_u{80}), TestCase::Duration::QUICK);
+    AddTestCase(new WifiEhtCapabilitiesIeTest(false, MHz_u{160}), TestCase::Duration::QUICK);
+    AddTestCase(new WifiEhtCapabilitiesIeTest(false, MHz_u{320}), TestCase::Duration::QUICK);
     AddTestCase(
         new TidToLinkMappingElementTest(WifiDirection::DOWNLINK, std::nullopt, std::nullopt, {}),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
     AddTestCase(new TidToLinkMappingElementTest(WifiDirection::UPLINK,
                                                 MicroSeconds(500 * 1024),
                                                 MicroSeconds(300 * 1024),
                                                 {{3, std::set<uint8_t>{0, 4, 6}}}),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new TidToLinkMappingElementTest(
                     WifiDirection::BOTH_DIRECTIONS,
                     std::nullopt,
                     MicroSeconds(100 * 1024),
                     {{3, std::set<uint8_t>{0, 4, 6}}, {6, std::set<uint8_t>{3, 7, 11, 14}}}),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new TidToLinkMappingElementTest(WifiDirection::DOWNLINK,
                                                 MicroSeconds(100 * 1024),
                                                 std::nullopt,
@@ -1408,9 +1398,9 @@ WifiEhtInfoElemsTestSuite::WifiEhtInfoElemsTestSuite()
                                                  {5, std::set<uint8_t>{14}},
                                                  {6, std::set<uint8_t>{1, 3, 6}},
                                                  {7, std::set<uint8_t>{11, 14}}}),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new EhtOperationElementTest({0, 0, 0, 0, 0}, 1, 2, 3, 4, 5, 6, 7, 8, std::nullopt),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new EhtOperationElementTest({1, 0, 0, 1, 0},
                                             1,
                                             2,
@@ -1421,7 +1411,7 @@ WifiEhtInfoElemsTestSuite::WifiEhtInfoElemsTestSuite()
                                             7,
                                             8,
                                             EhtOperation::EhtOpInfo{{1}, 3, 5}),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new EhtOperationElementTest({1, 1, 1, 1, 2},
                                             1,
                                             2,
@@ -1432,7 +1422,7 @@ WifiEhtInfoElemsTestSuite::WifiEhtInfoElemsTestSuite()
                                             7,
                                             8,
                                             EhtOperation::EhtOpInfo{{2}, 4, 6, 3000}),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 }
 
 static WifiEhtInfoElemsTestSuite g_wifiEhtInfoElemsTestSuite; ///< the test suite

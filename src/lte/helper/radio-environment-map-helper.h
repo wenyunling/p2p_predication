@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -20,7 +9,7 @@
 #ifndef RADIO_ENVIRONMENT_MAP_HELPER_H
 #define RADIO_ENVIRONMENT_MAP_HELPER_H
 
-#include <ns3/object.h>
+#include "ns3/object.h"
 
 #include <fstream>
 
@@ -35,7 +24,7 @@ class SpectrumChannel;
 class MobilityModel;
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * Generates a 2D map of the SINR from the strongest transmitter in the
  * downlink of an LTE FDD system. For instructions on usage, please refer to
@@ -51,18 +40,18 @@ class RadioEnvironmentMapHelper : public Object
     void DoDispose() override;
     /**
      * Register this type.
-     * \return The object TypeId.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
     /**
-     * \return the bandwidth (in num of RBs) over which SINR is calculated
+     * @return the bandwidth (in num of RBs) over which SINR is calculated
      */
     uint16_t GetBandwidth() const;
 
     /**
      *
-     * \param bw  the bandwidth (in num of RBs) over which SINR is calculated
+     * @param bw  the bandwidth (in num of RBs) over which SINR is calculated
      */
     void SetBandwidth(uint16_t bw);
 
@@ -91,10 +80,10 @@ class RadioEnvironmentMapHelper : public Object
      * Mobilize all the listeners to a specified area. Afterwards, schedule a
      * call to PrintAndReset() in 0.5 milliseconds.
      *
-     * \param xMin X coordinate of the first SINR listening point to deploy.
-     * \param xMax X coordinate of the last SINR listening point to deploy.
-     * \param yMin Y coordinate of the first SINR listening point to deploy.
-     * \param yMax Y coordinate of the last SINR listening point to deploy.
+     * @param xMin X coordinate of the first SINR listening point to deploy.
+     * @param xMax X coordinate of the last SINR listening point to deploy.
+     * @param yMin Y coordinate of the first SINR listening point to deploy.
+     * @param yMax Y coordinate of the last SINR listening point to deploy.
      */
     void RunOneIteration(double xMin, double xMax, double yMin, double yMax);
 

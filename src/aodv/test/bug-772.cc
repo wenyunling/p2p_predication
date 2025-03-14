@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 IITP RAS
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Pavel Boyko <boyko@iitp.ru>
  */
@@ -157,13 +146,11 @@ Bug772ChainTest::CreateDevices()
                                  "DataMode",
                                  StringValue("OfdmRate6Mbps"),
                                  "RtsCtsThreshold",
-                                 StringValue("2200"),
-                                 "MaxSlrc",
-                                 UintegerValue(7));
+                                 StringValue("2200"));
     NetDeviceContainer devices = wifi.Install(wifiPhy, wifiMac, *m_nodes);
 
     // Assign fixed stream numbers to wifi and channel random variables
-    streamsUsed += wifi.AssignStreams(devices, streamsUsed);
+    streamsUsed += WifiHelper::AssignStreams(devices, streamsUsed);
     // Assign 6 streams per device
     NS_TEST_ASSERT_MSG_EQ(streamsUsed, (devices.GetN() * 2), "Stream assignment mismatch");
     streamsUsed += wifiChannel.AssignStreams(chan, streamsUsed);
@@ -195,7 +182,7 @@ Bug772ChainTest::CreateDevices()
     m_sendSocket->Connect(InetSocketAddress(interfaces.GetAddress(m_size - 1), m_port));
     m_sendSocket->SetAllowBroadcast(true);
     Simulator::ScheduleWithContext(m_sendSocket->GetNode()->GetId(),
-                                   Seconds(1.0),
+                                   Seconds(1),
                                    &Bug772ChainTest::SendData,
                                    this,
                                    m_sendSocket);

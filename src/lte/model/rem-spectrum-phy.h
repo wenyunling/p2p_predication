@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -20,13 +9,13 @@
 #ifndef REM_SPECTRUM_PHY_H
 #define REM_SPECTRUM_PHY_H
 
-#include <ns3/mobility-model.h>
-#include <ns3/net-device.h>
-#include <ns3/nstime.h>
-#include <ns3/packet.h>
-#include <ns3/spectrum-channel.h>
-#include <ns3/spectrum-phy.h>
-#include <ns3/spectrum-value.h>
+#include "ns3/mobility-model.h"
+#include "ns3/net-device.h"
+#include "ns3/nstime.h"
+#include "ns3/packet.h"
+#include "ns3/spectrum-channel.h"
+#include "ns3/spectrum-phy.h"
+#include "ns3/spectrum-value.h"
 
 #include <fstream>
 #include <string>
@@ -56,8 +45,8 @@ class RemSpectrumPhy : public SpectrumPhy
     // inherited from Object
     void DoDispose() override;
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -74,14 +63,14 @@ class RemSpectrumPhy : public SpectrumPhy
     /**
      * set the RX spectrum model to be used
      *
-     * \param m
+     * @param m
      */
     void SetRxSpectrumModel(Ptr<const SpectrumModel> m);
 
     /**
      *
-     * \param noisePower the noise power
-     * \return the Signal to Noise Ratio calculated
+     * @param noisePower the noise power
+     * @return the Signal to Noise Ratio calculated
      */
     double GetSinr(double noisePower) const;
 
@@ -93,7 +82,7 @@ class RemSpectrumPhy : public SpectrumPhy
 
     /**
      *
-     * \return true if active
+     * @return true if active
      */
     bool IsActive() const;
 
@@ -106,14 +95,14 @@ class RemSpectrumPhy : public SpectrumPhy
     /**
      * set usage of DataChannel
      *
-     * \param value if true, data channel signal will be processed, control signal otherwise
+     * @param value if true, data channel signal will be processed, control signal otherwise
      */
     void SetUseDataChannel(bool value);
 
     /**
      * set RB Id
      *
-     * \param rbId Resource Block Id which will be processed
+     * @param rbId Resource Block Id which will be processed
      */
     void SetRbId(int32_t rbId);
 

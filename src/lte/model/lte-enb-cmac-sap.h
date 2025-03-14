@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  *         Marco Miozzo <mmiozzo@cttc.es>
@@ -21,7 +10,7 @@
 #ifndef LTE_ENB_CMAC_SAP_H
 #define LTE_ENB_CMAC_SAP_H
 
-#include <ns3/packet.h>
+#include "ns3/packet.h"
 
 namespace ns3
 {
@@ -50,14 +39,14 @@ class LteEnbCmacSapProvider
     /**
      * Add UE function
      *
-     * \param rnti
+     * @param rnti
      */
     virtual void AddUe(uint16_t rnti) = 0;
 
     /**
      * remove the UE, e.g., after handover or termination of the RRC connection
      *
-     * \param rnti
+     * @param rnti
      */
     virtual void RemoveUe(uint16_t rnti) = 0;
 
@@ -82,28 +71,28 @@ class LteEnbCmacSapProvider
     /**
      * Add a new logical channel
      *
-     * \param lcinfo
-     * \param msu
+     * @param lcinfo
+     * @param msu
      */
     virtual void AddLc(LcInfo lcinfo, LteMacSapUser* msu) = 0;
 
     /**
      * Reconfigure an existing logical channel
      *
-     * \param lcinfo
+     * @param lcinfo
      */
     virtual void ReconfigureLc(LcInfo lcinfo) = 0;
 
     /**
      * release an existing logical channel
      *
-     * \param rnti
-     * \param lcid
+     * @param rnti
+     * @param lcid
      */
     virtual void ReleaseLc(uint16_t rnti, uint8_t lcid) = 0;
 
     /**
-     * \brief Parameters for [re]configuring the UE
+     * @brief Parameters for [re]configuring the UE
      */
     struct UeConfig
     {
@@ -120,7 +109,7 @@ class LteEnbCmacSapProvider
     /**
      * update the configuration of the UE
      *
-     * \param params
+     * @param params
      */
     virtual void UeUpdateConfigurationReq(UeConfig params) = 0;
 
@@ -138,12 +127,12 @@ class LteEnbCmacSapProvider
 
     /**
      *
-     * \return the current RACH configuration of the MAC
+     * @return the current RACH configuration of the MAC
      */
     virtual RachConfig GetRachConfig() = 0;
 
     /**
-     * \brief AllocateNcRaPreambleReturnValue structure
+     * @brief AllocateNcRaPreambleReturnValue structure
      *
      */
     struct AllocateNcRaPreambleReturnValue
@@ -157,9 +146,9 @@ class LteEnbCmacSapProvider
      * Allocate a random access preamble for non-contention based random access (e.g., for
      * handover).
      *
-     * \param rnti the RNTI of the UE who will perform non-contention based random access
+     * @param rnti the RNTI of the UE who will perform non-contention based random access
      *
-     * \return  the newly allocated random access preamble
+     * @return  the newly allocated random access preamble
      */
     virtual AllocateNcRaPreambleReturnValue AllocateNcRaPreamble(uint16_t rnti) = 0;
 };
@@ -179,21 +168,21 @@ class LteEnbCmacSapUser
     /**
      * request the allocation of a Temporary C-RNTI
      *
-     * \return the T-C-RNTI
+     * @return the T-C-RNTI
      */
     virtual uint16_t AllocateTemporaryCellRnti() = 0;
 
     /**
      * notify the result of the last LC config operation
      *
-     * \param rnti the rnti of the user
-     * \param lcid the logical channel id
-     * \param success true if the operation was successful, false otherwise
+     * @param rnti the rnti of the user
+     * @param lcid the logical channel id
+     * @param success true if the operation was successful, false otherwise
      */
     virtual void NotifyLcConfigResult(uint16_t rnti, uint8_t lcid, bool success) = 0;
 
     /**
-     * \brief Parameters for [re]configuring the UE
+     * @brief Parameters for [re]configuring the UE
      */
     struct UeConfig
     {
@@ -210,12 +199,12 @@ class LteEnbCmacSapUser
     /**
      * Notify the RRC of a UE config updated requested by the MAC (normally, by the scheduler)
      *
-     * \param params
+     * @param params
      */
     virtual void RrcConfigurationUpdateInd(UeConfig params) = 0;
 
     /**
-     * \brief Is random access completed function
+     * @brief Is random access completed function
      *
      * This method is executed to decide if the non contention based
      * preamble has to be reused or not upon preamble expiry. If the random access
@@ -223,8 +212,8 @@ class LteEnbCmacSapUser
      * If not, the same UE retains the preamble and other available preambles are
      * assigned to the required UEs.
      *
-     * \param rnti the C-RNTI identifying the user
-     * \return true if the random access in connected mode is completed
+     * @param rnti the C-RNTI identifying the user
+     * @return true if the random access in connected mode is completed
      */
     virtual bool IsRandomAccessCompleted(uint16_t rnti) = 0;
 };

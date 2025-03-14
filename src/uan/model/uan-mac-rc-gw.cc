@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Leonard Tracy <lentracy@gmail.com>
  */
@@ -306,7 +295,7 @@ UanMacRcGw::StartCycle()
     // Calculate dataRate
     uint32_t totalBytes = 0;
     uint32_t totalFrames = 0;
-    Time pDelay = Seconds(0);
+    Time pDelay;
     if (numRts > 0)
     {
         auto rit = m_requests.begin();
@@ -483,7 +472,7 @@ UanMacRcGw::EndCycle()
 {
     NS_LOG_DEBUG(Now().As(Time::S) << " GW Ending cycle");
 
-    Time nextAck = Seconds(0);
+    Time nextAck;
 
     Time ackTime = Seconds(m_ackSize * 8.0 / m_phy->GetMode(m_currentRateNum).GetDataRateBps());
 

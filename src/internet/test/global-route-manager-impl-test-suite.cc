@@ -2,18 +2,7 @@
  * Copyright 2007 University of Washington
  * Copyright (C) 1999, 2000 Kunihiro Ishiguro, Toshiaki Takada
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors:  Tom Henderson (tomhend@u.washington.edu)
  *
@@ -31,15 +20,15 @@
 using namespace ns3;
 
 /**
- * \ingroup internet
- * \ingroup tests
- * \defgroup internet-test internet module tests
+ * @ingroup internet
+ * @ingroup tests
+ * @defgroup internet-test internet module tests
  */
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Global Route Manager Test
+ * @brief Global Route Manager Test
  */
 class GlobalRouteManagerImplTestCase : public TestCase
 {
@@ -202,7 +191,7 @@ GlobalRouteManagerImplTestCase::DoRun()
 
     Simulator::Run();
 
-    /// \todo here we should do some verification of the routes built
+    /// @todo here we should do some verification of the routes built
 
     Simulator::Destroy();
 
@@ -210,15 +199,15 @@ GlobalRouteManagerImplTestCase::DoRun()
     // all of the LSAs, which each destroys the attached LinkRecords.
     delete srm;
 
-    /// \todo Testing
+    /// @todo Testing
     // No testing has actually been done other than making sure that this code
     // does not crash
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Global Route Manager TestSuite
+ * @brief Global Route Manager TestSuite
  */
 class GlobalRouteManagerImplTestSuite : public TestSuite
 {
@@ -229,9 +218,9 @@ class GlobalRouteManagerImplTestSuite : public TestSuite
 };
 
 GlobalRouteManagerImplTestSuite::GlobalRouteManagerImplTestSuite()
-    : TestSuite("global-route-manager-impl", UNIT)
+    : TestSuite("global-route-manager-impl", Type::UNIT)
 {
-    AddTestCase(new GlobalRouteManagerImplTestCase(), TestCase::QUICK);
+    AddTestCase(new GlobalRouteManagerImplTestCase(), TestCase::Duration::QUICK);
 }
 
 static GlobalRouteManagerImplTestSuite

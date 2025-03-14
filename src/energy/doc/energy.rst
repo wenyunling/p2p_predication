@@ -3,7 +3,7 @@
 .. highlight:: bash
 
 Energy Framework
-----------------
+================
 
 Energy is a key issue for wireless devices, and network researchers
 often need to investigate the energy consumption at a node or in the
@@ -16,9 +16,6 @@ simulations requires support for modeling diverse energy models in
 ns-3. The |ns3| energy framework provides the basis for energy storing
 consumption and harvesting.
 
-
-Model Description
-*****************
 The framework is implemented into the ``src/energy/`` folder.
 
 The |ns3| energy framework is composed of 3 essential parts:
@@ -35,13 +32,21 @@ The |ns3| energy framework is composed of 3 essential parts:
 
     |ns3| energy framework
 
+Scope and Limitations
+---------------------
+
+* In the ``GenericBatteryModel`` charging behavior (voltage as a function of SoC) is included but is not been thoroughly tested. Testing requires the implementation of a harvesting device (A charger) capable of providing a CCCV charging method (typical of rechargeable batteries).
+* In the ``GenericBatteryModel`` impedance (battery resistance) is constant, battery aging or temperature effects are not considered.
+* The Rv battery model has some reported issues (See: issue `#164 <https://gitlab.com/nsnam/ns-3-dev/-/issues/164>`_).
+* The harvesting model can only be used with a ``BasicEnergySource`` because it does not consider the current capacity or voltage of the battery.
+* The is no energy sources or energy models others than the ones mentioned in this document. Support for other communication devices (lr-wpan, WiMax, etc) and other pieces of hardware (UAV, sensors, CPU) is required.
 
 Energy Source Models
-====================
+--------------------
 
 An energy source represents a power supply. In |ns3|, nodes can
 have one or more energy sources. Likewise, energy sources can be
-connected to multiple energy consuption models (Device energy models).
+connected to multiple energy consumption models (Device energy models).
 Connecting an energy source to a device energy model implies that the
 corresponding device draws power from the source.
 When energy is completely drained from the energy source, it notifies to the device energy models on
@@ -67,11 +72,11 @@ Harvester update triggers an update to the connected Energy Source.
 
 The ``EnergySource`` base class keeps a list of devices (``DeviceEnergyModel`` objects) and energy harvesters (``EnergyHarvester`` objects) that are using the particular Energy Source as power supply. When energy is completely drained, the Energy Source will notify all devices on this list. Each device can then handle this event independently, based on the desired behavior that should be followed in case of power outage.
 
-Generic Batttery Model
-######################
+Generic Battery Model
+~~~~~~~~~~~~~~~~~~~~~
 
 The Generic battery model is able to represent 4 basic types of batteries
-chemestries: Lithium-Ion (LiIon) or Lithium Polymer (LiPo), Nickel Cadmium (NiCd),
+chemistries: Lithium-Ion (LiIon) or Lithium Polymer (LiPo), Nickel Cadmium (NiCd),
 Lead Acid, and Nickel-metal hydride (NiMH). The main difference between these batteries
 is the shape of the discharge curves when using constant discharge current and that
 NiCd and NiMh batteries hysteresis phenomenon is also modeled. Peurket effect, aging,
@@ -81,10 +86,10 @@ arqueotipes must be chosen.
 
 The Generic Battery Model is directly based by the works of Trembley et al.
 Tremblay's model on itself is based on a popular battery model created by Shepherd.
-Tremblay's model consist in visually identify a set of points from batteries manufacters'
+Tremblay's model consist in visually identify a set of points from batteries manufacturers'
 discharge curves datasheets.
 
-.. _fig-energyFramework:
+.. _fig-dischargeCurve:
 
 .. figure:: figures/dischargeCurve.*
 
@@ -108,57 +113,33 @@ Additionally, it is also necessary to set the values of:
 * :math:`cutoffVoltage:` Required if we desired to inform connected energy consumption models that the battery has reached its discharged point.
 * :math:`i:` The discharge current used to discharge the battery. This value is provided by the energy consumption model attached to the battery.
 
-The value of :math:`R` is typically included in the datatsheets, however, because :math:`R` variability is not modeled in |ns3| (The resistance is fixed), it is necessary
+The value of :math:`R` is typically included in the datasheets, however, because :math:`R` variability is not modeled in |ns3| (The resistance is fixed), it is necessary
 to discretely adjust its value to obtain the desired discharge curves. The value :math:`i_{typical}` can
 be obtained by inferring its value from the discharged curves shown in datasheets. When modeling
 the behavior of a new battery, it is important to chose values that satisfies more than one curve,
 trial an error adjustments might be necessary to obtain the desired results.
 
-Attributes:
-
-* ``FullVoltage``: Represents the :math:`V_{full}` value.
-* ``MaxCapacity``: Represents the :math:`Q` value.
-* ``ExponentialVoltage``: Represents the :math:`V_{exp}` value.
-* ``ExponentialCapacity``: Represents the :math:`Q_{exp}` value.
-* ``NominalVoltage``: Represents the :math:`V_{nom}` value.
-* ``NominalCapacity``: Represents the :math:`Q_{nom}` value.
-* ``InternalResistance``: Represents the :math:`R` value.
-* ``TypicalDischargeCurrent``: Represents the :math:`i_{typical}` value.
-* ``CutoffVoltage``: The voltage where the battery is considered depleted.
-* ``BatteryType``: Indicates the battery type used.
-* ``PeriodicEnergyUpdateInterval``: Indicates how often the update values are obtained.
-* ``LowBatteryThreshold``: Additional voltage threshold to indicate when the battery has low energy.
-
 The process described above can be simplified by installing batteries presents of previously tested
 batteries using helpers. Details on helpers usage are detailed in the following sections.
 
 
-RV Battery Model
-################
 
-Attributes:
+Rv Energy Source
+~~~~~~~~~~~~~~~~
 
-* ``RvBatteryModelPeriodicEnergyUpdateInterval``: RV battery model sampling
-  interval.
-* ``RvBatteryModelOpenCircuitVoltage``: RV battery model open circuit voltage.
-* ``RvBatteryModelCutoffVoltage``: RV battery model cutoff voltage.
-* ``RvBatteryModelAlphaValue``: RV battery model alpha value.
-* ``RvBatteryModelBetaValue``: RV battery model beta value.
-* ``RvBatteryModelNumOfTerms``: The number of terms of the infinite sum for estimating battery level.
+The Rakhmatov (Rv) energy source model is the first implementation of a non-linear Li-Ion energy source model for ns-3.
+Originally created for ns-2, it was later on ported to ns-3 by Wu et al. The Rv model requires some real batteries experiments apriori
+in order to obtain the attribute values required by the model. For more information read the original author's paper.
 
 Basic Energy Source
-###################
+~~~~~~~~~~~~~~~~~~~
 
-Attributes:
-
-* ``BasicEnergySourceInitialEnergyJ``: Initial energy stored in
-  basic energy source.
-* ``BasicEnergySupplyVoltageV``: Initial supply voltage for basic energy source.
-* ``PeriodicEnergyUpdateInterval``: Time between two consecutive periodic energy updates.
-
+The Basic energy source represents an "ideal" linear energy source.
+Its straightforward design makes it useful for testing and designing energy models.
+However, users should consider utilizing different energy sources for testing realistic energy consumption scenarios, as the basic energy source is not reflective of most existing energy sources, such as the non-linear nature of energy sources such as batteries.
 
 Energy Consumption Models
-=========================
+-------------------------
 
 A ``DeviceEnergyModel`` is the energy consumption model of a device installed on the node.
 It is designed to be a state based model where each device is assumed to have a number of states, and each state is associated with a power consumption value.
@@ -169,7 +150,7 @@ Since the vehicle's speed can take continuous values within a certain range, it 
 However, by converting the speed value into current draw directly, the same set of ``DeviceEnergyModel`` APIs can still be used.
 
 WiFi Radio Energy Model
-#######################
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The WiFi Radio Energy Model is the energy consumption model of a Wifi
 net device. It provides a state for each of the available states of
@@ -208,18 +189,9 @@ used to install the model on a device, a callback is implicitly made
 so that the Wifi PHY is resumed from the OFF mode when the energy
 source is recharged.
 
-Attributes
-
-* ``IdleCurrentA``: The default radio Idle current in Ampere.
-* ``CcaBusyCurrentA``: The default radio CCA Busy State current in Ampere.
-* ``TxCurrentA``: The radio Tx current in Ampere.
-* ``RxCurrentA``: The radio Rx current in Ampere.
-* ``SwitchingCurrentA``: The default radio Channel Switch current in Ampere.
-* ``SleepCurrentA``: The radio Sleep current in Ampere.
-* ``TxCurrentModel``: A pointer to the attached tx current model.
 
 Energy Harvesting Models
-========================
+------------------------
 
 The energy harvester represents the elements that supply energy from
 the environment and recharge an energy source to which it is
@@ -233,7 +205,7 @@ power consumption of the device needs to be jointly modeled.
 
 
 Usage
-*****
+-----
 
 The main way that ns-3 users will typically interact with the Energy
 Framework is through the helper API and through the publicly visible
@@ -260,7 +232,7 @@ regarding the current harvestable power and the total energy harvested
 by the harvester.
 
 Helpers
-=======
+~~~~~~~
 
 **Energy Source Helper:**
 
@@ -285,7 +257,7 @@ object.
 **Generic Battery Model Helper:**
 
 The ``GenericBatteryModelHelper`` can be used to easily install an energy source into a
-node or node container of one of four types of chemestries (Li-Ion,Lead Acid, NiCd,NiMH).
+node or node container of one of four types of chemistries (Li-Ion,Lead Acid, NiCd,NiMH).
 Users must use one of the available presets that represent an specific battery.
 
 .. sourcecode:: cpp
@@ -327,24 +299,73 @@ Another option is to manually configure the values that makes the preset:
 Usage of both of these type of configurations are shown in ``generic-battery-discharge-example.cc``.
 The following table is a list of the available presents in |ns3|:
 
+.. table::
+   :align: left
+   :widths: auto
 
-+---------------------------+-------------------------------------------------+
-| Preset Name               | Description                                     |
-+===========================+=================================================+
-| PANASONIC_CGR18650DA_LION | Panasonic Li-Ion  (3.6V, 2450Ah, Size A)        |
-+---------------------------+-------------------------------------------------+
-| PANASONIC_HHR650D_NIMH    | Panasonic NiMh HHR550D (1.2V 6.5Ah, Size D)     |
-+---------------------------+-------------------------------------------------+
-| CSB_GP1272_LEADACID       | CSB Lead Acid GP1272 (12V,7.2Ah)                |
-+---------------------------+-------------------------------------------------+
-| PANASONIC_N700AAC_NICD    | Panasonic NiCd N-700AAC (1.2V 700mAh, Size: AA) |
-+---------------------------+-------------------------------------------------+
-| RSPRO_LGP12100_LEADACID   | Rs Pro Lead Acid LGP12100 (12V, 100Ah)          |
-+---------------------------+-------------------------------------------------+
+   +------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------+
+   | Preset Name                                                                                                                  | Description                                     |
+   +==============================================================================================================================+=================================================+
+   | `PANASONIC_CGR18650DA_LION <https://www.nsnam.org/wp-content/uploads/2024/lr-wpan-datasheets/LiIonPanasonicCGR18650DA.pdf>`_ | Panasonic Li-Ion  (3.6V, 2450Ah, Size A)        |
+   +------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------+
+   | `PANASONIC_HHR650D_NIMH <https://www.nsnam.org/wp-content/uploads/2024/lr-wpan-datasheets/NiMHPanasonicHHR650D3.pdf>`_       | Panasonic NiMh HHR550D (1.2V 6.5Ah, Size D)     |
+   +------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------+
+   | `CSB_GP1272_LEADACID <https://www.nsnam.org/wp-content/uploads/2024/lr-wpan-datasheets/LeadAcidCSBGP1272.pdf>`_              | CSB Lead Acid GP1272 (12V,7.2Ah)                |
+   +------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------+
+   | `PANASONIC_N700AAC_NICD <https://www.nsnam.org/wp-content/uploads/2024/lr-wpan-datasheets/NiCdPanasonicN700AAC.pdf>`_        | Panasonic NiCd N-700AAC (1.2V 700mAh, Size: AA) |
+   +------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------+
+   | `RSPRO_LGP12100_LEADACID <https://www.nsnam.org/wp-content/uploads/2024/lr-wpan-datasheets/LeadAcidRsProLBLGP12100.pdf>`_    | Rs Pro Lead Acid LGP12100 (12V, 100Ah)          |
+   +------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------+
+
+All the |ns3| available presets have been created by carefully choosing the batteries attribute values based on the information found on each battery datasheet.
+
+Attributes
+~~~~~~~~~~
+
+Besides using established presets, users can create their own energy sources by using the **Generic Battery Model**  attributes to create their own energy sources (i.e. batteries):
+
+* ``FullVoltage``: Represents the :math:`V_{full}` value.
+* ``MaxCapacity``: Represents the :math:`Q` value.
+* ``ExponentialVoltage``: Represents the :math:`V_{exp}` value.
+* ``ExponentialCapacity``: Represents the :math:`Q_{exp}` value.
+* ``NominalVoltage``: Represents the :math:`V_{nom}` value.
+* ``NominalCapacity``: Represents the :math:`Q_{nom}` value.
+* ``InternalResistance``: Represents the :math:`R` value.
+* ``TypicalDischargeCurrent``: Represents the :math:`i_{typical}` value.
+* ``CutoffVoltage``: The voltage where the battery is considered depleted.
+* ``BatteryType``: Indicates the battery type used.
+* ``PeriodicEnergyUpdateInterval``: Indicates how often the update values are obtained.
+* ``LowBatteryThreshold``: Additional voltage threshold to indicate when the battery has low energy.
+
+**Rv Energy source** attributes:
+
+* ``RvBatteryModelPeriodicEnergyUpdateInterval``: RV battery model sampling interval.
+* ``RvBatteryModelOpenCircuitVoltage``: RV battery model open circuit voltage.
+* ``RvBatteryModelCutoffVoltage``: RV battery model cutoff voltage.
+* ``RvBatteryModelAlphaValue``: RV battery model alpha value.
+* ``RvBatteryModelBetaValue``: RV battery model beta value.
+* ``RvBatteryModelNumOfTerms``: The number of terms of the infinite sum for estimating battery level.
+
+**Basic Energy source** attributes:
+
+* ``BasicEnergySourceInitialEnergyJ``: Initial energy stored in
+  basic energy source.
+* ``BasicEnergySupplyVoltageV``: Initial supply voltage for basic energy source.
+* ``PeriodicEnergyUpdateInterval``: Time between two consecutive periodic energy updates.
 
 
-Tracing
-=======
+**Wifi Radio Energy model** attributes:
+
+* ``IdleCurrentA``: The default radio Idle current in Ampere.
+* ``CcaBusyCurrentA``: The default radio CCA Busy State current in Ampere.
+* ``TxCurrentA``: The radio Tx current in Ampere.
+* ``RxCurrentA``: The radio Rx current in Ampere.
+* ``SwitchingCurrentA``: The default radio Channel Switch current in Ampere.
+* ``SleepCurrentA``: The radio Sleep current in Ampere.
+* ``TxCurrentModel``: A pointer to the attached tx current model.
+
+Traces
+~~~~~~
 
 Traced values differ between Energy Sources, Devices Energy Models and
 Energy Harvesters implementations, please look at the specific child
@@ -368,8 +389,8 @@ class for details.
 * ``HarvestedPower``: Current power provided by the BasicEnergyHarvester.
 * ``TotalEnergyHarvested``: Total energy harvested by the BasicEnergyHarvester.
 
-Examples
-========
+Examples and Tests
+------------------
 
 The following examples have been written.
 
@@ -384,18 +405,19 @@ Examples in ``src/energy/examples``:
 Examples in ``examples/energy``:
 
 * ``energy-model-example.cc``
-* ``energy-model-with-harvesting-example.cc``: Shows the harvesting model usage. Only usable with basicEnergySources.
+* ``energy-model-with-harvesting-example.cc``: Shows the harvesting model usage. Only usable with ``BasicEnergySource``.
 
 
-Tests
-=====
 The following tests have been written, which can be found in ``src/energy/tests/``:
+
+* ``basic-energy-harvester-test.cc``: Test energy harvester procedure
+* ``li-ion-energy-source-test.cc``: Test the procedure of the li-ion energy source (Deprecated). Use generic-battery-model instead.
 
 
 Validation
-**********
+----------
 
-The RV battery model is validated by comparing results with what was presented in the original RV battery model paper. The generic battery model is validated by superimposing the obtained discharge curves with manufacters's datasheets plots. The following shows the results of the ``generic-battery-discharge-example.cc`` superimposed to manufacter's datasheets charts:
+The RV battery model is validated by comparing results with what was presented in the original RV battery model paper. The generic battery model is validated by superimposing the obtained discharge curves with manufacturer's datasheets plots. The following shows the results of the ``generic-battery-discharge-example.cc`` superimposed to manufacturer's datasheets charts:
 
 
 .. _fig-leadacid:
@@ -422,28 +444,10 @@ The RV battery model is validated by comparing results with what was presented i
 
     NiMH battery discharge curve (Panasonic HHR650D)
 
-
-
-Scope and Limitations
-=====================
-
-* In the ``GenericBatteryModel`` charging behavior (voltage as a function of SoC) is included but is not been thoroughly tested. Testing requires the implementation of a harvesting device (A charger) capable of providing a CCCV charging method typically used in batteries.
-* In the ``GenericBatteryModel`` impedance (battery resistance) is constant, battery aging or temperature effects are not considered.
-* The Rv battery model has some reported issues (See: issue #164)
-* The harvesting mode can only be used with basic energy sources because it does not consider the current capacity or voltage of the battery.
-
-Future Work
-===========
-
-* Support of device energy models for PHY layers (lr-wpan, WiMax, etc) and other pieces of hardware (UAV, sensors, CPU).
-* Support for realistical charging batteries in the ``GenericBatteryModule``.
-* Support for device capable of charging batteries (e.g. chargers with CCCV capabilities).
-* Implement an energy harvester that recharges the energy sources according to the power levels defined in a user customizable dataset of real measurements.
-
 References
-==========
+----------
 
-Energy source models and energy consumption models:
+**Energy source models and energy consumption models**:
 
 [`1 <https://labs.ece.uw.edu/nsl/papers/SIMUTools-11.pdf>`_] H. Wu, S. Nabar and R. Poovendran. An Energy Framework for the Network Simulator 3 (ns-3).
 
@@ -459,12 +463,12 @@ Energy source models and energy consumption models:
 
 [`7 <https://www.mathworks.com/help/sps/powersys/ref/battery.html>`_]  MatWorks SimuLink Generic Battery Model
 
-[8] C. M. Shepherd. 1965. Design of Primary and Secondary Cells: II . An Equation Describing Battery Discharge. Journal of The Electrochemical Society 112, 7 (jul 1965), 657. https://doi.org/10.1149/1.2423659
+[`8 <https://iopscience.iop.org/article/10.1149/1.2423659>`_] C. M. Shepherd. 1965. Design of Primary and Secondary Cells: II . An Equation Describing Battery Discharge. Journal of The Electrochemical Society 112, 7 (jul 1965), 657. https://doi.org/10.1149/1.2423659
 
 [`9 <https://dl.acm.org/doi/abs/10.1145/3592149.3592156>`_] Alberto Gallegos Ramonet, Alexander Guzman Urbina, and Kazuhiko Kinoshita. 2023. Evaluation and Extension of ns-3 Battery Framework. In Proceedings of the 2023 Workshop on ns-3 (WNS3 '23). Association for Computing Machinery, New York, NY, USA, 102–108. https://doi.org/10.1145/3592149.3592156
 
 
-Energy Harvesting Models:
+**Energy harvesting models:**
 
 [10] C. Tapparello, H. Ayatollahi and W. Heinzelman. Extending the Energy Framework for Network Simulator 3 (ns-3). Workshop on ns-3 (WNS3), Poster Session, Atlanta, GA, USA. May, 2014.
 

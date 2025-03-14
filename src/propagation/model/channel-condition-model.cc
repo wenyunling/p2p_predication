@@ -2,31 +2,66 @@
  * Copyright (c) 2019 SIGNET Lab, Department of Information Engineering,
  * University of Padova
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #include "channel-condition-model.h"
 
 #include "ns3/boolean.h"
 #include "ns3/double.h"
+#include "ns3/geocentric-constant-position-mobility-model.h"
 #include "ns3/log.h"
 #include "ns3/mobility-model.h"
 #include "ns3/node.h"
+#include "ns3/pointer.h"
 #include "ns3/simulator.h"
 #include "ns3/string.h"
 
 #include <cmath>
+
+namespace
+{
+
+/// NTN Dense Urban LOS probabilities from table 6.6.1-1 of 3GPP 38.811
+const std::map<int, double> DenseUrbanLOSProb{
+    {10, {0.282}},
+    {20, {0.331}},
+    {30, {0.398}},
+    {40, {0.468}},
+    {50, {0.537}},
+    {60, {0.612}},
+    {70, {0.738}},
+    {80, {0.820}},
+    {90, {0.981}},
+};
+
+/// NTN Urban LOS probabilities from table 6.6.1-1 of 3GPP 38.811
+const std::map<int, double> UrbanLOSProb{
+    {10, {0.246}},
+    {20, {0.386}},
+    {30, {0.493}},
+    {40, {0.613}},
+    {50, {0.726}},
+    {60, {0.805}},
+    {70, {0.919}},
+    {80, {0.968}},
+    {90, {0.992}},
+};
+
+/// NTN Suburban LOS probabilities from table 6.6.1-1 of 3GPP 38.811
+const std::map<int, double> SuburbanRuralLOSProb{
+    {10, {0.782}},
+    {20, {0.869}},
+    {30, {0.919}},
+    {40, {0.929}},
+    {50, {0.935}},
+    {60, {0.940}},
+    {70, {0.949}},
+    {80, {0.952}},
+    {90, {0.998}},
+};
+
+} // namespace
 
 namespace ns3
 {
@@ -353,7 +388,7 @@ void
 ThreeGppChannelConditionModel::DoDispose()
 {
     m_channelConditionMap.clear();
-    m_updatePeriod = Seconds(0.0);
+    m_updatePeriod = Seconds(0);
 }
 
 Ptr<ChannelCondition>
@@ -535,6 +570,29 @@ ThreeGppChannelConditionModel::GetKey(Ptr<const MobilityModel> a, Ptr<const Mobi
     uint32_t key = (((x1 + x2) * (x1 + x2 + 1)) / 2) + x2;
 
     return key;
+}
+
+std::tuple<double, double>
+ThreeGppChannelConditionModel::GetQuantizedElevationAngle(Ptr<const MobilityModel> a,
+                                                          Ptr<const MobilityModel> b)
+{
+    Ptr<MobilityModel> aMobNonConst = ConstCast<MobilityModel>(a);
+    Ptr<MobilityModel> bMobNonConst = ConstCast<MobilityModel>(b);
+
+    // check if aMob and bMob are of type GeocentricConstantPositionMobilityModel
+    auto aNTNMob = DynamicCast<GeocentricConstantPositionMobilityModel>(aMobNonConst);
+    auto bNTNMob = DynamicCast<GeocentricConstantPositionMobilityModel>(bMobNonConst);
+    NS_ASSERT_MSG(aNTNMob && bNTNMob,
+                  "Mobility Models need to be of type Geocentric for NTN scenarios");
+
+    double elevAngle = aNTNMob->GetElevationAngle(bNTNMob);
+    // Round the elevation angle into a two-digits integer between 10 and 90, as specified in
+    // Sec. 6.6.1, 3GPP TR 38.811 v15.4.0
+    int elevAngleQuantized = (elevAngle < 10) ? 10 : round(elevAngle / 10) * 10;
+    NS_ASSERT_MSG((elevAngleQuantized >= 10) && (elevAngleQuantized <= 90),
+                  "Invalid elevation angle!");
+
+    return std::make_tuple(elevAngle, elevAngleQuantized);
 }
 
 // ------------------------------------------------------------------------- //
@@ -827,6 +885,102 @@ ThreeGppIndoorOpenOfficeChannelConditionModel::ComputePlos(Ptr<const MobilityMod
     }
 
     return pLos;
+}
+
+// ------------------------------------------------------------------------- //
+
+NS_OBJECT_ENSURE_REGISTERED(ThreeGppNTNDenseUrbanChannelConditionModel);
+
+TypeId
+ThreeGppNTNDenseUrbanChannelConditionModel::GetTypeId()
+{
+    static TypeId tid = TypeId("ns3::ThreeGppNTNDenseUrbanChannelConditionModel")
+                            .SetParent<ThreeGppChannelConditionModel>()
+                            .SetGroupName("Propagation")
+                            .AddConstructor<ThreeGppNTNDenseUrbanChannelConditionModel>();
+    return tid;
+}
+
+double
+ThreeGppNTNDenseUrbanChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,
+                                                        Ptr<const MobilityModel> b) const
+{
+    // Compute the LOS probability (see 3GPP TR 38.811, Table 6.6.1-1).
+    // The elevation angle is first quantized to one of the reference angles.
+    auto [elevAngle, quantizedElevAngle] = GetQuantizedElevationAngle(a, b);
+    return DenseUrbanLOSProb.at(quantizedElevAngle);
+}
+
+// ------------------------------------------------------------------------- //
+
+NS_OBJECT_ENSURE_REGISTERED(ThreeGppNTNUrbanChannelConditionModel);
+
+TypeId
+ThreeGppNTNUrbanChannelConditionModel::GetTypeId()
+{
+    static TypeId tid = TypeId("ns3::ThreeGppNTNUrbanChannelConditionModel")
+                            .SetParent<ThreeGppChannelConditionModel>()
+                            .SetGroupName("Propagation")
+                            .AddConstructor<ThreeGppNTNUrbanChannelConditionModel>();
+    return tid;
+}
+
+double
+ThreeGppNTNUrbanChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,
+                                                   Ptr<const MobilityModel> b) const
+{
+    // Compute the LOS probability (see 3GPP TR 38.811, Table 6.6.1-1).
+    // The elevation angle is first quantized to one of the reference angles.
+    auto [elevAngle, quantizedElevAngle] = GetQuantizedElevationAngle(a, b);
+    return UrbanLOSProb.at(quantizedElevAngle);
+}
+
+// ------------------------------------------------------------------------- //
+
+NS_OBJECT_ENSURE_REGISTERED(ThreeGppNTNSuburbanChannelConditionModel);
+
+TypeId
+ThreeGppNTNSuburbanChannelConditionModel::GetTypeId()
+{
+    static TypeId tid = TypeId("ns3::ThreeGppNTNSuburbanChannelConditionModel")
+                            .SetParent<ThreeGppChannelConditionModel>()
+                            .SetGroupName("Propagation")
+                            .AddConstructor<ThreeGppNTNSuburbanChannelConditionModel>();
+    return tid;
+}
+
+double
+ThreeGppNTNSuburbanChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,
+                                                      Ptr<const MobilityModel> b) const
+{
+    // Compute the LOS probability (see 3GPP TR 38.811, Table 6.6.1-1).
+    // The elevation angle is first quantized to one of the reference angles.
+    auto [elevAngle, quantizedElevAngle] = GetQuantizedElevationAngle(a, b);
+    return SuburbanRuralLOSProb.at(quantizedElevAngle);
+}
+
+// ------------------------------------------------------------------------- //
+
+NS_OBJECT_ENSURE_REGISTERED(ThreeGppNTNRuralChannelConditionModel);
+
+TypeId
+ThreeGppNTNRuralChannelConditionModel::GetTypeId()
+{
+    static TypeId tid = TypeId("ns3::ThreeGppNTNRuralChannelConditionModel")
+                            .SetParent<ThreeGppChannelConditionModel>()
+                            .SetGroupName("Propagation")
+                            .AddConstructor<ThreeGppNTNRuralChannelConditionModel>();
+    return tid;
+}
+
+double
+ThreeGppNTNRuralChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,
+                                                   Ptr<const MobilityModel> b) const
+{
+    // Compute the LOS probability (see 3GPP TR 38.811, Table 6.6.1-1).
+    // The elevation angle is first quantized to one of the reference angles.
+    auto [elevAngle, quantizedElevAngle] = GetQuantizedElevationAngle(a, b);
+    return SuburbanRuralLOSProb.at(quantizedElevAngle);
 }
 
 } // end namespace ns3

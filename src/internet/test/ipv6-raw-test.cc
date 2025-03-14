@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012 Hajime Tazaki
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Hajime Tazaki <tazaki@sfc.wide.ad.jp>
  */
@@ -55,9 +44,9 @@
 using namespace ns3;
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 RAW Socket Test
+ * @brief IPv6 RAW Socket Test
  */
 class Ipv6RawSocketImplTest : public TestCase
 {
@@ -65,15 +54,15 @@ class Ipv6RawSocketImplTest : public TestCase
     Ptr<Packet> m_receivedPacket2; //!< Received packet (2).
 
     /**
-     * \brief Send data.
-     * \param socket The sending socket.
-     * \param to Destination address.
+     * @brief Send data.
+     * @param socket The sending socket.
+     * @param to Destination address.
      */
     void DoSendData(Ptr<Socket> socket, std::string to);
     /**
-     * \brief Send data.
-     * \param socket The sending socket.
-     * \param to Destination address.
+     * @brief Send data.
+     * @param socket The sending socket.
+     * @param to Destination address.
      */
     void SendData(Ptr<Socket> socket, std::string to);
 
@@ -82,27 +71,27 @@ class Ipv6RawSocketImplTest : public TestCase
     Ipv6RawSocketImplTest();
 
     /**
-     * \brief Receive data.
-     * \param socket The receiving socket.
-     * \param packet The received packet.
-     * \param from The sender.
+     * @brief Receive data.
+     * @param socket The receiving socket.
+     * @param packet The received packet.
+     * @param from The sender.
      */
     void ReceivePacket(Ptr<Socket> socket, Ptr<Packet> packet, const Address& from);
     /**
-     * \brief Receive data.
-     * \param socket The receiving socket.
-     * \param packet The received packet.
-     * \param from The sender.
+     * @brief Receive data.
+     * @param socket The receiving socket.
+     * @param packet The received packet.
+     * @param from The sender.
      */
     void ReceivePacket2(Ptr<Socket> socket, Ptr<Packet> packet, const Address& from);
     /**
-     * \brief Receive data.
-     * \param socket The receiving socket.
+     * @brief Receive data.
+     * @param socket The receiving socket.
      */
     void ReceivePkt(Ptr<Socket> socket);
     /**
-     * \brief Receive data.
-     * \param socket The receiving socket.
+     * @brief Receive data.
+     * @param socket The receiving socket.
      */
     void ReceivePkt2(Ptr<Socket> socket);
 };
@@ -322,17 +311,17 @@ Ipv6RawSocketImplTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 RAW Socket TestSuite
+ * @brief IPv6 RAW Socket TestSuite
  */
 class Ipv6RawTestSuite : public TestSuite
 {
   public:
     Ipv6RawTestSuite()
-        : TestSuite("ipv6-raw", UNIT)
+        : TestSuite("ipv6-raw", Type::UNIT)
     {
-        AddTestCase(new Ipv6RawSocketImplTest, TestCase::QUICK);
+        AddTestCase(new Ipv6RawSocketImplTest, TestCase::Duration::QUICK);
     }
 };
 

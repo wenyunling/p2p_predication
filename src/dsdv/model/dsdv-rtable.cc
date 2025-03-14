@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 Hemanth Narra
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Hemanth Narra <hemanth@ittc.ku.com>
  *
@@ -251,7 +240,7 @@ RoutingTable::Purge(std::map<Ipv4Address, RoutingTableEntry>& removedAddresses)
             ++i;
             m_ipv4AddressEntry.erase(itmp);
         }
-        /** \todo Need to decide when to invalidate a route */
+        /** @todo Need to decide when to invalidate a route */
         /*          else if (i->second.GetLifeTime() > m_holddownTime)
          {
          ++i;
@@ -312,7 +301,7 @@ RoutingTable::AnyRunningEvent(Ipv4Address address)
         return false;
     }
     event = i->second;
-    return event.IsRunning();
+    return event.IsPending();
 }
 
 bool
@@ -340,7 +329,7 @@ RoutingTable::DeleteIpv4Event(Ipv4Address address)
         return false;
     }
     event = i->second;
-    if (event.IsRunning())
+    if (event.IsPending())
     {
         return false;
     }

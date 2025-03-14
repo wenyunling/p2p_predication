@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 The Boeing Company
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #include "ns3/abort.h"
@@ -34,14 +23,14 @@ NS_LOG_COMPONENT_DEFINE("PropagationLossModelsTest");
 // ===========================================================================
 
 /**
- * \ingroup propagation
- * \defgroup propagation-test Propagation module tests
+ * @ingroup propagation
+ * @defgroup propagation-test Propagation module tests
  */
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
- * \brief FriisPropagationLossModel Test
+ * @brief FriisPropagationLossModel Test
  */
 class FriisPropagationLossModelTestCase : public TestCase
 {
@@ -150,9 +139,9 @@ FriisPropagationLossModelTestCase::DoRun()
 // Added for Two-Ray Ground Model - tomhewer@mac.com
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
- * \brief TwoRayGroundPropagationLossModel Test
+ * @brief TwoRayGroundPropagationLossModel Test
  */
 class TwoRayGroundPropagationLossModelTestCase : public TestCase
 {
@@ -290,9 +279,9 @@ TwoRayGroundPropagationLossModelTestCase::DoRun()
 }
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
- * \brief LogDistancePropagationLossModel Test
+ * @brief LogDistancePropagationLossModel Test
  */
 class LogDistancePropagationLossModelTestCase : public TestCase
 {
@@ -392,9 +381,9 @@ LogDistancePropagationLossModelTestCase::DoRun()
 }
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
- * \brief MatrixPropagationLossModel Test
+ * @brief MatrixPropagationLossModel Test
  */
 class MatrixPropagationLossModelTestCase : public TestCase
 {
@@ -445,9 +434,9 @@ MatrixPropagationLossModelTestCase::DoRun()
 }
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
- * \brief RangePropagationLossModel Test
+ * @brief RangePropagationLossModel Test
  */
 class RangePropagationLossModelTestCase : public TestCase
 {
@@ -490,9 +479,9 @@ RangePropagationLossModelTestCase::DoRun()
 }
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
- * \brief Propagation models TestSuite
+ * @brief Propagation models TestSuite
  *
  * This TestSuite tests the following models:
  *   - FriisPropagationLossModel
@@ -508,13 +497,13 @@ class PropagationLossModelsTestSuite : public TestSuite
 };
 
 PropagationLossModelsTestSuite::PropagationLossModelsTestSuite()
-    : TestSuite("propagation-loss-model", UNIT)
+    : TestSuite("propagation-loss-model", Type::UNIT)
 {
-    AddTestCase(new FriisPropagationLossModelTestCase, TestCase::QUICK);
-    AddTestCase(new TwoRayGroundPropagationLossModelTestCase, TestCase::QUICK);
-    AddTestCase(new LogDistancePropagationLossModelTestCase, TestCase::QUICK);
-    AddTestCase(new MatrixPropagationLossModelTestCase, TestCase::QUICK);
-    AddTestCase(new RangePropagationLossModelTestCase, TestCase::QUICK);
+    AddTestCase(new FriisPropagationLossModelTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new TwoRayGroundPropagationLossModelTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new LogDistancePropagationLossModelTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new MatrixPropagationLossModelTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new RangePropagationLossModelTestCase, TestCase::Duration::QUICK);
 }
 
 /// Static variable for test initialization

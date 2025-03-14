@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2005,2006 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
@@ -36,12 +25,12 @@ namespace
 {
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Base class for Test tags
+ * @brief Base class for Test tags
  *
- * \note Class internal to packet-test-suite.cc
+ * @note Class internal to packet-test-suite.cc
  */
 class ATestTagBase : public Tag
 {
@@ -53,7 +42,7 @@ class ATestTagBase : public Tag
     }
 
     /// Constructor
-    /// \param data Tag data
+    /// @param data Tag data
     ATestTagBase(uint8_t data)
         : m_error(false),
           m_data(data)
@@ -62,7 +51,7 @@ class ATestTagBase : public Tag
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -74,7 +63,7 @@ class ATestTagBase : public Tag
     }
 
     /// Get the tag data.
-    /// \return the tag data.
+    /// @return the tag data.
     int GetData() const
     {
         int result = (int)m_data;
@@ -86,12 +75,12 @@ class ATestTagBase : public Tag
 };
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Template class for Test tags
+ * @brief Template class for Test tags
  *
- * \note Class internal to packet-test-suite.cc
+ * @note Class internal to packet-test-suite.cc
  */
 template <int N>
 class ATestTag : public ATestTagBase
@@ -99,7 +88,7 @@ class ATestTag : public ATestTagBase
   public:
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -156,7 +145,7 @@ class ATestTag : public ATestTagBase
     }
 
     /// Constructor
-    /// \param data Tag data
+    /// @param data Tag data
     ATestTag(uint8_t data)
         : ATestTagBase(data)
     {
@@ -168,14 +157,14 @@ class ATestTag : public ATestTagBase
 #define LARGE_TAG_BUFFER_SIZE 64
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Template class for Large Test tags
+ * @brief Template class for Large Test tags
  *
- * \see Bug 2221: Expanding packet tag maximum size
+ * @see Bug 2221: Expanding packet tag maximum size
  *
- * \note Class internal to packet-test-suite.cc
+ * @note Class internal to packet-test-suite.cc
  */
 class ALargeTestTag : public Tag
 {
@@ -191,7 +180,7 @@ class ALargeTestTag : public Tag
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -243,12 +232,12 @@ class ALargeTestTag : public Tag
 };
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Base class for Test headers
+ * @brief Base class for Test headers
  *
- * \note Class internal to packet-test-suite.cc
+ * @note Class internal to packet-test-suite.cc
  */
 class ATestHeaderBase : public Header
 {
@@ -261,7 +250,7 @@ class ATestHeaderBase : public Header
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -278,12 +267,12 @@ class ATestHeaderBase : public Header
 };
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Template class for Test headers
+ * @brief Template class for Test headers
  *
- * \note Class internal to packet-test-suite.cc
+ * @note Class internal to packet-test-suite.cc
  */
 template <int N>
 class ATestHeader : public ATestHeaderBase
@@ -291,7 +280,7 @@ class ATestHeader : public ATestHeaderBase
   public:
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -347,12 +336,12 @@ class ATestHeader : public ATestHeaderBase
 };
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Base class for Test trailers
+ * @brief Base class for Test trailers
  *
- * \note Class internal to packet-test-suite.cc
+ * @note Class internal to packet-test-suite.cc
  */
 class ATestTrailerBase : public Trailer
 {
@@ -365,7 +354,7 @@ class ATestTrailerBase : public Trailer
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -382,12 +371,12 @@ class ATestTrailerBase : public Trailer
 };
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Template class for Test trailers
+ * @brief Template class for Test trailers
  *
- * \note Class internal to packet-test-suite.cc
+ * @note Class internal to packet-test-suite.cc
  */
 template <int N>
 class ATestTrailer : public ATestTrailerBase
@@ -395,7 +384,7 @@ class ATestTrailer : public ATestTrailerBase
   public:
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -453,20 +442,20 @@ class ATestTrailer : public ATestTrailerBase
 };
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Struct to hold the expected data in the packet
+ * @brief Struct to hold the expected data in the packet
  *
- * \note Class internal to packet-test-suite.cc
+ * @note Class internal to packet-test-suite.cc
  */
 struct Expected
 {
     /**
      * Constructor
-     * \param n_ Number of elements
-     * \param start_ Start
-     * \param end_ End
+     * @param n_ Number of elements
+     * @param start_ Start
+     * @param end_ End
      */
     Expected(uint32_t n_, uint32_t start_, uint32_t end_)
         : n(n_),
@@ -478,10 +467,10 @@ struct Expected
 
     /**
      * Constructor
-     * \param n_ Number of elements
-     * \param start_ Start
-     * \param end_ End
-     * \param data_ Data stored in tag
+     * @param n_ Number of elements
+     * @param start_ Start
+     * @param end_ End
+     * @param data_ Data stored in tag
      */
     Expected(uint32_t n_, uint32_t start_, uint32_t end_, uint8_t data_)
         : n(n_),
@@ -512,8 +501,8 @@ struct Expected
 #define CHECK_DATA(p, n, ...) DoCheckData(p, n, __VA_ARGS__)
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
  * Packet unit tests.
  */
@@ -526,16 +515,16 @@ class PacketTest : public TestCase
   private:
     /**
      * Checks the packet
-     * \param p The packet
-     * \param n The number of variable arguments
-     * \param ... The variable arguments
+     * @param p The packet
+     * @param n The number of variable arguments
+     * @param ... The variable arguments
      */
     void DoCheck(Ptr<const Packet> p, uint32_t n, ...);
     /**
      * Checks the packet and its data
-     * \param p The packet
-     * \param n The number of variable arguments
-     * \param ... The variable arguments
+     * @param p The packet
+     * @param n The number of variable arguments
+     * @param ... The variable arguments
      */
     void DoCheckData(Ptr<const Packet> p, uint32_t n, ...);
 };
@@ -653,7 +642,7 @@ PacketTest::DoRun()
 
     {
         Packet c0 = *copy;
-        Packet c1 = *copy;
+        Packet c1 = *copy; // NOLINT(performance-unnecessary-copy-initialization)
         c0 = c1;
         CHECK(&c0, 1, E(1, 0, 1000));
         CHECK(&c1, 1, E(1, 0, 1000));
@@ -861,7 +850,7 @@ PacketTest::DoRun()
     }
 
     {
-        /// \internal
+        /// @internal
         /// See \bugid{572}
         Ptr<Packet> tmp = Create<Packet>(1000);
         tmp->AddByteTag(ATestTag<20>());
@@ -959,8 +948,8 @@ PacketTest::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
  * Packet Tag list unit tests.
  */
@@ -974,33 +963,33 @@ class PacketTagListTest : public TestCase
     void DoRun() override;
     /**
      * Checks against a reference PacketTagList
-     * \param ref Reference
-     * \param t List to test
-     * \param msg Message
-     * \param miss Expected miss/hit
+     * @param ref Reference
+     * @param t List to test
+     * @param msg Message
+     * @param miss Expected miss/hit
      */
     void CheckRef(const PacketTagList& ref, ATestTagBase& t, const char* msg, bool miss = false);
     /**
      * Checks against a reference PacketTagList
-     * \param ref Reference
-     * \param msg Message
-     * \param miss Expected miss/hit
+     * @param ref Reference
+     * @param msg Message
+     * @param miss Expected miss/hit
      */
     void CheckRefList(const PacketTagList& ref, const char* msg, int miss = 0);
 
     /**
      * Prints the remove time
-     * \param ref Reference.
-     * \param t List to test.
-     * \param msg Message - prints on cout if msg is not null.
-     * \return the ticks to remove the tags.
+     * @param ref Reference.
+     * @param t List to test.
+     * @param msg Message - prints on cout if msg is not null.
+     * @return the ticks to remove the tags.
      */
     int RemoveTime(const PacketTagList& ref, ATestTagBase& t, const char* msg = nullptr);
 
     /**
      * Prints the remove time
-     * \param verbose prints on cout if verbose is true.
-     * \return the ticks to remove the tags.
+     * @param verbose prints on cout if verbose is true.
+     * @return the ticks to remove the tags.
      */
     int AddRemoveTime(const bool verbose = false);
 };
@@ -1269,10 +1258,10 @@ PacketTagListTest::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Packet TestSuite
+ * @brief Packet TestSuite
  */
 class PacketTestSuite : public TestSuite
 {
@@ -1281,10 +1270,10 @@ class PacketTestSuite : public TestSuite
 };
 
 PacketTestSuite::PacketTestSuite()
-    : TestSuite("packet", UNIT)
+    : TestSuite("packet", Type::UNIT)
 {
-    AddTestCase(new PacketTest, TestCase::QUICK);
-    AddTestCase(new PacketTagListTest, TestCase::QUICK);
+    AddTestCase(new PacketTest, TestCase::Duration::QUICK);
+    AddTestCase(new PacketTagListTest, TestCase::Duration::QUICK);
 }
 
 static PacketTestSuite g_packetTestSuite; //!< Static variable for test initialization

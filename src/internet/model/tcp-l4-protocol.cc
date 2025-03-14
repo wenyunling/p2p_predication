@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007 Georgia Tech Research Corporation
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Raj Bhattacharjea <raj.b@gatech.edu>
  */
@@ -66,9 +55,6 @@ NS_OBJECT_ENSURE_REGISTERED(TcpL4Protocol);
     {                                                                                              \
         std::clog << " [node " << m_node->GetId() << "] ";                                         \
     }
-
-/* see http://www.iana.org/assignments/protocol-numbers */
-const uint8_t TcpL4Protocol::PROT_NUMBER = 6;
 
 TypeId
 TcpL4Protocol::GetTypeId()
@@ -598,7 +584,7 @@ TcpL4Protocol::SendPacketV4(Ptr<Packet> packet,
     // XXX outgoingHeader cannot be logged
 
     TcpHeader outgoingHeader = outgoing;
-    /** \todo UrgentPointer */
+    /** @todo UrgentPointer */
     /* outgoingHeader.SetUrgentPointer (0); */
     if (Node::ChecksumEnabled())
     {
@@ -657,7 +643,7 @@ TcpL4Protocol::SendPacketV6(Ptr<Packet> packet,
                            oif));
     }
     TcpHeader outgoingHeader = outgoing;
-    /** \todo UrgentPointer */
+    /** @todo UrgentPointer */
     /* outgoingHeader.SetUrgentPointer (0); */
     if (Node::ChecksumEnabled())
     {

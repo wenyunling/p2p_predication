@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 Dean Armstrong
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Dean Armstrong <deanarm@gmail.com>
  */
@@ -34,10 +23,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Throughput test for MsduAggregator
+ * @brief Throughput test for MsduAggregator
  */
 class WifiMsduAggregatorThroughputTest : public TestCase
 {
@@ -151,7 +140,7 @@ WifiMsduAggregatorThroughputTest::DoRun()
                                 InetSocketAddress(Ipv4Address::GetAny(), udpPort));
     ApplicationContainer sinkApp = packetSink.Install(sta.Get(0));
     sinkApp.Start(Seconds(0));
-    sinkApp.Stop(Seconds(9.0));
+    sinkApp.Stop(Seconds(9));
 
     // The packet source is an on-off application on the AP
     // device. Given that we have fixed the transmit rate at 1 Mbps
@@ -164,8 +153,8 @@ WifiMsduAggregatorThroughputTest::DoRun()
     onoff.SetAttribute("PacketSize", UintegerValue(100));
     onoff.SetConstantRate(DataRate("1Mbps"));
     ApplicationContainer sourceApp = onoff.Install(ap.Get(0));
-    sourceApp.Start(Seconds(1.0));
-    sourceApp.Stop(Seconds(9.0));
+    sourceApp.Start(Seconds(1));
+    sourceApp.Stop(Seconds(9));
 
     // Enable tracing at the AP
     if (m_writeResults)
@@ -174,7 +163,7 @@ WifiMsduAggregatorThroughputTest::DoRun()
         wifiPhy.EnablePcap("wifi-amsdu-throughput", sta.Get(0)->GetId(), 0);
     }
 
-    Simulator::Stop(Seconds(10.0));
+    Simulator::Stop(Seconds(10));
     Simulator::Run();
     Simulator::Destroy();
 
@@ -202,10 +191,10 @@ WifiMsduAggregatorThroughputTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief MsduAggregator Test Suite
+ * @brief MsduAggregator Test Suite
  *
  * For now the MSDU Aggregator Test Suite contains only the one test
  * that is defined in this file, so it's class definition and
@@ -218,9 +207,9 @@ class WifiMsduAggregatorTestSuite : public TestSuite
 };
 
 WifiMsduAggregatorTestSuite::WifiMsduAggregatorTestSuite()
-    : TestSuite("wifi-msdu-aggregator", SYSTEM)
+    : TestSuite("wifi-msdu-aggregator", Type::SYSTEM)
 {
-    AddTestCase(new WifiMsduAggregatorThroughputTest, TestCase::QUICK);
+    AddTestCase(new WifiMsduAggregatorThroughputTest, TestCase::Duration::QUICK);
 }
 
 static WifiMsduAggregatorTestSuite wifiMsduAggregatorTestSuite;

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2015 Sébastien Deronne
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Sébastien Deronne <sebastien.deronne@gmail.com>
  */
@@ -57,22 +46,22 @@ NS_LOG_COMPONENT_DEFINE("SimplesHtHiddenStations");
 int
 main(int argc, char* argv[])
 {
-    uint32_t payloadSize = 1472; // bytes
-    double simulationTime = 10;  // seconds
-    uint32_t nMpdus = 1;
-    uint32_t maxAmpduSize = 0;
-    bool enableRts = false;
-    double minExpectedThroughput = 0;
-    double maxExpectedThroughput = 0;
+    uint32_t payloadSize{1472}; // bytes
+    Time simulationTime{"10s"};
+    uint32_t nMpdus{1};
+    uint32_t maxAmpduSize{0};
+    bool enableRts{false};
+    double minExpectedThroughput{0};
+    double maxExpectedThroughput{0};
 
     RngSeedManager::SetSeed(1);
-    RngSeedManager::SetRun(5);
+    RngSeedManager::SetRun(7);
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("nMpdus", "Number of aggregated MPDUs", nMpdus);
     cmd.AddValue("payloadSize", "Payload size in bytes", payloadSize);
     cmd.AddValue("enableRts", "Enable RTS/CTS", enableRts);
-    cmd.AddValue("simulationTime", "Simulation time in seconds", simulationTime);
+    cmd.AddValue("simulationTime", "Simulation time", simulationTime);
     cmd.AddValue("minExpectedThroughput",
                  "if set, simulation fails if the lowest throughput is below this value",
                  minExpectedThroughput);
@@ -138,6 +127,10 @@ main(int argc, char* argv[])
     Config::Set("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/BE_MaxAmpduSize",
                 UintegerValue(maxAmpduSize));
 
+    int64_t streamNumber = 20;
+    streamNumber += WifiHelper::AssignStreams(apDevice, streamNumber);
+    streamNumber += WifiHelper::AssignStreams(staDevices, streamNumber);
+
     // Setting mobility model
     MobilityHelper mobility;
     Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator>();
@@ -159,6 +152,8 @@ main(int argc, char* argv[])
     InternetStackHelper stack;
     stack.Install(wifiApNode);
     stack.Install(wifiStaNodes);
+    streamNumber += stack.AssignStreams(wifiApNode, streamNumber);
+    streamNumber += stack.AssignStreams(wifiStaNodes, streamNumber);
 
     Ipv4AddressHelper address;
     address.SetBase("192.168.1.0", "255.255.255.0");
@@ -171,8 +166,9 @@ main(int argc, char* argv[])
     uint16_t port = 9;
     UdpServerHelper server(port);
     ApplicationContainer serverApp = server.Install(wifiApNode);
-    serverApp.Start(Seconds(0.0));
-    serverApp.Stop(Seconds(simulationTime + 1));
+    serverApp.Start(Seconds(0));
+    serverApp.Stop(simulationTime + Seconds(1));
+    streamNumber += server.AssignStreams(wifiApNode, streamNumber);
 
     UdpClientHelper client(ApInterface.GetAddress(0), port);
     client.SetAttribute("MaxPackets", UintegerValue(4294967295U));
@@ -181,8 +177,9 @@ main(int argc, char* argv[])
 
     // Saturated UDP traffic from stations to AP
     ApplicationContainer clientApp1 = client.Install(wifiStaNodes);
-    clientApp1.Start(Seconds(1.0));
-    clientApp1.Stop(Seconds(simulationTime + 1));
+    clientApp1.Start(Seconds(1));
+    clientApp1.Stop(simulationTime + Seconds(1));
+    streamNumber += client.AssignStreams(wifiStaNodes, streamNumber);
 
     phy.EnablePcap("SimpleHtHiddenStations_Ap", apDevice.Get(0));
     phy.EnablePcap("SimpleHtHiddenStations_Sta1", staDevices.Get(0));
@@ -191,15 +188,15 @@ main(int argc, char* argv[])
     AsciiTraceHelper ascii;
     phy.EnableAsciiAll(ascii.CreateFileStream("SimpleHtHiddenStations.tr"));
 
-    Simulator::Stop(Seconds(simulationTime + 1));
+    Simulator::Stop(simulationTime + Seconds(1));
 
     Simulator::Run();
 
-    uint64_t totalPacketsThrough = DynamicCast<UdpServer>(serverApp.Get(0))->GetReceived();
+    double totalPacketsThrough = DynamicCast<UdpServer>(serverApp.Get(0))->GetReceived();
 
     Simulator::Destroy();
 
-    double throughput = totalPacketsThrough * payloadSize * 8 / (simulationTime * 1000000.0);
+    auto throughput = totalPacketsThrough * payloadSize * 8 / simulationTime.GetMicroSeconds();
     std::cout << "Throughput: " << throughput << " Mbit/s" << '\n';
     if (throughput < minExpectedThroughput ||
         (maxExpectedThroughput > 0 && throughput > maxExpectedThroughput))

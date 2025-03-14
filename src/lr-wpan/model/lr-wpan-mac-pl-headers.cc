@@ -1,28 +1,19 @@
 /*
  * Copyright (c) 2020 Ritsumeikan University, Shiga, Japan.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  *  Author: Alberto Gallegos Ramonet <ramonet@fc.ritsumei.ac.jp>
  */
 
 #include "lr-wpan-mac-pl-headers.h"
 
-#include <ns3/address-utils.h>
-#include <ns3/simulator.h>
+#include "ns3/address-utils.h"
+#include "ns3/simulator.h"
 
 namespace ns3
+{
+namespace lrwpan
 {
 
 /***********************************************************
@@ -38,7 +29,8 @@ NS_OBJECT_ENSURE_REGISTERED(BeaconPayloadHeader);
 TypeId
 BeaconPayloadHeader::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::BeaconPayloadHeader")
+    static TypeId tid = TypeId("ns3::lrwpan::BeaconPayloadHeader")
+                            .AddDeprecatedName("ns3::BeaconPayloadHeader")
                             .SetParent<Header>()
                             .SetGroupName("LrWpan")
                             .AddConstructor<BeaconPayloadHeader>();
@@ -172,20 +164,15 @@ CommandPayloadHeader::GetSerializedSize() const
         size += 3; // (short address + Association Status)
         break;
     case DISASSOCIATION_NOTIF:
-        break;
     case DATA_REQ:
-        break;
     case PANID_CONFLICT:
-        break;
     case ORPHAN_NOTIF:
-        break;
     case BEACON_REQ:
         break;
     case COOR_REALIGN:
         size += 8;
         break;
     case GTS_REQ:
-        break;
     case CMD_RESERVED:
         break;
     }
@@ -208,13 +195,9 @@ CommandPayloadHeader::Serialize(Buffer::Iterator start) const
         i.WriteU8(m_assocStatus);
         break;
     case DISASSOCIATION_NOTIF:
-        break;
     case DATA_REQ:
-        break;
     case PANID_CONFLICT:
-        break;
     case ORPHAN_NOTIF:
-        break;
     case BEACON_REQ:
         break;
     case COOR_REALIGN:
@@ -225,7 +208,6 @@ CommandPayloadHeader::Serialize(Buffer::Iterator start) const
         i.WriteU8(m_logChPage);
         break;
     case GTS_REQ:
-        break;
     case CMD_RESERVED:
         break;
     }
@@ -247,13 +229,9 @@ CommandPayloadHeader::Deserialize(Buffer::Iterator start)
         m_assocStatus = i.ReadU8();
         break;
     case DISASSOCIATION_NOTIF:
-        break;
     case DATA_REQ:
-        break;
     case PANID_CONFLICT:
-        break;
     case ORPHAN_NOTIF:
-        break;
     case BEACON_REQ:
         break;
     case COOR_REALIGN:
@@ -264,7 +242,6 @@ CommandPayloadHeader::Deserialize(Buffer::Iterator start)
         m_logChPage = i.ReadU8();
         break;
     case GTS_REQ:
-        break;
     case CMD_RESERVED:
         break;
     }
@@ -292,13 +269,9 @@ CommandPayloadHeader::Print(std::ostream& os) const
            << "| Status Response | = " << m_assocStatus;
         break;
     case DISASSOCIATION_NOTIF:
-        break;
     case DATA_REQ:
-        break;
     case PANID_CONFLICT:
-        break;
     case ORPHAN_NOTIF:
-        break;
     case BEACON_REQ:
         break;
     case COOR_REALIGN:
@@ -309,9 +282,7 @@ CommandPayloadHeader::Print(std::ostream& os) const
            << "| Page Num.| = " << static_cast<uint32_t>(m_logChPage);
         break;
     case GTS_REQ:
-        break;
     case CMD_RESERVED:
-        break;
     default:
         break;
     }
@@ -448,4 +419,5 @@ CommandPayloadHeader::GetPanId() const
     return m_panid;
 }
 
+} // namespace lrwpan
 } // namespace ns3

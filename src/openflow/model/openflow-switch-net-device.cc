@@ -1,16 +1,5 @@
 /*
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Blake Hurd  <naimorai@gmail.com>
  */
@@ -30,7 +19,7 @@ NS_OBJECT_ENSURE_REGISTERED(OpenFlowSwitchNetDevice);
 /**
  * Generate an ID.
  *
- * \return Generated ID.
+ * @return Generated ID.
  */
 static uint64_t
 GenerateId()
@@ -283,7 +272,7 @@ Address
 OpenFlowSwitchNetDevice::GetBroadcast() const
 {
     NS_LOG_FUNCTION_NOARGS();
-    return Mac48Address("ff:ff:ff:ff:ff:ff");
+    return Mac48Address::GetBroadcast();
 }
 
 bool
@@ -909,7 +898,7 @@ OpenFlowSwitchNetDevice::FillPortDesc(ofi::Port p, ofp_phy_port* desc)
     desc->config = htonl(p.config);
     desc->state = htonl(p.state);
 
-    /// \todo This should probably be fixed eventually to specify different available features.
+    /// @todo This should probably be fixed eventually to specify different available features.
     desc->curr = 0;       // htonl(netdev_get_features(p->netdev, NETDEV_FEAT_CURRENT));
     desc->supported = 0;  // htonl(netdev_get_features(p->netdev, NETDEV_FEAT_SUPPORTED));
     desc->advertised = 0; // htonl(netdev_get_features(p->netdev, NETDEV_FEAT_ADVERTISED));
@@ -1195,12 +1184,12 @@ OpenFlowSwitchNetDevice::ReceivePortMod(const void* msg)
             if ((opm->config & htonl(OFPPC_PORT_DOWN)) && (p.config & OFPPC_PORT_DOWN) == 0)
             {
                 p.config |= OFPPC_PORT_DOWN;
-                /// \todo Possibly disable the Port's Net Device via the appropriate interface.
+                /// @todo Possibly disable the Port's Net Device via the appropriate interface.
             }
             else if ((opm->config & htonl(OFPPC_PORT_DOWN)) == 0 && (p.config & OFPPC_PORT_DOWN))
             {
                 p.config &= ~OFPPC_PORT_DOWN;
-                /// \todo Possibly enable the Port's Net Device via the appropriate interface.
+                /// @todo Possibly enable the Port's Net Device via the appropriate interface.
             }
         }
     }

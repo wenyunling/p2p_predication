@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2005,2006,2007 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
@@ -41,8 +30,8 @@ class UdpSocketImpl;
 class NetDevice;
 
 /**
- * \ingroup internet
- * \defgroup udp UDP
+ * @ingroup internet
+ * @defgroup udp UDP
  *
  * This  is  an  implementation of the User Datagram Protocol described in
  * \RFC{768}.  It implements a connectionless,  unreliable  datagram  packet
@@ -57,18 +46,20 @@ class NetDevice;
  */
 
 /**
- * \ingroup udp
- * \brief Implementation of the UDP protocol
+ * @ingroup udp
+ * @brief Implementation of the UDP protocol
  */
 class UdpL4Protocol : public IpL4Protocol
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
-    static const uint8_t PROT_NUMBER; //!< protocol number (0x11)
+
+    /// Protocol number (see http://www.iana.org/assignments/protocol-numbers)
+    static constexpr uint8_t PROT_NUMBER = 17;
 
     UdpL4Protocol();
     ~UdpL4Protocol() override;
@@ -79,52 +70,52 @@ class UdpL4Protocol : public IpL4Protocol
 
     /**
      * Set node associated with this stack
-     * \param node the node
+     * @param node the node
      */
     void SetNode(Ptr<Node> node);
 
     int GetProtocolNumber() const override;
 
     /**
-     * \return A smart Socket pointer to a UdpSocket, allocated by this instance
+     * @return A smart Socket pointer to a UdpSocket, allocated by this instance
      * of the UDP protocol
      */
     Ptr<Socket> CreateSocket();
 
     /**
-     * \brief Allocate an IPv4 Endpoint
-     * \return the Endpoint
+     * @brief Allocate an IPv4 Endpoint
+     * @return the Endpoint
      */
     Ipv4EndPoint* Allocate();
     /**
-     * \brief Allocate an IPv4 Endpoint
-     * \param address address to use
-     * \return the Endpoint
+     * @brief Allocate an IPv4 Endpoint
+     * @param address address to use
+     * @return the Endpoint
      */
     Ipv4EndPoint* Allocate(Ipv4Address address);
     /**
-     * \brief Allocate an IPv4 Endpoint
-     * \param boundNetDevice Bound NetDevice (if any)
-     * \param port port to use
-     * \return the Endpoint
+     * @brief Allocate an IPv4 Endpoint
+     * @param boundNetDevice Bound NetDevice (if any)
+     * @param port port to use
+     * @return the Endpoint
      */
     Ipv4EndPoint* Allocate(Ptr<NetDevice> boundNetDevice, uint16_t port);
     /**
-     * \brief Allocate an IPv4 Endpoint
-     * \param boundNetDevice Bound NetDevice (if any)
-     * \param address address to use
-     * \param port port to use
-     * \return the Endpoint
+     * @brief Allocate an IPv4 Endpoint
+     * @param boundNetDevice Bound NetDevice (if any)
+     * @param address address to use
+     * @param port port to use
+     * @return the Endpoint
      */
     Ipv4EndPoint* Allocate(Ptr<NetDevice> boundNetDevice, Ipv4Address address, uint16_t port);
     /**
-     * \brief Allocate an IPv4 Endpoint
-     * \param boundNetDevice Bound NetDevice (if any)
-     * \param localAddress local address to use
-     * \param localPort local port to use
-     * \param peerAddress remote address to use
-     * \param peerPort remote port to use
-     * \return the Endpoint
+     * @brief Allocate an IPv4 Endpoint
+     * @param boundNetDevice Bound NetDevice (if any)
+     * @param localAddress local address to use
+     * @param localPort local port to use
+     * @param peerAddress remote address to use
+     * @param peerPort remote port to use
+     * @return the Endpoint
      */
     Ipv4EndPoint* Allocate(Ptr<NetDevice> boundNetDevice,
                            Ipv4Address localAddress,
@@ -133,39 +124,39 @@ class UdpL4Protocol : public IpL4Protocol
                            uint16_t peerPort);
 
     /**
-     * \brief Allocate an IPv6 Endpoint
-     * \return the Endpoint
+     * @brief Allocate an IPv6 Endpoint
+     * @return the Endpoint
      */
     Ipv6EndPoint* Allocate6();
     /**
-     * \brief Allocate an IPv6 Endpoint
-     * \param address address to use
-     * \return the Endpoint
+     * @brief Allocate an IPv6 Endpoint
+     * @param address address to use
+     * @return the Endpoint
      */
     Ipv6EndPoint* Allocate6(Ipv6Address address);
     /**
-     * \brief Allocate an IPv6 Endpoint
-     * \param boundNetDevice Bound NetDevice (if any)
-     * \param port port to use
-     * \return the Endpoint
+     * @brief Allocate an IPv6 Endpoint
+     * @param boundNetDevice Bound NetDevice (if any)
+     * @param port port to use
+     * @return the Endpoint
      */
     Ipv6EndPoint* Allocate6(Ptr<NetDevice> boundNetDevice, uint16_t port);
     /**
-     * \brief Allocate an IPv6 Endpoint
-     * \param boundNetDevice Bound NetDevice (if any)
-     * \param address address to use
-     * \param port port to use
-     * \return the Endpoint
+     * @brief Allocate an IPv6 Endpoint
+     * @param boundNetDevice Bound NetDevice (if any)
+     * @param address address to use
+     * @param port port to use
+     * @return the Endpoint
      */
     Ipv6EndPoint* Allocate6(Ptr<NetDevice> boundNetDevice, Ipv6Address address, uint16_t port);
     /**
-     * \brief Allocate an IPv6 Endpoint
-     * \param boundNetDevice Bound NetDevice (if any)
-     * \param localAddress local address to use
-     * \param localPort local port to use
-     * \param peerAddress remote address to use
-     * \param peerPort remote port to use
-     * \return the Endpoint
+     * @brief Allocate an IPv6 Endpoint
+     * @param boundNetDevice Bound NetDevice (if any)
+     * @param localAddress local address to use
+     * @param localPort local port to use
+     * @param peerAddress remote address to use
+     * @param peerPort remote port to use
+     * @return the Endpoint
      */
     Ipv6EndPoint* Allocate6(Ptr<NetDevice> boundNetDevice,
                             Ipv6Address localAddress,
@@ -174,32 +165,32 @@ class UdpL4Protocol : public IpL4Protocol
                             uint16_t peerPort);
 
     /**
-     * \brief Remove an IPv4 Endpoint.
-     * \param endPoint the end point to remove
+     * @brief Remove an IPv4 Endpoint.
+     * @param endPoint the end point to remove
      */
     void DeAllocate(Ipv4EndPoint* endPoint);
     /**
-     * \brief Remove an IPv6 Endpoint.
-     * \param endPoint the end point to remove
+     * @brief Remove an IPv6 Endpoint.
+     * @param endPoint the end point to remove
      */
     void DeAllocate(Ipv6EndPoint* endPoint);
 
     /**
-     * \brief Remove a socket from the internal list
+     * @brief Remove a socket from the internal list
      *
-     * \param socket socket to remove
-     * \return true if the socket has been removed
+     * @param socket socket to remove
+     * @return true if the socket has been removed
      */
     bool RemoveSocket(Ptr<UdpSocketImpl> socket);
 
     // called by UdpSocket.
     /**
-     * \brief Send a packet via UDP (IPv4)
-     * \param packet The packet to send
-     * \param saddr The source Ipv4Address
-     * \param daddr The destination Ipv4Address
-     * \param sport The source port number
-     * \param dport The destination port number
+     * @brief Send a packet via UDP (IPv4)
+     * @param packet The packet to send
+     * @param saddr The source Ipv4Address
+     * @param daddr The destination Ipv4Address
+     * @param sport The source port number
+     * @param dport The destination port number
      */
     void Send(Ptr<Packet> packet,
               Ipv4Address saddr,
@@ -207,13 +198,13 @@ class UdpL4Protocol : public IpL4Protocol
               uint16_t sport,
               uint16_t dport);
     /**
-     * \brief Send a packet via UDP (IPv4)
-     * \param packet The packet to send
-     * \param saddr The source Ipv4Address
-     * \param daddr The destination Ipv4Address
-     * \param sport The source port number
-     * \param dport The destination port number
-     * \param route The route
+     * @brief Send a packet via UDP (IPv4)
+     * @param packet The packet to send
+     * @param saddr The source Ipv4Address
+     * @param daddr The destination Ipv4Address
+     * @param sport The source port number
+     * @param dport The destination port number
+     * @param route The route
      */
     void Send(Ptr<Packet> packet,
               Ipv4Address saddr,
@@ -222,12 +213,12 @@ class UdpL4Protocol : public IpL4Protocol
               uint16_t dport,
               Ptr<Ipv4Route> route);
     /**
-     * \brief Send a packet via UDP (IPv6)
-     * \param packet The packet to send
-     * \param saddr The source Ipv4Address
-     * \param daddr The destination Ipv4Address
-     * \param sport The source port number
-     * \param dport The destination port number
+     * @brief Send a packet via UDP (IPv6)
+     * @param packet The packet to send
+     * @param saddr The source Ipv4Address
+     * @param daddr The destination Ipv4Address
+     * @param sport The source port number
+     * @param dport The destination port number
      */
     void Send(Ptr<Packet> packet,
               Ipv6Address saddr,
@@ -235,13 +226,13 @@ class UdpL4Protocol : public IpL4Protocol
               uint16_t sport,
               uint16_t dport);
     /**
-     * \brief Send a packet via UDP (IPv6)
-     * \param packet The packet to send
-     * \param saddr The source Ipv4Address
-     * \param daddr The destination Ipv4Address
-     * \param sport The source port number
-     * \param dport The destination port number
-     * \param route The route
+     * @brief Send a packet via UDP (IPv6)
+     * @param packet The packet to send
+     * @param saddr The source Ipv4Address
+     * @param daddr The destination Ipv4Address
+     * @param sport The source port number
+     * @param dport The destination port number
+     * @param route The route
      */
     void Send(Ptr<Packet> packet,
               Ipv6Address saddr,

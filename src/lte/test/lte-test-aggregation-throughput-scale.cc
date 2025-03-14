@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2017 Alexander Krotov
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Alexander Krotov <krotov@iitp.ru>
  *
@@ -20,25 +9,25 @@
 
 #include "lte-test-aggregation-throughput-scale.h"
 
-#include <ns3/application-container.h>
-#include <ns3/friis-spectrum-propagation-loss.h>
-#include <ns3/internet-stack-helper.h>
-#include <ns3/ipv4-address-helper.h>
-#include <ns3/ipv4-interface-container.h>
-#include <ns3/ipv4-static-routing-helper.h>
-#include <ns3/log.h>
-#include <ns3/lte-enb-net-device.h>
-#include <ns3/lte-helper.h>
-#include <ns3/lte-ue-net-device.h>
-#include <ns3/lte-ue-rrc.h>
-#include <ns3/mobility-helper.h>
-#include <ns3/net-device-container.h>
-#include <ns3/node-container.h>
-#include <ns3/packet-sink.h>
-#include <ns3/point-to-point-epc-helper.h>
-#include <ns3/point-to-point-helper.h>
-#include <ns3/simulator.h>
-#include <ns3/udp-client.h>
+#include "ns3/application-container.h"
+#include "ns3/friis-spectrum-propagation-loss.h"
+#include "ns3/internet-stack-helper.h"
+#include "ns3/ipv4-address-helper.h"
+#include "ns3/ipv4-interface-container.h"
+#include "ns3/ipv4-static-routing-helper.h"
+#include "ns3/log.h"
+#include "ns3/lte-enb-net-device.h"
+#include "ns3/lte-helper.h"
+#include "ns3/lte-ue-net-device.h"
+#include "ns3/lte-ue-rrc.h"
+#include "ns3/mobility-helper.h"
+#include "ns3/net-device-container.h"
+#include "ns3/node-container.h"
+#include "ns3/packet-sink.h"
+#include "ns3/point-to-point-epc-helper.h"
+#include "ns3/point-to-point-helper.h"
+#include "ns3/simulator.h"
+#include "ns3/udp-client.h"
 
 #include <algorithm>
 #include <numeric>
@@ -48,14 +37,14 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("LteAggregationThroughputScaleTest");
 
 LteAggregationThroughputScaleTestSuite::LteAggregationThroughputScaleTestSuite()
-    : TestSuite("lte-aggregation-throughput-scale", SYSTEM)
+    : TestSuite("lte-aggregation-throughput-scale", Type::SYSTEM)
 {
     AddTestCase(new LteAggregationThroughputScaleTestCase("Carrier aggregation throughput scale"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteAggregationThroughputScaleTestSuite g_lteAggregationThroughputScaleTestSuite;
@@ -143,9 +132,9 @@ LteAggregationThroughputScaleTestCase::GetThroughput(uint8_t numberOfComponentCa
     pgwNode->AddApplication(client);
 
     apps.Add(client);
-    apps.Start(Seconds(1.0));
+    apps.Start(Seconds(1));
 
-    Simulator::Stop(Seconds(2.0));
+    Simulator::Stop(Seconds(2));
     Simulator::Run();
 
     m_actualCellId = ueDev->GetRrc()->GetCellId();

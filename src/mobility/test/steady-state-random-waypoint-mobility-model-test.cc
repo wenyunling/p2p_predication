@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 IITP RAS
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Denis Fakhriev <fakhriev@iitp.ru>
  */
@@ -29,9 +18,9 @@
 using namespace ns3;
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief Steady State Random Waypoint Test
+ * @brief Steady State Random Waypoint Test
  */
 class SteadyStateRandomWaypointTest : public TestCase
 {
@@ -89,7 +78,7 @@ SteadyStateRandomWaypointTest::DoRun()
         model->AssignStreams(100 * (i + 1));
         // Add this mobility model to the stack.
         mobilityStack.push_back(model);
-        Simulator::Schedule(Seconds(0.0), &Object::Initialize, model);
+        Simulator::Schedule(Seconds(0), &Object::Initialize, model);
     }
 
     Simulator::Schedule(Seconds(0.001), &SteadyStateRandomWaypointTest::DistribCompare, this);
@@ -149,15 +138,15 @@ SteadyStateRandomWaypointTest::DistribCompare()
 }
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief Steady State Random Waypoint Test Suite
+ * @brief Steady State Random Waypoint Test Suite
  */
 struct SteadyStateRandomWaypointTestSuite : public TestSuite
 {
     SteadyStateRandomWaypointTestSuite()
-        : TestSuite("steady-state-rwp-mobility-model", UNIT)
+        : TestSuite("steady-state-rwp-mobility-model", Type::UNIT)
     {
-        AddTestCase(new SteadyStateRandomWaypointTest, TestCase::QUICK);
+        AddTestCase(new SteadyStateRandomWaypointTest, TestCase::Duration::QUICK);
     }
 } g_steadyStateRandomWaypointTestSuite; ///< the test suite

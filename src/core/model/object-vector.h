@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007 INRIA, Mathieu Lacage
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Mathieu Lacage <mathieu.lacage@gmail.com>
  */
@@ -25,8 +14,8 @@
 #include "ptr.h"
 
 /**
- * \file
- * \ingroup attribute_ObjectVector
+ * @file
+ * @ingroup attribute_ObjectVector
  * ns3::ObjectVectorValue attribute value declarations and template implementations.
  */
 
@@ -34,15 +23,15 @@ namespace ns3
 {
 
 /**
- * \ingroup attribute_ObjectVector
+ * @ingroup attribute_ObjectVector
  * ObjectVectorValue is an alias for ObjectPtrContainerValue
  */
 typedef ObjectPtrContainerValue ObjectVectorValue;
 
 /**
- * \ingroup attribute_ObjectVector
+ * @ingroup attribute_ObjectVector
  * MakeAccessorHelper implementation for ObjectVector.
- * \copydetails ns3::DoMakeAccessorHelperOne(U T::*)
+ * @copydetails ns3::DoMakeAccessorHelperOne(U T::*)
  */
 template <typename T, typename U>
 Ptr<const AttributeAccessor> MakeObjectVectorAccessor(U T::*memberVariable);
@@ -52,16 +41,16 @@ template <typename T>
 Ptr<const AttributeChecker> MakeObjectVectorChecker();
 
 /**
- * \ingroup attribute_ObjectVector
- * \copydoc ns3::MakeObjectPtrContainerAccessor()
+ * @ingroup attribute_ObjectVector
+ * @copydoc ns3::MakeObjectPtrContainerAccessor()
  */
 template <typename T, typename U, typename INDEX>
 Ptr<const AttributeAccessor> MakeObjectVectorAccessor(Ptr<U> (T::*get)(INDEX) const,
                                                       INDEX (T::*getN)() const);
 
 /**
- * \ingroup attribute_ObjectVector
- * \copydoc ns3::MakeObjectPtrContainerAccessor()
+ * @ingroup attribute_ObjectVector
+ * @copydoc ns3::MakeObjectPtrContainerAccessor()
  */
 template <typename T, typename U, typename INDEX>
 Ptr<const AttributeAccessor> MakeObjectVectorAccessor(INDEX (T::*getN)() const,

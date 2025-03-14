@@ -1,34 +1,24 @@
 /*
  *   Copyright (c) 2020 University of Padova, Dep. of Information Engineering, SIGNET lab.
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License version 2 as
- *   published by the Free Software Foundation;
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program; if not, write to the Free Software
- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *   SPDX-License-Identifier: GPL-2.0-only
  */
 
 #include "phased-array-model.h"
 
 #include "isotropic-antenna-model.h"
 
-#include <ns3/boolean.h>
-#include <ns3/double.h>
-#include <ns3/log.h>
-#include <ns3/pointer.h>
-#include <ns3/uinteger.h>
+#include "ns3/boolean.h"
+#include "ns3/double.h"
+#include "ns3/log.h"
+#include "ns3/pointer.h"
+#include "ns3/uinteger.h"
 
 namespace ns3
 {
 
 uint32_t PhasedArrayModel::m_idCounter = 0;
+SymmetricAdjacencyMatrix<bool> PhasedArrayModel::m_outOfDateAntennaPairChannel;
 
 NS_LOG_COMPONENT_DEFINE("PhasedArrayModel");
 
@@ -38,6 +28,8 @@ PhasedArrayModel::PhasedArrayModel()
     : m_isBfVectorValid{false}
 {
     m_id = m_idCounter++;
+    m_outOfDateAntennaPairChannel.AddRow();
+    m_outOfDateAntennaPairChannel.SetValueAdjacent(m_id, true);
 }
 
 PhasedArrayModel::~PhasedArrayModel()
@@ -146,6 +138,23 @@ uint32_t
 PhasedArrayModel::GetId() const
 {
     return m_id;
+}
+
+bool
+PhasedArrayModel::IsChannelOutOfDate(Ptr<const PhasedArrayModel> antennaB) const
+{
+    // Check that channel needs update
+    bool needsUpdate = m_outOfDateAntennaPairChannel.GetValue(m_id, antennaB->m_id);
+
+    // Assume the channel will be updated (needsUpdate == true), reset these
+    m_outOfDateAntennaPairChannel.SetValue(m_id, antennaB->m_id, false);
+    return needsUpdate;
+}
+
+void
+PhasedArrayModel::InvalidateChannels() const
+{
+    m_outOfDateAntennaPairChannel.SetValueAdjacent(m_id, true);
 }
 
 } /* namespace ns3 */

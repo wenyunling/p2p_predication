@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2014 Piotr Gawlowicz
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Piotr Gawlowicz <gawlowicz.p@gmail.com>
  *
@@ -23,30 +12,30 @@
 #include "lte-ffr-simple.h"
 #include "lte-simple-spectrum-phy.h"
 
+#include "ns3/boolean.h"
+#include "ns3/callback.h"
+#include "ns3/config.h"
+#include "ns3/double.h"
+#include "ns3/enum.h"
+#include "ns3/ff-mac-scheduler.h"
 #include "ns3/internet-module.h"
+#include "ns3/log.h"
+#include "ns3/lte-common.h"
+#include "ns3/lte-enb-net-device.h"
+#include "ns3/lte-enb-phy.h"
+#include "ns3/lte-enb-rrc.h"
 #include "ns3/lte-helper.h"
+#include "ns3/lte-ue-net-device.h"
+#include "ns3/lte-ue-phy.h"
+#include "ns3/lte-ue-rrc.h"
 #include "ns3/mobility-helper.h"
 #include "ns3/packet-sink-helper.h"
 #include "ns3/point-to-point-epc-helper.h"
 #include "ns3/point-to-point-module.h"
+#include "ns3/pointer.h"
+#include "ns3/simulator.h"
+#include "ns3/string.h"
 #include "ns3/udp-client-server-helper.h"
-#include <ns3/boolean.h>
-#include <ns3/callback.h>
-#include <ns3/config.h>
-#include <ns3/double.h>
-#include <ns3/enum.h>
-#include <ns3/ff-mac-scheduler.h>
-#include <ns3/log.h>
-#include <ns3/lte-common.h>
-#include <ns3/lte-enb-net-device.h>
-#include <ns3/lte-enb-phy.h>
-#include <ns3/lte-enb-rrc.h>
-#include <ns3/lte-ue-net-device.h>
-#include <ns3/lte-ue-phy.h>
-#include <ns3/lte-ue-rrc.h>
-#include <ns3/pointer.h>
-#include <ns3/simulator.h>
-#include <ns3/string.h>
 
 using namespace ns3;
 
@@ -57,7 +46,7 @@ NS_LOG_COMPONENT_DEFINE("LteFrequencyReuseTest");
  */
 
 LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
-    : TestSuite("lte-frequency-reuse", SYSTEM)
+    : TestSuite("lte-frequency-reuse", Type::SYSTEM)
 {
     //  LogLevel logLevel = (LogLevel)(LOG_PREFIX_FUNC | LOG_PREFIX_TIME | LOG_LEVEL_DEBUG);
     //  LogComponentEnable ("LteFrequencyReuseTest", logLevel);
@@ -86,7 +75,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                       12,
                                       availableDlRb,
                                       availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteHardFrTestCase("DownlinkHardFrPf2",
                                       5,
                                       "ns3::PfFfMacScheduler",
@@ -98,7 +87,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                       12,
                                       availableDlRb,
                                       availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteHardFrTestCase("DownlinkHardFrPss1",
                                       1,
                                       "ns3::PssFfMacScheduler",
@@ -110,7 +99,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                       12,
                                       availableDlRb,
                                       availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteHardFrTestCase("DownlinkHardFrPss2",
                                       5,
                                       "ns3::PssFfMacScheduler",
@@ -122,7 +111,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                       12,
                                       availableDlRb,
                                       availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteHardFrTestCase("DownlinkHardFrCqa1",
                                       1,
                                       "ns3::CqaFfMacScheduler",
@@ -134,7 +123,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                       12,
                                       availableDlRb,
                                       availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteHardFrTestCase("DownlinkHardFrCqa2",
                                       5,
                                       "ns3::CqaFfMacScheduler",
@@ -146,7 +135,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                       12,
                                       availableDlRb,
                                       availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteHardFrTestCase("DownlinkHardFrFdTbfq1",
                                       1,
                                       "ns3::FdTbfqFfMacScheduler",
@@ -158,7 +147,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                       12,
                                       availableDlRb,
                                       availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteHardFrTestCase("DownlinkHardFrFdTbfq2",
                                       5,
                                       "ns3::FdTbfqFfMacScheduler",
@@ -170,7 +159,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                       12,
                                       availableDlRb,
                                       availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteHardFrTestCase("DownlinkHardFrTdTbfq1",
                                       1,
                                       "ns3::TdTbfqFfMacScheduler",
@@ -182,7 +171,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                       12,
                                       availableDlRb,
                                       availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteHardFrTestCase("DownlinkHardFrTdTbfq2",
                                       5,
                                       "ns3::TdTbfqFfMacScheduler",
@@ -194,7 +183,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                       12,
                                       availableDlRb,
                                       availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     availableDlRb.clear();
     availableUlRb.clear();
@@ -232,7 +221,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                         6,
                                         availableDlRb,
                                         availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteStrictFrTestCase("DownlinkStrictFrPf2",
                                         5,
                                         "ns3::PfFfMacScheduler",
@@ -246,7 +235,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                         6,
                                         availableDlRb,
                                         availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteStrictFrTestCase("DownlinkStrictFrPss1",
                                         1,
                                         "ns3::PssFfMacScheduler",
@@ -260,7 +249,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                         6,
                                         availableDlRb,
                                         availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteStrictFrTestCase("DownlinkStrictFrPss2",
                                         5,
                                         "ns3::PssFfMacScheduler",
@@ -274,7 +263,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                         6,
                                         availableDlRb,
                                         availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteStrictFrTestCase("DownlinkStrictFrCqa1",
                                         1,
                                         "ns3::CqaFfMacScheduler",
@@ -288,7 +277,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                         6,
                                         availableDlRb,
                                         availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteStrictFrTestCase("DownlinkStrictFrCqa2",
                                         5,
                                         "ns3::CqaFfMacScheduler",
@@ -302,7 +291,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                         6,
                                         availableDlRb,
                                         availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteStrictFrTestCase("DownlinkStrictFrCqaFdTbfq1",
                                         1,
                                         "ns3::FdTbfqFfMacScheduler",
@@ -316,7 +305,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                         6,
                                         availableDlRb,
                                         availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteStrictFrTestCase("DownlinkStrictFrCqaFdTbfq2",
                                         5,
                                         "ns3::FdTbfqFfMacScheduler",
@@ -330,7 +319,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                         6,
                                         availableDlRb,
                                         availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteStrictFrTestCase("DownlinkStrictFrCqaTdTbfq1",
                                         1,
                                         "ns3::TdTbfqFfMacScheduler",
@@ -344,7 +333,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                         6,
                                         availableDlRb,
                                         availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteStrictFrTestCase("DownlinkStrictFrCqaTdTbfq2",
                                         5,
                                         "ns3::TdTbfqFfMacScheduler",
@@ -358,84 +347,84 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
                                         6,
                                         availableDlRb,
                                         availableUlRb),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     AddTestCase(new LteStrictFrAreaTestCase("LteStrictFrAreaTestCasePf1", "ns3::PfFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(
         new LteStrictFrAreaTestCase("LteStrictFrAreaTestCasePss1", "ns3::PssFfMacScheduler"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
     AddTestCase(
         new LteStrictFrAreaTestCase("LteStrictFrAreaTestCaseCqa1", "ns3::CqaFfMacScheduler"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
     AddTestCase(
         new LteStrictFrAreaTestCase("LteStrictFrAreaTestCaseFdTbfq1", "ns3::FdTbfqFfMacScheduler"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
     AddTestCase(
         new LteStrictFrAreaTestCase("LteStrictFrAreaTestCaseTdTbfq1", "ns3::TdTbfqFfMacScheduler"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
 
     AddTestCase(new LteSoftFrAreaTestCase("LteSoftFrAreaTestCasePf1", "ns3::PfFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteSoftFrAreaTestCase("LteSoftFrAreaTestCasePss1", "ns3::PssFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteSoftFrAreaTestCase("LteSoftFrAreaTestCaseCqa1", "ns3::CqaFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(
         new LteSoftFrAreaTestCase("LteSoftFrAreaTestCaseFdTbfq1", "ns3::FdTbfqFfMacScheduler"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
     AddTestCase(
         new LteSoftFrAreaTestCase("LteSoftFrAreaTestCaseTdTbfq1", "ns3::TdTbfqFfMacScheduler"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
 
     AddTestCase(new LteSoftFfrAreaTestCase("LteSoftFfrAreaTestCasePf1", "ns3::PfFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteSoftFfrAreaTestCase("LteSoftFfrAreaTestCasePss1", "ns3::PssFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteSoftFfrAreaTestCase("LteSoftFfrAreaTestCaseCqa1", "ns3::CqaFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(
         new LteSoftFfrAreaTestCase("LteSoftFfrAreaTestCaseFdTbfq1", "ns3::FdTbfqFfMacScheduler"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
     AddTestCase(
         new LteSoftFfrAreaTestCase("LteSoftFfrAreaTestCaseTdTbfq1", "ns3::TdTbfqFfMacScheduler"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
 
     AddTestCase(
         new LteEnhancedFfrAreaTestCase("LteEnhancedFfrAreaTestCasePf1", "ns3::PfFfMacScheduler"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
     AddTestCase(
         new LteEnhancedFfrAreaTestCase("LteEnhancedFfrAreaTestCasePss1", "ns3::PssFfMacScheduler"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
     AddTestCase(
         new LteEnhancedFfrAreaTestCase("LteEnhancedFfrAreaTestCaseCqa1", "ns3::CqaFfMacScheduler"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
     AddTestCase(new LteEnhancedFfrAreaTestCase("LteEnhancedFfrAreaTestCaseFdTbfq1",
                                                "ns3::FdTbfqFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteEnhancedFfrAreaTestCase("LteEnhancedFfrAreaTestCaseTdTbfq1",
                                                "ns3::TdTbfqFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     AddTestCase(new LteDistributedFfrAreaTestCase("LteDistributedFfrAreaTestCasePf1",
                                                   "ns3::PfFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteDistributedFfrAreaTestCase("LteDistributedFfrAreaTestCasePss1",
                                                   "ns3::PssFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteDistributedFfrAreaTestCase("LteDistributedFfrAreaTestCaseCqa1",
                                                   "ns3::CqaFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteDistributedFfrAreaTestCase("LteDistributedFfrAreaTestCaseFdTbfq1",
                                                   "ns3::FdTbfqFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteDistributedFfrAreaTestCase("LteDistributedFfrAreaTestCaseTdTbfq1",
                                                   "ns3::TdTbfqFfMacScheduler"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteFrequencyReuseTestSuite lteFrequencyReuseTestSuite;
@@ -2123,7 +2112,7 @@ LteDistributedFfrAreaTestCase::DoRun()
             NS_LOG_LOGIC("installing UDP DL app for UE " << u);
             UdpClientHelper dlClientHelper(ueIpIfaces.GetAddress(u), dlPort);
             dlClientHelper.SetAttribute("MaxPackets", UintegerValue(1000000));
-            dlClientHelper.SetAttribute("Interval", TimeValue(MilliSeconds(1.0)));
+            dlClientHelper.SetAttribute("Interval", TimeValue(MilliSeconds(1)));
             clientApps.Add(dlClientHelper.Install(remoteHost));
             PacketSinkHelper dlPacketSinkHelper("ns3::UdpSocketFactory",
                                                 InetSocketAddress(Ipv4Address::GetAny(), dlPort));
@@ -2132,7 +2121,7 @@ LteDistributedFfrAreaTestCase::DoRun()
             NS_LOG_LOGIC("installing UDP UL app for UE " << u);
             UdpClientHelper ulClientHelper(remoteHostAddr, ulPort);
             ulClientHelper.SetAttribute("MaxPackets", UintegerValue(1000000));
-            ulClientHelper.SetAttribute("Interval", TimeValue(MilliSeconds(1.0)));
+            ulClientHelper.SetAttribute("Interval", TimeValue(MilliSeconds(1)));
             clientApps.Add(ulClientHelper.Install(ue));
             PacketSinkHelper ulPacketSinkHelper("ns3::UdpSocketFactory",
                                                 InetSocketAddress(Ipv4Address::GetAny(), ulPort));

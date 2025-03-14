@@ -1,26 +1,15 @@
 /*
  *  Copyright 2013. Lawrence Livermore National Security, LLC.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Steven Smith <smith84@llnl.gov>
  *
  */
 
 /**
- * \file
- * \ingroup mpi
+ * @file
+ * @ingroup mpi
  * Implementation of classes ns3::NullMessageSentBuffer and ns3::NullMessageMpiInterface.
  */
 
@@ -51,9 +40,9 @@ NS_LOG_COMPONENT_DEFINE("NullMessageMpiInterface");
 NS_OBJECT_ENSURE_REGISTERED(NullMessageMpiInterface);
 
 /**
- * \ingroup mpi
+ * @ingroup mpi
  *
- * \brief Non-blocking send buffers for Null Message implementation.
+ * @brief Non-blocking send buffers for Null Message implementation.
  *
  * One buffer is allocated for each non-blocking send.
  */
@@ -64,15 +53,15 @@ class NullMessageSentBuffer
     ~NullMessageSentBuffer();
 
     /**
-     * \return pointer to sent buffer
+     * @return pointer to sent buffer
      */
     uint8_t* GetBuffer();
     /**
-     * \param buffer pointer to sent buffer
+     * @param buffer pointer to sent buffer
      */
     void SetBuffer(uint8_t* buffer);
     /**
-     * \return MPI request
+     * @return MPI request
      */
     MPI_Request* GetRequest();
 
@@ -404,7 +393,7 @@ NullMessageMpiInterface::ReceiveMessages(bool blocking)
             Time rxTime(time);
 
             // rxtime == 0 means this is a Null Message
-            if (rxTime > Time(0))
+            if (rxTime.IsStrictlyPositive())
             {
                 count -= sizeof(time) + sizeof(guaranteeUpdate) + sizeof(node) + sizeof(dev);
 

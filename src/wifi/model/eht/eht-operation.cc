@@ -1,25 +1,14 @@
 /*
  * Copyright (c) 2022
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Sharan Naribole <sharan.naribole@gmail.com>
  */
 
 #include "eht-operation.h"
 
-#include <ns3/assert.h>
+#include "ns3/assert.h"
 
 #include <algorithm>
 
@@ -75,10 +64,10 @@ EhtOperation::EhtOpParams::Deserialize(Buffer::Iterator start)
 
 /**
  * set the max Tx/Rx NSS for input MCS index range
- * \param vec vector of max NSS per MCS
- * \param maxNss max NSS for input MCS range
- * \param mcsStart MCS index start
- * \param mcsEnd MCS index end
+ * @param vec vector of max NSS per MCS
+ * @param maxNss max NSS for input MCS range
+ * @param mcsStart MCS index start
+ * @param mcsEnd MCS index end
  */
 void
 SetMaxNss(std::vector<uint8_t>& vec, uint8_t maxNss, uint8_t mcsStart, uint8_t mcsEnd)
@@ -94,10 +83,10 @@ SetMaxNss(std::vector<uint8_t>& vec, uint8_t maxNss, uint8_t mcsStart, uint8_t m
 
 /**
  * Get the max Tx/Rx NSS for input MCS index range
- * \param vec vector of max NSS per MCS
- * \param mcsStart MCS index start
- * \param mcsEnd MCS index end
- * \return max Rx NSS
+ * @param vec vector of max NSS per MCS
+ * @param mcsStart MCS index start
+ * @param mcsEnd MCS index end
+ * @return max Rx NSS
  */
 uint32_t
 GetMaxNss(const std::vector<uint8_t>& vec, uint8_t mcsStart, uint8_t mcsEnd)

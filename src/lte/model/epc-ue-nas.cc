@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -21,34 +10,15 @@
 
 #include "lte-as-sap.h"
 
-#include <ns3/epc-helper.h>
-#include <ns3/fatal-error.h>
-#include <ns3/log.h>
-#include <ns3/simulator.h>
+#include "ns3/epc-helper.h"
+#include "ns3/fatal-error.h"
+#include "ns3/log.h"
+#include "ns3/simulator.h"
 
 namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE("EpcUeNas");
-
-/// Map each of UE NAS states to its string representation.
-static const std::string g_ueNasStateName[EpcUeNas::NUM_STATES] = {
-    "OFF",
-    "ATTACHING",
-    "IDLE_REGISTERED",
-    "CONNECTING_TO_EPC",
-    "ACTIVE",
-};
-
-/**
- * \param s The UE NAS state.
- * \return The string representation of the given state.
- */
-static inline const std::string&
-ToString(EpcUeNas::State s)
-{
-    return g_ueNasStateName[s];
-}
 
 NS_OBJECT_ENSURE_REGISTERED(EpcUeNas);
 
@@ -284,11 +254,10 @@ EpcUeNas::GetState() const
 void
 EpcUeNas::SwitchToState(State newState)
 {
-    NS_LOG_FUNCTION(this << ToString(newState));
+    NS_LOG_FUNCTION(this << newState);
     State oldState = m_state;
     m_state = newState;
-    NS_LOG_INFO("IMSI " << m_imsi << " NAS " << ToString(oldState) << " --> "
-                        << ToString(newState));
+    NS_LOG_INFO("IMSI " << m_imsi << " NAS " << oldState << " --> " << newState);
     m_stateTransitionCallback(oldState, newState);
 
     // actions to be done when entering a new state:
@@ -305,6 +274,27 @@ EpcUeNas::SwitchToState(State newState)
     default:
         break;
     }
+}
+
+std::ostream&
+operator<<(std::ostream& os, EpcUeNas::State state)
+{
+    switch (state)
+    {
+    case EpcUeNas::State::OFF:
+        return os << "OFF";
+    case EpcUeNas::State::ATTACHING:
+        return os << "ATTACHING";
+    case EpcUeNas::State::IDLE_REGISTERED:
+        return os << "IDLE_REGISTERED";
+    case EpcUeNas::State::CONNECTING_TO_EPC:
+        return os << "CONNECTING_TO_EPC";
+    case EpcUeNas::State::ACTIVE:
+        return os << "ACTIVE";
+    case EpcUeNas::State::NUM_STATES:
+        return os << "NUM_STATES";
+    };
+    return os << "UNKNOWN(" << static_cast<uint32_t>(state) << ")";
 }
 
 } // namespace ns3

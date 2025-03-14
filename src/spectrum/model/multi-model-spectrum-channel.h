@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -25,7 +14,7 @@
 #include "spectrum-propagation-loss-model.h"
 #include "spectrum-value.h"
 
-#include <ns3/propagation-delay-model.h>
+#include "ns3/propagation-delay-model.h"
 
 #include <map>
 #include <set>
@@ -34,13 +23,13 @@ namespace ns3
 {
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  * Container: SpectrumModelUid_t, SpectrumConverter
  */
 typedef std::map<SpectrumModelUid_t, SpectrumConverter> SpectrumConverterMap_t;
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  * The Tx spectrum model information. This class is used to convert
  * one spectrum model into another one.
  */
@@ -49,7 +38,7 @@ class TxSpectrumModelInfo
   public:
     /**
      * Constructor.
-     * \param txSpectrumModel the Tx Spectrum model.
+     * @param txSpectrumModel the Tx Spectrum model.
      */
     TxSpectrumModelInfo(Ptr<const SpectrumModel> txSpectrumModel);
 
@@ -58,13 +47,13 @@ class TxSpectrumModelInfo
 };
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  * Container: SpectrumModelUid_t, TxSpectrumModelInfo
  */
 typedef std::map<SpectrumModelUid_t, TxSpectrumModelInfo> TxSpectrumModelInfoMap_t;
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  * The Rx spectrum model information. This class is used to convert
  * one spectrum model into another one.
  */
@@ -73,7 +62,7 @@ class RxSpectrumModelInfo
   public:
     /**
      * Constructor.
-     * \param rxSpectrumModel the Rx Spectrum model.
+     * @param rxSpectrumModel the Rx Spectrum model.
      */
     RxSpectrumModelInfo(Ptr<const SpectrumModel> rxSpectrumModel);
 
@@ -82,19 +71,19 @@ class RxSpectrumModelInfo
 };
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  * Container: SpectrumModelUid_t, RxSpectrumModelInfo
  */
 typedef std::map<SpectrumModelUid_t, RxSpectrumModelInfo> RxSpectrumModelInfoMap_t;
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  *
  * This SpectrumChannel implementation can handle the presence of
  * SpectrumPhy instances which can use
  * different spectrum models, i.e.,  different SpectrumModel.
  *
- * \note It is allowed for a receiving SpectrumPhy to switch to a
+ * @note It is allowed for a receiving SpectrumPhy to switch to a
  * different SpectrumModel during the simulation. The requirement
  * for this to work is that, after the SpectrumPhy switched its
  * SpectrumModel,  MultiModelSpectrumChannel::AddRx () is
@@ -106,8 +95,8 @@ class MultiModelSpectrumChannel : public SpectrumChannel
     MultiModelSpectrumChannel();
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -130,9 +119,9 @@ class MultiModelSpectrumChannel : public SpectrumChannel
      * an iterator pointing to it. If not, it creates a new entry in
      * m_txSpectrumModelInfoMap, and returns an iterator to it.
      *
-     * \param txSpectrumModel The TX SpectrumModel  being considered
+     * @param txSpectrumModel The TX SpectrumModel  being considered
      *
-     * \return An iterator pointing to the corresponding entry in m_txSpectrumModelInfoMap
+     * @return An iterator pointing to the corresponding entry in m_txSpectrumModelInfoMap
      */
     TxSpectrumModelInfoMap_t::const_iterator FindAndEventuallyAddTxSpectrumModel(
         Ptr<const SpectrumModel> txSpectrumModel);
@@ -140,10 +129,18 @@ class MultiModelSpectrumChannel : public SpectrumChannel
     /**
      * Used internally to reschedule transmission after the propagation delay.
      *
-     * \param params The signal parameters.
-     * \param receiver A pointer to the receiver SpectrumPhy.
+     * @param txPsd The transmitted PSD.
+     * @param txAntennaGain The antenna gain at the transmitter.
+     * @param params The signal parameters.
+     * @param receiver A pointer to the receiver SpectrumPhy.
+     * @param availableConvertedPsds available converted PSDs from the TX PSD.
      */
-    virtual void StartRx(Ptr<SpectrumSignalParameters> params, Ptr<SpectrumPhy> receiver);
+    virtual void StartRx(
+        Ptr<SpectrumValue> txPsd,
+        double txAntennaGain,
+        Ptr<SpectrumSignalParameters> params,
+        Ptr<SpectrumPhy> receiver,
+        const std::map<SpectrumModelUid_t, Ptr<SpectrumValue>>& availableConvertedPsds);
 
     /**
      * Data structure holding, for each TX SpectrumModel,  all the

@@ -1,25 +1,14 @@
 /*
  *  Copyright 2013. Lawrence Livermore National Security, LLC.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Steven Smith <smith84@llnl.gov>
  */
 
 /**
- * \file
- * \ingroup mpi
+ * @file
+ * @ingroup mpi
  * Implementation of class ns3::NullMessageSimulatorImpl.
  */
 
@@ -30,16 +19,16 @@
 #include "remote-channel-bundle-manager.h"
 #include "remote-channel-bundle.h"
 
-#include <ns3/assert.h>
-#include <ns3/channel.h>
-#include <ns3/double.h>
-#include <ns3/event-impl.h>
-#include <ns3/log.h>
-#include <ns3/node-container.h>
-#include <ns3/pointer.h>
-#include <ns3/ptr.h>
-#include <ns3/scheduler.h>
-#include <ns3/simulator.h>
+#include "ns3/assert.h"
+#include "ns3/channel.h"
+#include "ns3/double.h"
+#include "ns3/event-impl.h"
+#include "ns3/log.h"
+#include "ns3/node-container.h"
+#include "ns3/pointer.h"
+#include "ns3/ptr.h"
+#include "ns3/scheduler.h"
+#include "ns3/simulator.h"
 
 #include <cmath>
 #include <fstream>

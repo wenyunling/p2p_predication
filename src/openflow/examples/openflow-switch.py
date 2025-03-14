@@ -1,17 +1,6 @@
 #
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License version 2 as
-# published by the Free Software Foundation;
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Author: Blake Hurd <naimorai@gmail.com>
 # Modified by: Josh Pelkey <joshpelkey@gmail.com>
@@ -53,7 +42,7 @@ for i in range(4):
 switchNode = csmaSwitch.Get(0)
 swtch = ns.OpenFlowSwitchHelper()
 controller = ns.ofi.DropController()
-# controller = ns.CreateObject("ns3::ofi::LearningController")
+# controller = ns.CreateObject[ns.ofi.LearningController]()
 swtch.Install(switchNode, switchDevices, controller)
 # controller->SetAttribute("ExpirationTime", TimeValue(timeout))
 
@@ -74,24 +63,24 @@ onoff.SetConstantRate(ns.DataRate("500kb/s"))
 
 app = onoff.Install(terminals.Get(0))
 
-app.Start(ns.Seconds(1.0))
-app.Stop(ns.Seconds(10.0))
+app.Start(ns.Seconds(1))
+app.Stop(ns.Seconds(10))
 
 sink = ns.PacketSinkHelper(
     "ns3::UdpSocketFactory", ns.InetSocketAddress(ns.Ipv4Address.GetAny(), port).ConvertTo()
 )
 app = sink.Install(terminals.Get(1))
-app.Start(ns.Seconds(0.0))
+app.Start(ns.Seconds(0))
 
 onoff.SetAttribute(
     "Remote", ns.AddressValue(ns.InetSocketAddress(ns.Ipv4Address("10.1.1.1"), port).ConvertTo())
 )
 app = onoff.Install(terminals.Get(3))
 app.Start(ns.Seconds(1.1))
-app.Stop(ns.Seconds(10.0))
+app.Stop(ns.Seconds(10))
 
 app = sink.Install(terminals.Get(0))
-app.Start(ns.Seconds(0.0))
+app.Start(ns.Seconds(0))
 
 ns.Simulator.Run()
 ns.Simulator.Destroy()

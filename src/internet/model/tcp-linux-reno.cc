@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2019 NITK Surathkal
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Apoorva Bhargava <apoorvabhargava13@gmail.com>
  *         Mohit P. Tahiliani <tahiliani@nitk.edu.in>
@@ -78,6 +67,13 @@ void
 TcpLinuxReno::CongestionAvoidance(Ptr<TcpSocketState> tcb, uint32_t segmentsAcked)
 {
     NS_LOG_FUNCTION(this << tcb << segmentsAcked);
+
+    if (m_suppressIncreaseIfCwndLimited && !tcb->m_isCwndLimited)
+    {
+        NS_LOG_DEBUG("No increase because current cwnd " << tcb->m_cWnd
+                                                         << " is not limiting the flow");
+        return;
+    }
 
     uint32_t w = tcb->m_cWnd / tcb->m_segmentSize;
 
@@ -148,6 +144,13 @@ Ptr<TcpCongestionOps>
 TcpLinuxReno::Fork()
 {
     return CopyObject<TcpLinuxReno>(this);
+}
+
+void
+TcpLinuxReno::SetSuppressIncreaseIfCwndLimited(bool value)
+{
+    NS_LOG_FUNCTION(this << value);
+    m_suppressIncreaseIfCwndLimited = value;
 }
 
 } // namespace ns3

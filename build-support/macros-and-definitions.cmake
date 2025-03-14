@@ -1,17 +1,6 @@
 # Copyright (c) 2017-2021 Universidade de Brasília
 #
-# This program is free software; you can redistribute it and/or modify it under
-# the terms of the GNU General Public License version 2 as published by the Free
-# Software Foundation;
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-# details.
-#
-# You should have received a copy of the GNU General Public License along with
-# this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-# Place, Suite 330, Boston, MA  02111-1307 USA
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Author: Gabriel Ferreira <gabrielcarvfer@gmail.com>
 
@@ -92,19 +81,13 @@ macro(SUBDIRLIST result curdir)
 endmacro()
 
 macro(library_target_name libname targetname)
-  set(${targetname} lib${libname})
+  set(${targetname} ${libname})
 endmacro()
 
 macro(clear_global_cached_variables)
   # clear cache variables
   unset(build_profile CACHE)
   unset(build_profile_suffix CACHE)
-  set(lib-ns3-static-objs
-      ""
-      CACHE
-        INTERNAL
-        "list of object files from module used by NS3_STATIC and NS3_MONOLIB"
-  )
   set(ns3-contrib-libs "" CACHE INTERNAL "list of processed contrib modules")
   set(ns3-example-folders "" CACHE INTERNAL "list of example folders")
   set(ns3-execs "" CACHE INTERNAL "list of c++ executables")
@@ -121,7 +104,6 @@ macro(clear_global_cached_variables)
   mark_as_advanced(
     build_profile
     build_profile_suffix
-    lib-ns3-static-objs
     ns3-contrib-libs
     ns3-example-folders
     ns3-execs
@@ -159,6 +141,21 @@ macro(process_options)
                                                         STREQUAL "default"
   )
     set(cmakeBuildType relwithdebinfo)
+    # Do not use optimized for size builds on MacOS See issue #1065:
+    # https://gitlab.com/nsnam/ns-3-dev/-/issues/1065
+    if(NOT (DEFINED APPLE))
+      string(REPLACE "-O2" "-Os" CMAKE_CXX_FLAGS_RELWITHDEBINFO
+                     "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}"
+      )
+    endif()
+    # Do not use -Os for gcc 9 default builds due to a bug in gcc that can
+    # result  in extreme memory usage. See MR !1955
+    # https://gitlab.com/nsnam/ns-3-dev/-/merge_requests/1955
+    if(GCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.0.0")
+      string(REPLACE "-Os" "-O2" CMAKE_CXX_FLAGS_RELWITHDEBINFO
+                     "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}"
+      )
+    endif()
     set(CMAKE_CXX_FLAGS_DEFAULT ${CMAKE_CXX_FLAGS_RELWITHDEBINFO})
     add_definitions(-DNS3_BUILD_PROFILE_DEBUG)
   elseif(${cmakeBuildType} STREQUAL "release")
@@ -184,7 +181,8 @@ macro(process_options)
   set(ENABLE_TESTS OFF)
   if(${NS3_TESTS} OR ${ns3rc_tests_enabled})
     set(ENABLE_TESTS ON)
-    enable_testing()
+    # CTest creates a TEST target that conflicts with ns-3 test library
+    # enable_testing()
   else()
     list(REMOVE_ITEM libs_to_build test)
   endif()
@@ -205,15 +203,25 @@ macro(process_options)
     unset(CMAKE_VERBOSE_MAKEFILE CACHE)
   endif()
 
+  if(${NS3_FORCE_LOCAL_DEPENDENCIES})
+    set(CMAKE_FIND_FRAMEWORK NEVER)
+    set(CMAKE_FIND_APPBUNDLE NEVER)
+    set(CMAKE_FIND_USE_CMAKE_SYSTEM_PATH FALSE)
+    set(CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH FALSE)
+  endif()
+
   # Set warning level and warning as errors
   if(${NS3_WARNINGS})
-    if(DEFINED MSVC)
+    if(${MSVC})
       add_compile_options(/W3) # /W4 = -Wall + -Wextra
       if(${NS3_WARNINGS_AS_ERRORS})
         add_compile_options(/WX)
       endif()
     else()
       add_compile_options(-Wall) # -Wextra
+      if(${GCC_WORKING_PEDANTIC_SEMICOLON})
+        add_compile_options(-Wpedantic)
+      endif()
       if(${NS3_WARNINGS_AS_ERRORS})
         add_compile_options(-Werror -Wno-error=deprecated-declarations)
       endif()
@@ -251,7 +259,8 @@ macro(process_options)
 
   if(${NS3_CLANG_TIDY})
     find_program(
-      CLANG_TIDY NAMES clang-tidy clang-tidy-14 clang-tidy-15 clang-tidy-16
+      CLANG_TIDY NAMES clang-tidy clang-tidy-15 clang-tidy-16 clang-tidy-17
+                       clang-tidy-18 clang-tidy-19
     )
     if("${CLANG_TIDY}" STREQUAL "CLANG_TIDY-NOTFOUND")
       message(FATAL_ERROR "Clang-tidy was not found")
@@ -301,10 +310,17 @@ macro(process_options)
   if("${CMAKE_FORMAT_PROGRAM}" STREQUAL "CMAKE_FORMAT_PROGRAM-NOTFOUND")
     message(${HIGHLIGHTED_STATUS} "Proceeding without cmake-format")
   else()
-    file(GLOB_RECURSE MODULES_CMAKE_FILES src/**/CMakeLists.txt
-         contrib/**/CMakeLists.txt examples/**/CMakeLists.txt
-         scratch/**/CMakeLists.txt
+    file(
+      GLOB
+      MODULES_CMAKE_FILES
+      src/**/CMakeLists.txt
+      contrib/**/CMakeLists.txt
+      src/**/examples/CMakeLists.txt
+      contrib/**/examples/CMakeLists.txt
+      examples/**/CMakeLists.txt
+      scratch/**/CMakeLists.txt
     )
+    file(GLOB_RECURSE SCRATCH_CMAKE_FILES scratch/**/CMakeLists.txt)
     file(
       GLOB
       INTERNAL_CMAKE_FILES
@@ -323,7 +339,7 @@ macro(process_options)
       COMMAND
         ${CMAKE_FORMAT_PROGRAM} -c
         ${PROJECT_SOURCE_DIR}/build-support/cmake-format-modules.yaml -i
-        ${MODULES_CMAKE_FILES}
+        ${MODULES_CMAKE_FILES} ${SCRATCH_CMAKE_FILES}
     )
     add_custom_target(
       cmake-format-check
@@ -371,7 +387,9 @@ macro(process_options)
   endif()
 
   if(${NS3_SANITIZE})
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,leak,undefined")
+    set(CMAKE_CXX_FLAGS
+        "${CMAKE_CXX_FLAGS} -fsanitize=address,leak,undefined -fno-sanitize-recover=all"
+    )
   endif()
 
   if(${NS3_SANITIZE_MEMORY})
@@ -523,7 +541,9 @@ macro(process_options)
     if(${SQLite3_FOUND})
       set(ENABLE_SQLITE True)
       add_definitions(-DHAVE_SQLITE3)
-      include_directories(${SQLite3_INCLUDE_DIRS})
+      if(NOT ${NS3_FORCE_LOCAL_DEPENDENCIES})
+        include_directories(${SQLite3_INCLUDE_DIRS})
+      endif()
     endif()
   endif()
 
@@ -537,7 +557,9 @@ macro(process_options)
       set(ENABLE_EIGEN True)
       add_definitions(-DHAVE_EIGEN3)
       add_definitions(-DEIGEN_MPL2_ONLY)
-      include_directories(${EIGEN3_INCLUDE_DIR})
+      if(NOT ${NS3_FORCE_LOCAL_DEPENDENCIES})
+        include_directories(${EIGEN3_INCLUDE_DIR})
+      endif()
     else()
       set(ENABLE_EIGEN_REASON "Eigen was not found")
     endif()
@@ -565,13 +587,16 @@ macro(process_options)
               "GTK3 found with incompatible version ${GTK3_VERSION}"
           )
         else()
-          include_directories(${GTK3_INCLUDE_DIRS} ${HarfBuzz_INCLUDE_DIRS})
+          if(NOT ${NS3_FORCE_LOCAL_DEPENDENCIES})
+            include_directories(${GTK3_INCLUDE_DIRS} ${HarfBuzz_INCLUDE_DIRS})
+          endif()
         endif()
       endif()
 
     endif()
   endif()
 
+  set(LIBXML2_FOUND FALSE)
   if(${NS3_STATIC})
     # Warn users that they may be using shared libraries, which won't produce a
     # standalone static library
@@ -591,7 +616,9 @@ macro(process_options)
       set(LIBXML2_FOUND_REASON "LibXML2 was not found")
     else()
       add_definitions(-DHAVE_LIBXML2)
-      include_directories(${LIBXML2_INCLUDE_DIR})
+      if(NOT ${NS3_FORCE_LOCAL_DEPENDENCIES})
+        include_directories(${LIBXML2_INCLUDE_DIR})
+      endif()
     endif()
   endif()
 
@@ -638,7 +665,9 @@ macro(process_options)
           set(CMAKE_INSTALL_RPATH "${DEVELOPER_DIR}" CACHE STRING "")
         endif()
       endif()
-      include_directories(${Python3_INCLUDE_DIRS})
+      if(NOT ${NS3_FORCE_LOCAL_DEPENDENCIES})
+        include_directories(${Python3_INCLUDE_DIRS})
+      endif()
     else()
       message(${HIGHLIGHTED_STATUS}
               "Python: development libraries were not found"
@@ -663,14 +692,6 @@ macro(process_options)
         "Bindings: python bindings require Python, but it could not be found"
       )
       set(ENABLE_PYTHON_BINDINGS_REASON "missing dependency: python")
-    elseif(APPLE AND "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "arm64")
-      # Warn users that Cppyy on ARM Macs isn't supported yet
-      message(${HIGHLIGHTED_STATUS}
-              "Bindings: macOS silicon detected -- see issue 930"
-      )
-      set(ENABLE_PYTHON_BINDINGS_REASON
-          "macOS silicon detected -- see issue 930"
-      )
     else()
       check_deps(missing_packages PYTHON_PACKAGES cppyy)
       if(missing_packages)
@@ -681,6 +702,12 @@ macro(process_options)
         set(ENABLE_PYTHON_BINDINGS_REASON
             "missing dependency: ${missing_packages}"
         )
+      elseif(${NS3_MPI})
+        message(
+          ${HIGHLIGHTED_STATUS}
+          "Bindings: python bindings disabled due to an incompatibility with the MPI module"
+        )
+        set(ENABLE_PYTHON_BINDINGS_REASON "incompatible module enabled: mpi")
       else()
         set(ENABLE_PYTHON_BINDINGS ON)
       endif()
@@ -806,12 +833,6 @@ macro(process_options)
     endif()
   endif()
 
-  # Process config-store-config
-  configure_file(
-    build-support/config-store-config-template.h
-    ${CMAKE_HEADER_OUTPUT_DIRECTORY}/config-store-config.h
-  )
-
   set(ENABLE_MPI FALSE)
   if(${NS3_MPI})
     find_package(MPI QUIET)
@@ -819,16 +840,21 @@ macro(process_options)
       message(FATAL_ERROR "MPI was not found.")
     else()
       message(STATUS "MPI was found.")
-      add_definitions(-DNS3_MPI)
-      include_directories(${MPI_CXX_INCLUDE_DIRS})
+      target_compile_definitions(MPI::MPI_CXX INTERFACE NS3_MPI)
       set(ENABLE_MPI TRUE)
     endif()
   endif()
 
+  # Use upstream boost package config with CMake 3.30 and above
+  if(POLICY CMP0167)
+    cmake_policy(SET CMP0167 NEW)
+  endif()
   mark_as_advanced(Boost_INCLUDE_DIR)
   find_package(Boost)
   if(${Boost_FOUND})
-    include_directories(${Boost_INCLUDE_DIRS})
+    if(NOT ${NS3_FORCE_LOCAL_DEPENDENCIES})
+      include_directories(${Boost_INCLUDE_DIRS})
+    endif()
     set(CMAKE_REQUIRED_INCLUDES ${Boost_INCLUDE_DIRS})
   endif()
 
@@ -840,7 +866,9 @@ macro(process_options)
     else()
       message(STATUS "GSL was found.")
       add_definitions(-DHAVE_GSL)
-      include_directories(${GSL_INCLUDE_DIRS})
+      if(NOT ${NS3_FORCE_LOCAL_DEPENDENCIES})
+        include_directories(${GSL_INCLUDE_DIRS})
+      endif()
     endif()
   endif()
 
@@ -965,7 +993,7 @@ macro(process_options)
   # return variable
   check_deps(
     sphinx_docs_missing_deps CMAKE_PACKAGES Sphinx
-    EXECUTABLES epstopdf pdflatex latexmk convert dvipng
+    EXECUTABLES epstopdf pdflatex latexmk convert dvipng dia
   )
   if(sphinx_docs_missing_deps)
     message(
@@ -1109,7 +1137,7 @@ macro(process_options)
   check_function_exists("getenv" "HAVE_GETENV")
 
   configure_file(
-    build-support/core-config-template.h
+    ${PROJECT_SOURCE_DIR}/build-support/core-config-template.h
     ${CMAKE_HEADER_OUTPUT_DIRECTORY}/core-config.h
   )
 
@@ -1138,7 +1166,11 @@ macro(process_options)
   set(PLATFORM_UNSUPPORTED_POST "features. Continuing without them.")
   # Remove from libs_to_build all incompatible libraries or the ones that
   # dependencies couldn't be installed
-  if(APPLE OR WSLv1 OR WIN32)
+  if(APPLE
+     OR WSLv1
+     OR WIN32
+     OR BSD
+  )
     set(ENABLE_TAP OFF)
     set(ENABLE_EMU OFF)
     set(ENABLE_FDNETDEV FALSE)
@@ -1167,7 +1199,6 @@ macro(process_options)
   set(ns3-all-enabled-modules)
   set(ns3-libs-tests)
   set(ns3-contrib-libs)
-  set(lib-ns3-static-objs)
   set(ns3-external-libs)
 
   foreach(libname ${scanned_modules})
@@ -1246,19 +1277,26 @@ macro(process_options)
         <cstdlib>
         <cstring>
         <exception>
+        <deque>
         <fstream>
+        <functional>
         <iostream>
         <limits>
         <list>
         <map>
         <math.h>
         <ostream>
+        <queue>
         <set>
         <sstream>
         <stdint.h>
         <stdlib.h>
         <string>
+        <tuple>
+        <typeinfo>
+        <type_traits>
         <unordered_map>
+        <utility>
         <vector>
     )
     add_library(
@@ -1269,7 +1307,11 @@ macro(process_options)
       stdlib_pch${build_profile_suffix} PUBLIC
       "${precompiled_header_libraries}"
     )
-    add_library(stdlib_pch ALIAS stdlib_pch${build_profile_suffix})
+
+    # Alias may collide with actual pch in builds without suffix (e.g. release)
+    if(NOT TARGET stdlib_pch)
+      add_library(stdlib_pch ALIAS stdlib_pch${build_profile_suffix})
+    endif()
 
     add_executable(
       stdlib_pch_exec ${PROJECT_SOURCE_DIR}/build-support/empty-main.cc
@@ -1292,19 +1334,14 @@ macro(process_options)
 
   # Netanim depends on ns-3 core, so we built it later
   if(${NS3_NETANIM})
-    include(FetchContent)
-    FetchContent_Declare(
-      netanim GIT_REPOSITORY https://gitlab.com/nsnam/netanim.git
-      GIT_TAG netanim-3.109
+    include(ExternalProject)
+    ExternalProject_Add(
+      netanim_visualizer
+      GIT_REPOSITORY https://gitlab.com/nsnam/netanim.git
+      GIT_TAG netanim-3.110
+      BUILD_IN_SOURCE TRUE
+      CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_OUTPUT_DIRECTORY}
     )
-    FetchContent_Populate(netanim)
-    file(COPY build-support/3rd-party/netanim-cmakelists.cmake
-         DESTINATION ${netanim_SOURCE_DIR}
-    )
-    file(RENAME ${netanim_SOURCE_DIR}/netanim-cmakelists.cmake
-         ${netanim_SOURCE_DIR}/CMakeLists.txt
-    )
-    add_subdirectory(${netanim_SOURCE_DIR} ${netanim_BINARY_DIR})
   endif()
 
   if(${NS3_FETCH_OPTIONAL_COMPONENTS})
@@ -1356,8 +1393,8 @@ macro(build_example)
   set(filtered_in ON)
   if(NS3_FILTER_MODULE_EXAMPLES_AND_TESTS)
     set(filtered_in OFF)
-    foreach(filtered_module NS3_FILTER_MODULE_EXAMPLES_AND_TESTS)
-      if(${filtered_module} IN_LIST EXAMPLE_LIBRARIES_TO_LINK)
+    foreach(required_module ${EXAMPLE_LIBRARIES_TO_LINK})
+      if(${required_module} IN_LIST NS3_FILTER_MODULE_EXAMPLES_AND_TESTS)
         set(filtered_in ON)
       endif()
     endforeach()

@@ -1,32 +1,21 @@
 /*
  * Copyright (c) 2012 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
 
-#include <ns3/applications-module.h>
-#include <ns3/buildings-module.h>
-#include <ns3/config-store-module.h>
-#include <ns3/core-module.h>
-#include <ns3/internet-module.h>
-#include <ns3/log.h>
-#include <ns3/lte-module.h>
-#include <ns3/mobility-module.h>
-#include <ns3/network-module.h>
-#include <ns3/point-to-point-helper.h>
+#include "ns3/applications-module.h"
+#include "ns3/buildings-module.h"
+#include "ns3/config-store-module.h"
+#include "ns3/core-module.h"
+#include "ns3/internet-module.h"
+#include "ns3/log.h"
+#include "ns3/lte-module.h"
+#include "ns3/mobility-module.h"
+#include "ns3/network-module.h"
+#include "ns3/point-to-point-helper.h"
 
 #include <iomanip>
 #include <ios>
@@ -45,9 +34,9 @@ NS_LOG_COMPONENT_DEFINE("LenaDualStripe");
 /**
  * Check if two boxes are overlapping.
  *
- * \param a First box.
- * \param b Second box.
- * \return true if the boxes are overlapping, false otherwise.
+ * @param a First box.
+ * @param b Second box.
+ * @return true if the boxes are overlapping, false otherwise.
  */
 bool
 AreOverlapping(Box a, Box b)
@@ -65,14 +54,14 @@ class FemtocellBlockAllocator
   public:
     /**
      * Constructor
-     * \param area the total area
-     * \param nApartmentsX the number of apartments in the X direction
-     * \param nFloors the number of floors
+     * @param area the total area
+     * @param nApartmentsX the number of apartments in the X direction
+     * @param nFloors the number of floors
      */
     FemtocellBlockAllocator(Box area, uint32_t nApartmentsX, uint32_t nFloors);
     /**
      * Function that creates building blocks.
-     * \param n the number of blocks to create
+     * @param n the number of blocks to create
      */
     void Create(uint32_t n);
     /// Create function
@@ -82,8 +71,8 @@ class FemtocellBlockAllocator
     /**
      * Function that checks if the box area is overlapping with some of previously created building
      * blocks.
-     * \param box the area to check
-     * \returns true if there is an overlap
+     * @param box the area to check
+     * @returns true if there is an overlap
      */
     bool OverlapsWithAnyPrevious(Box box);
     Box m_area;                           ///< Area
@@ -171,7 +160,7 @@ FemtocellBlockAllocator::OverlapsWithAnyPrevious(Box box)
 /**
  * Print a list of buildings that can be plotted using Gnuplot.
  *
- * \param filename the output file name.
+ * @param filename the output file name.
  */
 void
 PrintGnuplottableBuildingListToFile(std::string filename)
@@ -196,7 +185,7 @@ PrintGnuplottableBuildingListToFile(std::string filename)
 /**
  * Print a list of UEs that can be plotted using Gnuplot.
  *
- * \param filename the output file name.
+ * @param filename the output file name.
  */
 void
 PrintGnuplottableUeListToFile(std::string filename)
@@ -230,7 +219,7 @@ PrintGnuplottableUeListToFile(std::string filename)
 /**
  * Print a list of ENBs that can be plotted using Gnuplot.
  *
- * \param filename the output file name.
+ * @param filename the output file name.
  */
 void
 PrintGnuplottableEnbListToFile(std::string filename)

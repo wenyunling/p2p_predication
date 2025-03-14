@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 University of Kansas
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Justin Rohrer <rohrej@ittc.ku.edu>
  *
@@ -100,22 +89,22 @@ class RoutingExperiment
 
     /**
      * Handles the command-line parameters.
-     * \param argc The argument count.
-     * \param argv The argument vector.
+     * @param argc The argument count.
+     * @param argv The argument vector.
      */
     void CommandSetup(int argc, char** argv);
 
   private:
     /**
      * Setup the receiving socket in a Sink Node.
-     * \param addr The address of the node.
-     * \param node The node pointer.
-     * \return the socket.
+     * @param addr The address of the node.
+     * @param node The node pointer.
+     * @return the socket.
      */
     Ptr<Socket> SetupPacketReceive(Ipv4Address addr, Ptr<Node> node);
     /**
      * Receive a packet.
-     * \param socket The receiving socket.
+     * @param socket The receiving socket.
      */
     void ReceivePacket(Ptr<Socket> socket);
     /**
@@ -184,7 +173,7 @@ RoutingExperiment::CheckThroughput()
 
     out.close();
     packetsReceived = 0;
-    Simulator::Schedule(Seconds(1.0), &RoutingExperiment::CheckThroughput, this);
+    Simulator::Schedule(Seconds(1), &RoutingExperiment::CheckThroughput, this);
 }
 
 Ptr<Socket>
@@ -417,7 +406,7 @@ RoutingExperiment::Run()
 
     if (m_flowMonitor)
     {
-        flowmon->SerializeToXmlFile("./output/"+ tr_name + ".xml", false, false);
+        flowmon->SerializeToXmlFile(tr_name + ".flowmon", false, false);
     }
 
     Simulator::Destroy();

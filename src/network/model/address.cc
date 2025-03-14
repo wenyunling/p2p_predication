@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
@@ -130,7 +119,7 @@ Address::CheckCompatible(uint8_t type, uint8_t len) const
 {
     NS_LOG_FUNCTION(this << static_cast<uint32_t>(type) << static_cast<uint32_t>(len));
     NS_ASSERT(len <= MAX_SIZE);
-    /// \internal
+    /// @internal
     /// Mac address type/length detection is discussed in \bugid{1568}
     return (m_len == len && m_type == type) || (m_len >= len && m_type == 0);
 }
@@ -245,6 +234,10 @@ operator<(const Address& a, const Address& b)
 std::ostream&
 operator<<(std::ostream& os, const Address& address)
 {
+    if (address.m_len == 0)
+    {
+        return os;
+    }
     os.setf(std::ios::hex, std::ios::basefield);
     os.fill('0');
     os << std::setw(2) << (uint32_t)address.m_type << "-" << std::setw(2) << (uint32_t)address.m_len

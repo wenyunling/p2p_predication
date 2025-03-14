@@ -2,18 +2,7 @@
  * Copyright (c) 2014 Wireless Communications and Networking Group (WCNG),
  * University of Rochester, Rochester, NY, USA.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Cristiano Tapparello <cristiano.tapparello@rochester.edu>
  */
@@ -60,14 +49,15 @@
 #include <vector>
 
 using namespace ns3;
+using namespace ns3::energy;
 
 NS_LOG_COMPONENT_DEFINE("EnergyWithHarvestingExample");
 
 /**
  * Print a received packet
  *
- * \param from sender address
- * \return a string with the details of the packet: dst {IP, port}, time.
+ * @param from sender address
+ * @return a string with the details of the packet: dst {IP, port}, time.
  */
 static inline std::string
 PrintReceivedPacket(Address& from)
@@ -82,7 +72,7 @@ PrintReceivedPacket(Address& from)
 }
 
 /**
- * \param socket Pointer to socket.
+ * @param socket Pointer to socket.
  *
  * Packet receiving sink.
  */
@@ -101,11 +91,11 @@ ReceivePacket(Ptr<Socket> socket)
 }
 
 /**
- * \param socket Pointer to socket.
- * \param pktSize Packet size.
- * \param n Pointer to node.
- * \param pktCount Number of packets to generate.
- * \param pktInterval Packet sending interval.
+ * @param socket Pointer to socket.
+ * @param pktSize Packet size.
+ * @param n Pointer to node.
+ * @param pktCount Number of packets to generate.
+ * @param pktInterval Packet sending interval.
  *
  * Traffic generator.
  */
@@ -136,8 +126,8 @@ GenerateTraffic(Ptr<Socket> socket,
 /**
  * Trace function for remaining energy at node.
  *
- * \param oldValue Old value
- * \param remainingEnergy New value
+ * @param oldValue Old value
+ * @param remainingEnergy New value
  */
 void
 RemainingEnergy(double oldValue, double remainingEnergy)
@@ -149,8 +139,8 @@ RemainingEnergy(double oldValue, double remainingEnergy)
 /**
  * Trace function for total energy consumption at node.
  *
- * \param oldValue Old value
- * \param totalEnergy New value
+ * @param oldValue Old value
+ * @param totalEnergy New value
  */
 void
 TotalEnergy(double oldValue, double totalEnergy)
@@ -162,8 +152,8 @@ TotalEnergy(double oldValue, double totalEnergy)
 /**
  * Trace function for the power harvested by the energy harvester.
  *
- * \param oldValue Old value
- * \param harvestedPower New value
+ * @param oldValue Old value
+ * @param harvestedPower New value
  */
 void
 HarvestedPower(double oldValue, double harvestedPower)
@@ -175,8 +165,8 @@ HarvestedPower(double oldValue, double harvestedPower)
 /**
  * Trace function for the total energy harvested by the node.
  *
- * \param oldValue Old value
- * \param totalEnergyHarvested New value
+ * @param oldValue Old value
+ * @param totalEnergyHarvested New value
  */
 void
 TotalEnergyHarvested(double oldValue, double totalEnergyHarvested)
@@ -350,7 +340,7 @@ main(int argc, char* argv[])
                         numPackets,
                         interPacketInterval);
 
-    Simulator::Stop(Seconds(10.0));
+    Simulator::Stop(Seconds(10));
     Simulator::Run();
 
     for (auto iter = deviceModels.Begin(); iter != deviceModels.End(); iter++)

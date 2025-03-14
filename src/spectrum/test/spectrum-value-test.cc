@@ -1,29 +1,18 @@
 /*
  * Copyright (c) 2009 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
 
 #include "spectrum-test.h"
 
-#include <ns3/log.h>
-#include <ns3/object.h>
-#include <ns3/spectrum-converter.h>
-#include <ns3/spectrum-value.h>
-#include <ns3/test.h>
+#include "ns3/log.h"
+#include "ns3/object.h"
+#include "ns3/spectrum-converter.h"
+#include "ns3/spectrum-value.h"
+#include "ns3/test.h"
 
 #include <cmath>
 #include <iostream>
@@ -35,18 +24,18 @@ using namespace ns3;
 #define TOLERANCE 1e-6
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
- * \brief Spectrum Value Test
+ * @brief Spectrum Value Test
  */
 class SpectrumValueTestCase : public TestCase
 {
   public:
     /**
      * Constructor
-     * \param a first SpectrumValue
-     * \param b second SpectrumValue
-     * \param name test name
+     * @param a first SpectrumValue
+     * @param b second SpectrumValue
+     * @param name test name
      */
     SpectrumValueTestCase(SpectrumValue a, SpectrumValue b, std::string name);
     ~SpectrumValueTestCase() override;
@@ -55,9 +44,9 @@ class SpectrumValueTestCase : public TestCase
   private:
     /**
      * Check that two SpectrumValue are equal within a tolerance
-     * \param x first SpectrumValue
-     * \param y second SpectrumValue
-     * \return true if the two values are within the tolerance
+     * @param x first SpectrumValue
+     * @param y second SpectrumValue
+     * @return true if the two values are within the tolerance
      */
     bool MoreOrLessEqual(SpectrumValue x, SpectrumValue y);
 
@@ -94,9 +83,9 @@ SpectrumValueTestCase::DoRun()
 }
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
- * \brief Spectrum Value TestSuite
+ * @brief Spectrum Value TestSuite
  */
 class SpectrumValueTestSuite : public TestSuite
 {
@@ -105,7 +94,7 @@ class SpectrumValueTestSuite : public TestSuite
 };
 
 SpectrumValueTestSuite::SpectrumValueTestSuite()
-    : TestSuite("spectrum-value", UNIT)
+    : TestSuite("spectrum-value", Type::UNIT)
 {
     // NS_LOG_INFO("creating SpectrumValueTestSuite");
 
@@ -203,10 +192,10 @@ SpectrumValueTestSuite::SpectrumValueTestSuite()
     tv5 = v1 * v2;
     tv6 = v1 / v2;
 
-    AddTestCase(new SpectrumValueTestCase(tv3, v3, "tv3 = v1 + v2"), TestCase::QUICK);
-    AddTestCase(new SpectrumValueTestCase(tv4, v4, "tv4 = v1 - v2"), TestCase::QUICK);
-    AddTestCase(new SpectrumValueTestCase(tv5, v5, "tv5 = v1 * v2"), TestCase::QUICK);
-    AddTestCase(new SpectrumValueTestCase(tv6, v6, "tv6 = v1 div v2"), TestCase::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv3, v3, "tv3 = v1 + v2"), TestCase::Duration::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv4, v4, "tv4 = v1 - v2"), TestCase::Duration::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv5, v5, "tv5 = v1 * v2"), TestCase::Duration::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv6, v6, "tv6 = v1 div v2"), TestCase::Duration::QUICK);
 
     // std::cerr << v6 << std::endl;
     // std::cerr << tv6 << std::endl;
@@ -221,10 +210,10 @@ SpectrumValueTestSuite::SpectrumValueTestSuite()
     tv5 *= v2;
     tv6 /= v2;
 
-    AddTestCase(new SpectrumValueTestCase(tv3, v3, "tv3 += v2"), TestCase::QUICK);
-    AddTestCase(new SpectrumValueTestCase(tv4, v4, "tv4 -= v2"), TestCase::QUICK);
-    AddTestCase(new SpectrumValueTestCase(tv5, v5, "tv5 *= v2"), TestCase::QUICK);
-    AddTestCase(new SpectrumValueTestCase(tv6, v6, "tv6 div= v2"), TestCase::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv3, v3, "tv3 += v2"), TestCase::Duration::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv4, v4, "tv4 -= v2"), TestCase::Duration::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv5, v5, "tv5 *= v2"), TestCase::Duration::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv6, v6, "tv6 div= v2"), TestCase::Duration::QUICK);
 
     SpectrumValue tv7a(f);
     SpectrumValue tv8a(f);
@@ -234,11 +223,14 @@ SpectrumValueTestSuite::SpectrumValueTestSuite()
     tv8a = v1 - doubleValue;
     tv9a = v1 * doubleValue;
     tv10a = v1 / doubleValue;
-    AddTestCase(new SpectrumValueTestCase(tv7a, v7, "tv7a = v1 + doubleValue"), TestCase::QUICK);
-    AddTestCase(new SpectrumValueTestCase(tv8a, v8, "tv8a = v1 - doubleValue"), TestCase::QUICK);
-    AddTestCase(new SpectrumValueTestCase(tv9a, v9, "tv9a = v1 * doubleValue"), TestCase::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv7a, v7, "tv7a = v1 + doubleValue"),
+                TestCase::Duration::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv8a, v8, "tv8a = v1 - doubleValue"),
+                TestCase::Duration::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv9a, v9, "tv9a = v1 * doubleValue"),
+                TestCase::Duration::QUICK);
     AddTestCase(new SpectrumValueTestCase(tv10a, v10, "tv10a = v1 div doubleValue"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     SpectrumValue tv7b(f);
     SpectrumValue tv8b(f);
@@ -248,11 +240,14 @@ SpectrumValueTestSuite::SpectrumValueTestSuite()
     tv8b = doubleValue - v1;
     tv9b = doubleValue * v1;
     tv10b = doubleValue / v1;
-    AddTestCase(new SpectrumValueTestCase(tv7b, v7, "tv7b =  doubleValue + v1"), TestCase::QUICK);
-    AddTestCase(new SpectrumValueTestCase(tv8b, v8, "tv8b =  doubleValue - v1"), TestCase::QUICK);
-    AddTestCase(new SpectrumValueTestCase(tv9b, v9, "tv9b =  doubleValue * v1"), TestCase::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv7b, v7, "tv7b =  doubleValue + v1"),
+                TestCase::Duration::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv8b, v8, "tv8b =  doubleValue - v1"),
+                TestCase::Duration::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv9b, v9, "tv9b =  doubleValue * v1"),
+                TestCase::Duration::QUICK);
     AddTestCase(new SpectrumValueTestCase(tv10b, v10, "tv10b = doubleValue div v1"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     SpectrumValue v1ls3(f);
     SpectrumValue v1rs3(f);
@@ -262,18 +257,20 @@ SpectrumValueTestSuite::SpectrumValueTestSuite()
     v1ls3[0] = v1[3];
     v1ls3[1] = v1[4];
     tv1ls3 = v1 << 3;
-    AddTestCase(new SpectrumValueTestCase(tv1ls3, v1ls3, "tv1ls3 = v1 << 3"), TestCase::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv1ls3, v1ls3, "tv1ls3 = v1 << 3"),
+                TestCase::Duration::QUICK);
 
     v1rs3[3] = v1[0];
     v1rs3[4] = v1[1];
     tv1rs3 = v1 >> 3;
-    AddTestCase(new SpectrumValueTestCase(tv1rs3, v1rs3, "tv1rs3 = v1 >> 3"), TestCase::QUICK);
+    AddTestCase(new SpectrumValueTestCase(tv1rs3, v1rs3, "tv1rs3 = v1 >> 3"),
+                TestCase::Duration::QUICK);
 }
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
- * \brief Spectrum Converter TestSuite
+ * @brief Spectrum Converter TestSuite
  */
 class SpectrumConverterTestSuite : public TestSuite
 {
@@ -282,7 +279,7 @@ class SpectrumConverterTestSuite : public TestSuite
 };
 
 SpectrumConverterTestSuite::SpectrumConverterTestSuite()
-    : TestSuite("spectrum-converter", UNIT)
+    : TestSuite("spectrum-converter", Type::UNIT)
 {
     double f;
 
@@ -314,7 +311,7 @@ SpectrumConverterTestSuite::SpectrumConverterTestSuite()
     //   NS_LOG_LOGIC(t12);
     //   NS_LOG_LOGIC(*res);
 
-    AddTestCase(new SpectrumValueTestCase(t12, *res, ""), TestCase::QUICK);
+    AddTestCase(new SpectrumValueTestCase(t12, *res, ""), TestCase::Duration::QUICK);
     // TEST_ASSERT(MoreOrLessEqual(t12, *res));
 
     Ptr<SpectrumValue> v2a = Create<SpectrumValue>(sof2);
@@ -326,7 +323,7 @@ SpectrumConverterTestSuite::SpectrumConverterTestSuite()
     //   NS_LOG_LOGIC(*v2a);
     //   NS_LOG_LOGIC(t21a);
     //   NS_LOG_LOGIC(*res);
-    AddTestCase(new SpectrumValueTestCase(t21a, *res, ""), TestCase::QUICK);
+    AddTestCase(new SpectrumValueTestCase(t21a, *res, ""), TestCase::Duration::QUICK);
     // TEST_ASSERT(MoreOrLessEqual(t21a, *res));
 
     Ptr<SpectrumValue> v2b = Create<SpectrumValue>(sof2);
@@ -345,7 +342,7 @@ SpectrumConverterTestSuite::SpectrumConverterTestSuite()
     //   NS_LOG_LOGIC(*v2b);
     //   NS_LOG_LOGIC(t21b);
     //   NS_LOG_LOGIC(*res);
-    AddTestCase(new SpectrumValueTestCase(t21b, *res, ""), TestCase::QUICK);
+    AddTestCase(new SpectrumValueTestCase(t21b, *res, ""), TestCase::Duration::QUICK);
 }
 
 /// Static variable for test initialization

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2014 Piotr Gawlowicz
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Piotr Gawlowicz <gawlowicz.p@gmail.com>
  *
@@ -21,20 +10,20 @@
 #include "lte-ffr-algorithm.h"
 
 #include "ns3/boolean.h"
+#include "ns3/log.h"
 #include "ns3/uinteger.h"
-#include <ns3/log.h>
 
 namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE("LteFfrAlgorithm");
 
-/// Type 0 RGB allocation
+/// Type 0 RBG allocation
 static const int Type0AllocationRbg[4] = {
-    10,  // RGB size 1
-    26,  // RGB size 2
-    63,  // RGB size 3
-    110, // RGB size 4
+    10,  // RBG size 1
+    26,  // RBG size 2
+    63,  // RBG size 3
+    110, // RBG size 4
 };       // see table 7.1.6.1-1 of 3GPP TS 36.213
 
 NS_OBJECT_ENSURE_REGISTERED(LteFfrAlgorithm);

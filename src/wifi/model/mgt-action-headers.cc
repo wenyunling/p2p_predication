@@ -2,18 +2,7 @@
  * Copyright (c) 2006 INRIA
  * Copyright (c) 2009 MIRKO BANCHI
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  *          Mirko Banchi <mk.banchi@gmail.com>
@@ -22,9 +11,13 @@
 #include "mgt-action-headers.h"
 
 #include "addba-extension.h"
+#include "gcr-group-address.h"
 
 #include "ns3/multi-link-element.h"
 #include "ns3/packet.h"
+#include "ns3/simulator.h"
+
+#include <vector>
 
 namespace ns3
 {
@@ -191,6 +184,9 @@ WifiActionHeader::GetAction() const
         case QAB_RESPONSE:
             retval.publicAction = QAB_RESPONSE;
             break;
+        case FILS_DISCOVERY:
+            retval.publicAction = FILS_DISCOVERY;
+            break;
         default:
             NS_FATAL_ERROR("Unknown public action code");
             retval.publicAction = QAB_REQUEST; /* quiet compiler */
@@ -293,9 +289,7 @@ WifiActionHeader::GetAction() const
     case MULTIHOP: // not yet supported
         switch (m_actionValue)
         {
-        case PROXY_UPDATE: // not used so far
-            retval.multihopAction = PROXY_UPDATE;
-            break;
+        case PROXY_UPDATE:              // not used so far
         case PROXY_UPDATE_CONFIRMATION: // not used so far
             retval.multihopAction = PROXY_UPDATE;
             break;
@@ -553,6 +547,7 @@ WifiActionHeader::Print(std::ostream& os) const
         {
             CASE_ACTION_VALUE(QAB_REQUEST);
             CASE_ACTION_VALUE(QAB_RESPONSE);
+            CASE_ACTION_VALUE(FILS_DISCOVERY);
         default:
             NS_FATAL_ERROR("Unknown public action code");
         }
@@ -745,6 +740,13 @@ MgtAddBaRequestHeader::GetInstanceTypeId() const
 void
 MgtAddBaRequestHeader::Print(std::ostream& os) const
 {
+    os << "A-MSDU support=" << m_amsduSupport << " Policy=" << +m_policy << " TID=" << +m_tid
+       << " Buffer size=" << m_bufferSize << " Timeout=" << m_timeoutValue
+       << " Starting seq=" << m_startingSeq;
+    if (m_gcrGroupAddress.has_value())
+    {
+        os << " GCR group address=" << m_gcrGroupAddress.value();
+    }
 }
 
 uint32_t
@@ -755,6 +757,11 @@ MgtAddBaRequestHeader::GetSerializedSize() const
     size += 2; // Block ack parameter set
     size += 2; // Block ack timeout value
     size += 2; // Starting sequence control
+    if (m_gcrGroupAddress)
+    {
+        // a GCR Group Address element has to be added
+        size += GcrGroupAddress().GetSerializedSize();
+    }
     if (m_bufferSize >= 1024)
     {
         // an ADDBA Extension element has to be added
@@ -771,6 +778,12 @@ MgtAddBaRequestHeader::Serialize(Buffer::Iterator start) const
     i.WriteHtolsbU16(GetParameterSet());
     i.WriteHtolsbU16(m_timeoutValue);
     i.WriteHtolsbU16(GetStartingSequenceControl());
+    if (m_gcrGroupAddress)
+    {
+        GcrGroupAddress gcrGroupAddr;
+        gcrGroupAddr.m_gcrGroupAddress = *m_gcrGroupAddress;
+        i = gcrGroupAddr.Serialize(i);
+    }
     if (m_bufferSize >= 1024)
     {
         AddbaExtension addbaExt;
@@ -787,8 +800,16 @@ MgtAddBaRequestHeader::Deserialize(Buffer::Iterator start)
     SetParameterSet(i.ReadLsbtohU16());
     m_timeoutValue = i.ReadLsbtohU16();
     SetStartingSequenceControl(i.ReadLsbtohU16());
-    AddbaExtension addbaExt;
+    m_gcrGroupAddress.reset();
+    GcrGroupAddress gcrGroupAddr;
     auto tmp = i;
+    i = gcrGroupAddr.DeserializeIfPresent(i);
+    if (i.GetDistanceFrom(tmp) != 0)
+    {
+        m_gcrGroupAddress = gcrGroupAddr.m_gcrGroupAddress;
+    }
+    AddbaExtension addbaExt;
+    tmp = i;
     i = addbaExt.DeserializeIfPresent(i);
     if (i.GetDistanceFrom(tmp) != 0)
     {
@@ -848,6 +869,12 @@ MgtAddBaRequestHeader::SetAmsduSupport(bool supported)
     m_amsduSupport = supported;
 }
 
+void
+MgtAddBaRequestHeader::SetGcrGroupAddress(const Mac48Address& address)
+{
+    m_gcrGroupAddress = address;
+}
+
 uint8_t
 MgtAddBaRequestHeader::GetTid() const
 {
@@ -875,7 +902,7 @@ MgtAddBaRequestHeader::GetBufferSize() const
 bool
 MgtAddBaRequestHeader::IsAmsduSupported() const
 {
-    return m_amsduSupport == 1;
+    return m_amsduSupport;
 }
 
 uint16_t
@@ -890,11 +917,16 @@ MgtAddBaRequestHeader::GetStartingSequenceControl() const
     return (m_startingSeq << 4) & 0xfff0;
 }
 
+std::optional<Mac48Address>
+MgtAddBaRequestHeader::GetGcrGroupAddress() const
+{
+    return m_gcrGroupAddress;
+}
+
 uint16_t
 MgtAddBaRequestHeader::GetParameterSet() const
 {
-    uint16_t res = 0;
-    res |= m_amsduSupport;
+    uint16_t res = m_amsduSupport ? 1 : 0;
     res |= m_policy << 1;
     res |= m_tid << 2;
     res |= (m_bufferSize % 1024) << 6;
@@ -904,7 +936,7 @@ MgtAddBaRequestHeader::GetParameterSet() const
 void
 MgtAddBaRequestHeader::SetParameterSet(uint16_t params)
 {
-    m_amsduSupport = params & 0x01;
+    m_amsduSupport = ((params & 0x01) == 1);
     m_policy = (params >> 1) & 0x01;
     m_tid = (params >> 2) & 0x0f;
     m_bufferSize = (params >> 6) & 0x03ff;
@@ -935,7 +967,12 @@ MgtAddBaResponseHeader::GetInstanceTypeId() const
 void
 MgtAddBaResponseHeader::Print(std::ostream& os) const
 {
-    os << "status code=" << m_code;
+    os << "Status code=" << m_code << "A-MSDU support=" << m_amsduSupport << " Policy=" << +m_policy
+       << " TID=" << +m_tid << " Buffer size=" << m_bufferSize << " Timeout=" << m_timeoutValue;
+    if (m_gcrGroupAddress.has_value())
+    {
+        os << " GCR group address=" << m_gcrGroupAddress.value();
+    }
 }
 
 uint32_t
@@ -946,6 +983,11 @@ MgtAddBaResponseHeader::GetSerializedSize() const
     size += m_code.GetSerializedSize(); // Status code
     size += 2;                          // Block ack parameter set
     size += 2;                          // Block ack timeout value
+    if (m_gcrGroupAddress)
+    {
+        // a GCR Group Address element has to be added
+        size += GcrGroupAddress().GetSerializedSize();
+    }
     if (m_bufferSize >= 1024)
     {
         // an ADDBA Extension element has to be added
@@ -962,6 +1004,12 @@ MgtAddBaResponseHeader::Serialize(Buffer::Iterator start) const
     i = m_code.Serialize(i);
     i.WriteHtolsbU16(GetParameterSet());
     i.WriteHtolsbU16(m_timeoutValue);
+    if (m_gcrGroupAddress)
+    {
+        GcrGroupAddress gcrGroupAddr;
+        gcrGroupAddr.m_gcrGroupAddress = *m_gcrGroupAddress;
+        i = gcrGroupAddr.Serialize(i);
+    }
     if (m_bufferSize >= 1024)
     {
         AddbaExtension addbaExt;
@@ -978,8 +1026,16 @@ MgtAddBaResponseHeader::Deserialize(Buffer::Iterator start)
     i = m_code.Deserialize(i);
     SetParameterSet(i.ReadLsbtohU16());
     m_timeoutValue = i.ReadLsbtohU16();
-    AddbaExtension addbaExt;
+    m_gcrGroupAddress.reset();
+    GcrGroupAddress gcrGroupAddr;
     auto tmp = i;
+    i = gcrGroupAddr.DeserializeIfPresent(i);
+    if (i.GetDistanceFrom(tmp) != 0)
+    {
+        m_gcrGroupAddress = gcrGroupAddr.m_gcrGroupAddress;
+    }
+    AddbaExtension addbaExt;
+    tmp = i;
     i = addbaExt.DeserializeIfPresent(i);
     if (i.GetDistanceFrom(tmp) != 0)
     {
@@ -1033,6 +1089,12 @@ MgtAddBaResponseHeader::SetAmsduSupport(bool supported)
     m_amsduSupport = supported;
 }
 
+void
+MgtAddBaResponseHeader::SetGcrGroupAddress(const Mac48Address& address)
+{
+    m_gcrGroupAddress = address;
+}
+
 StatusCode
 MgtAddBaResponseHeader::GetStatusCode() const
 {
@@ -1066,14 +1128,19 @@ MgtAddBaResponseHeader::GetBufferSize() const
 bool
 MgtAddBaResponseHeader::IsAmsduSupported() const
 {
-    return m_amsduSupport == 1;
+    return m_amsduSupport;
+}
+
+std::optional<Mac48Address>
+MgtAddBaResponseHeader::GetGcrGroupAddress() const
+{
+    return m_gcrGroupAddress;
 }
 
 uint16_t
 MgtAddBaResponseHeader::GetParameterSet() const
 {
-    uint16_t res = 0;
-    res |= m_amsduSupport;
+    uint16_t res = m_amsduSupport ? 1 : 0;
     res |= m_policy << 1;
     res |= m_tid << 2;
     res |= (m_bufferSize % 1024) << 6;
@@ -1083,7 +1150,7 @@ MgtAddBaResponseHeader::GetParameterSet() const
 void
 MgtAddBaResponseHeader::SetParameterSet(uint16_t params)
 {
-    m_amsduSupport = params & 0x01;
+    m_amsduSupport = ((params & 0x01) == 1);
     m_policy = (params >> 1) & 0x01;
     m_tid = (params >> 2) & 0x0f;
     m_bufferSize = (params >> 6) & 0x03ff;
@@ -1114,6 +1181,11 @@ MgtDelBaHeader::GetInstanceTypeId() const
 void
 MgtDelBaHeader::Print(std::ostream& os) const
 {
+    os << "Initiator=" << m_initiator << " TID=" << +m_tid;
+    if (m_gcrGroupAddress.has_value())
+    {
+        os << " GCR group address=" << m_gcrGroupAddress.value();
+    }
 }
 
 uint32_t
@@ -1122,6 +1194,11 @@ MgtDelBaHeader::GetSerializedSize() const
     uint32_t size = 0;
     size += 2; // DelBa parameter set
     size += 2; // Reason code
+    if (m_gcrGroupAddress)
+    {
+        // a GCR Group Address element has to be added
+        size += GcrGroupAddress().GetSerializedSize();
+    }
     return size;
 }
 
@@ -1131,6 +1208,12 @@ MgtDelBaHeader::Serialize(Buffer::Iterator start) const
     Buffer::Iterator i = start;
     i.WriteHtolsbU16(GetParameterSet());
     i.WriteHtolsbU16(m_reasonCode);
+    if (m_gcrGroupAddress)
+    {
+        GcrGroupAddress gcrGroupAddr;
+        gcrGroupAddr.m_gcrGroupAddress = *m_gcrGroupAddress;
+        i = gcrGroupAddr.Serialize(i);
+    }
 }
 
 uint32_t
@@ -1139,6 +1222,14 @@ MgtDelBaHeader::Deserialize(Buffer::Iterator start)
     Buffer::Iterator i = start;
     SetParameterSet(i.ReadLsbtohU16());
     m_reasonCode = i.ReadLsbtohU16();
+    m_gcrGroupAddress.reset();
+    GcrGroupAddress gcrGroupAddr;
+    auto tmp = i;
+    i = gcrGroupAddr.DeserializeIfPresent(i);
+    if (i.GetDistanceFrom(tmp) != 0)
+    {
+        m_gcrGroupAddress = gcrGroupAddr.m_gcrGroupAddress;
+    }
     return i.GetDistanceFrom(start);
 }
 
@@ -1173,6 +1264,18 @@ MgtDelBaHeader::SetTid(uint8_t tid)
 {
     NS_ASSERT(tid < 16);
     m_tid = static_cast<uint16_t>(tid);
+}
+
+void
+MgtDelBaHeader::SetGcrGroupAddress(const Mac48Address& address)
+{
+    m_gcrGroupAddress = address;
+}
+
+std::optional<Mac48Address>
+MgtDelBaHeader::GetGcrGroupAddress() const
+{
+    return m_gcrGroupAddress;
 }
 
 uint16_t
@@ -1347,6 +1450,413 @@ MgtEmlOmn::GetLinkBitmap() const
         bitmap >>= 1;
     }
     return list;
+}
+
+/***************************************************
+ *                 FILS Discovery
+ ****************************************************/
+
+NS_OBJECT_ENSURE_REGISTERED(FilsDiscHeader);
+
+TypeId
+FilsDiscHeader::GetTypeId()
+{
+    static TypeId tid = TypeId("ns3::FilsDiscHeader")
+                            .SetParent<Header>()
+                            .SetGroupName("Wifi")
+                            .AddConstructor<FilsDiscHeader>();
+    return tid;
+}
+
+TypeId
+FilsDiscHeader::GetInstanceTypeId() const
+{
+    return GetTypeId();
+}
+
+FilsDiscHeader::FilsDiscHeader()
+    : m_len(m_frameCtl.m_lenPresenceInd),
+      m_fdCap(m_frameCtl.m_capPresenceInd),
+      m_primaryCh(m_frameCtl.m_primChPresenceInd),
+      m_apConfigSeqNum(m_frameCtl.m_apCsnPresenceInd),
+      m_accessNetOpt(m_frameCtl.m_anoPresenceInd),
+      m_chCntrFreqSeg1(m_frameCtl.m_chCntrFreqSeg1PresenceInd)
+{
+}
+
+void
+FilsDiscHeader::SetSsid(const std::string& ssid)
+{
+    m_ssid = ssid;
+    m_frameCtl.m_ssidLen = ssid.length() - 1;
+}
+
+const std::string&
+FilsDiscHeader::GetSsid() const
+{
+    return m_ssid;
+}
+
+uint32_t
+FilsDiscHeader::GetInformationFieldSize() const
+{
+    auto size = GetSizeNonOptSubfields();
+    size += m_len.has_value() ? 1 : 0;
+    size += m_fdCap.has_value() ? 2 : 0;
+    size += m_opClass.has_value() ? 1 : 0;
+    size += m_primaryCh.has_value() ? 1 : 0;
+    size += m_apConfigSeqNum.has_value() ? 1 : 0;
+    size += m_accessNetOpt.has_value() ? 1 : 0;
+    size += m_chCntrFreqSeg1.has_value() ? 1 : 0;
+    return size;
+}
+
+uint32_t
+FilsDiscHeader::GetSerializedSize() const
+{
+    auto size = GetInformationFieldSize();
+    // Optional elements
+    size += m_rnr.has_value() ? m_rnr->GetSerializedSize() : 0;
+    size += m_tim.has_value() ? m_tim->GetSerializedSize() : 0;
+    return size;
+}
+
+uint32_t
+FilsDiscHeader::GetSizeNonOptSubfields() const
+{
+    return 2                  /* FILS Discovery Frame Control */
+           + 8                /* Timestamp */
+           + 2                /* Beacon Interval */
+           + m_ssid.length(); /* SSID */
+}
+
+void
+FilsDiscHeader::SetLengthSubfield()
+{
+    m_len.reset(); // so that Length size is not included by GetInformationFieldSize()
+    auto infoFieldSize = GetInformationFieldSize();
+    auto nonOptSubfieldsSize = GetSizeNonOptSubfields();
+    NS_ABORT_MSG_IF(infoFieldSize < nonOptSubfieldsSize, "Length subfield is less than 0");
+    m_len = infoFieldSize - nonOptSubfieldsSize;
+}
+
+void
+FilsDiscHeader::Print(std::ostream& os) const
+{
+    os << "Control=" << m_frameCtl << ", "
+       << "Time Stamp=" << m_timeStamp << ", "
+       << "Beacon Interval=" << m_beaconInt << ", "
+       << "SSID=" << m_ssid << ", ";
+    if (m_len.has_value())
+    {
+        os << "Length=" << *m_len << ", ";
+    }
+    if (m_fdCap.has_value())
+    {
+        os << "FD Capability=" << *m_fdCap << ", ";
+    }
+    if (m_opClass.has_value())
+    {
+        os << "Operating Class=" << *m_opClass << ", ";
+    }
+    if (m_primaryCh.has_value())
+    {
+        os << "Primary Channel=" << *m_primaryCh << ", ";
+    }
+    if (m_apConfigSeqNum.has_value())
+    {
+        os << "AP-CSN=" << *m_apConfigSeqNum << ", ";
+    }
+    if (m_accessNetOpt.has_value())
+    {
+        os << "ANO=" << *m_accessNetOpt << ", ";
+    }
+    if (m_chCntrFreqSeg1.has_value())
+    {
+        os << "Channel Center Frequency Seg 1=" << *m_chCntrFreqSeg1 << ", ";
+    }
+    if (m_tim.has_value())
+    {
+        os << "Traffic Indicator Map=" << *m_tim;
+    }
+}
+
+void
+FilsDiscHeader::Serialize(Buffer::Iterator start) const
+{
+    Buffer::Iterator i = start;
+    m_frameCtl.Serialize(i);
+    i.WriteHtolsbU64(Simulator::Now().GetMicroSeconds()); // Time stamp
+    i.WriteHtolsbU16(m_beaconInt);
+    i.Write(reinterpret_cast<const uint8_t*>(m_ssid.data()), m_ssid.length());
+    if (m_len.has_value())
+    {
+        i.WriteU8(*m_len);
+    }
+    if (m_fdCap.has_value())
+    {
+        m_fdCap->Serialize(i);
+    }
+    NS_ASSERT(m_opClass.has_value() == m_primaryCh.has_value());
+    if (m_opClass.has_value())
+    {
+        i.WriteU8(*m_opClass);
+    }
+    if (m_primaryCh.has_value())
+    {
+        i.WriteU8(*m_primaryCh);
+    }
+    if (m_apConfigSeqNum.has_value())
+    {
+        i.WriteU8(*m_apConfigSeqNum);
+    }
+    if (m_accessNetOpt.has_value())
+    {
+        i.WriteU8(*m_accessNetOpt);
+    }
+    if (m_chCntrFreqSeg1.has_value())
+    {
+        i.WriteU8(*m_chCntrFreqSeg1);
+    }
+    i = m_rnr.has_value() ? m_rnr->Serialize(i) : i;
+    i = m_tim.has_value() ? m_tim->Serialize(i) : i;
+}
+
+uint32_t
+FilsDiscHeader::Deserialize(Buffer::Iterator start)
+{
+    Buffer::Iterator i = start;
+    auto nOctets = m_frameCtl.Deserialize(i);
+    i.Next(nOctets);
+    m_timeStamp = i.ReadLsbtohU64();
+    m_beaconInt = i.ReadLsbtohU16();
+    std::vector<uint8_t> ssid(m_frameCtl.m_ssidLen + 2);
+    i.Read(ssid.data(), m_frameCtl.m_ssidLen + 1);
+    ssid[m_frameCtl.m_ssidLen + 1] = 0;
+    m_ssid = std::string(reinterpret_cast<char*>(ssid.data()));
+    // Optional subfields
+    if (m_frameCtl.m_lenPresenceInd)
+    {
+        m_len = i.ReadU8();
+    }
+    if (m_frameCtl.m_capPresenceInd)
+    {
+        nOctets = m_fdCap->Deserialize(i);
+        i.Next(nOctets);
+    }
+    if (m_frameCtl.m_primChPresenceInd)
+    {
+        m_opClass = i.ReadU8();
+        m_primaryCh = i.ReadU8();
+    }
+    if (m_frameCtl.m_apCsnPresenceInd)
+    {
+        m_apConfigSeqNum = i.ReadU8();
+    }
+    if (m_frameCtl.m_anoPresenceInd)
+    {
+        m_accessNetOpt = i.ReadU8();
+    }
+    if (m_frameCtl.m_chCntrFreqSeg1PresenceInd)
+    {
+        m_chCntrFreqSeg1 = i.ReadU8();
+    }
+    // Optional elements
+    m_rnr.emplace();
+    auto tmp = i;
+    i = m_rnr->DeserializeIfPresent(i);
+    if (i.GetDistanceFrom(tmp) == 0)
+    {
+        m_rnr.reset();
+    }
+
+    m_tim.emplace();
+    tmp = i;
+    i = m_tim->DeserializeIfPresent(i);
+    if (i.GetDistanceFrom(tmp) == 0)
+    {
+        m_tim.reset();
+    }
+
+    return i.GetDistanceFrom(start);
+}
+
+std::ostream&
+operator<<(std::ostream& os, const FilsDiscHeader::FilsDiscFrameControl& control)
+{
+    os << "ssidLen:" << control.m_ssidLen << " capPresenceInd:" << control.m_capPresenceInd
+       << " shortSsidInd:" << control.m_shortSsidInd
+       << " apCsnPresenceInd:" << control.m_apCsnPresenceInd
+       << " anoPresenceInd:" << control.m_anoPresenceInd
+       << " chCntrFreqSeg1PresenceInd:" << control.m_chCntrFreqSeg1PresenceInd
+       << " primChPresenceInd:" << control.m_primChPresenceInd
+       << " rsnInfoPresenceInd:" << control.m_rsnInfoPresenceInd
+       << " lenPresenceInd:" << control.m_lenPresenceInd
+       << " mdPresenceInd:" << control.m_mdPresenceInd;
+    return os;
+}
+
+void
+FilsDiscHeader::FilsDiscFrameControl::Serialize(Buffer::Iterator& start) const
+{
+    uint16_t val = m_ssidLen | ((m_capPresenceInd ? 1 : 0) << 5) | (m_shortSsidInd << 6) |
+                   ((m_apCsnPresenceInd ? 1 : 0) << 7) | ((m_anoPresenceInd ? 1 : 0) << 8) |
+                   ((m_chCntrFreqSeg1PresenceInd ? 1 : 0) << 9) |
+                   ((m_primChPresenceInd ? 1 : 0) << 10) | (m_rsnInfoPresenceInd << 11) |
+                   ((m_lenPresenceInd ? 1 : 0) << 12) | (m_mdPresenceInd << 13);
+    start.WriteHtolsbU16(val);
+}
+
+uint32_t
+FilsDiscHeader::FilsDiscFrameControl::Deserialize(Buffer::Iterator start)
+{
+    auto val = start.ReadLsbtohU16();
+
+    m_ssidLen = val & 0x001f;
+    m_capPresenceInd = ((val >> 5) & 0x0001) == 1;
+    m_shortSsidInd = (val >> 6) & 0x0001;
+    m_apCsnPresenceInd = ((val >> 7) & 0x0001) == 1;
+    m_anoPresenceInd = ((val >> 8) & 0x0001) == 1;
+    m_chCntrFreqSeg1PresenceInd = ((val >> 9) & 0x0001) == 1;
+    m_primChPresenceInd = ((val >> 10) & 0x0001) == 1;
+    m_rsnInfoPresenceInd = (val >> 11) & 0x0001;
+    m_lenPresenceInd = ((val >> 12) & 0x0001) == 1;
+    m_mdPresenceInd = (val >> 13) & 0x0001;
+
+    return 2;
+}
+
+std::ostream&
+operator<<(std::ostream& os, const FilsDiscHeader::FdCapability& capability)
+{
+    os << "ess:" << capability.m_ess << " privacy:" << capability.m_privacy
+       << " channelWidth:" << capability.m_chWidth << " maxNss:" << capability.m_maxNss
+       << " multiBssidInd:" << capability.m_multiBssidPresenceInd
+       << " phyIdx:" << capability.m_phyIdx << " minRate:" << capability.m_minRate;
+    return os;
+}
+
+void
+FilsDiscHeader::FdCapability::Serialize(Buffer::Iterator& start) const
+{
+    uint16_t val = m_ess | (m_privacy << 1) | (m_chWidth << 2) | (m_maxNss << 5) |
+                   (m_multiBssidPresenceInd << 9) | (m_phyIdx << 10) | (m_minRate << 13);
+    start.WriteHtolsbU16(val);
+}
+
+uint32_t
+FilsDiscHeader::FdCapability::Deserialize(Buffer::Iterator start)
+{
+    auto val = start.ReadLsbtohU16();
+
+    m_ess = val & 0x0001;
+    m_privacy = (val >> 1) & 0x0001;
+    m_chWidth = (val >> 2) & 0x0007;
+    m_maxNss = (val >> 5) & 0x0007;
+    m_multiBssidPresenceInd = (val >> 9) & 0x0001;
+    m_phyIdx = (val >> 10) & 0x0007;
+    m_minRate = (val >> 13) & 0x0007;
+
+    return 2;
+}
+
+void
+FilsDiscHeader::FdCapability::SetOpChannelWidth(MHz_u width)
+{
+    m_chWidth = (width == MHz_u{20} || width == MHz_u{22}) ? 0
+                : (width == MHz_u{40})                     ? 1
+                : (width == MHz_u{80})                     ? 2
+                : (width == MHz_u{160})                    ? 3
+                                                           : 4;
+}
+
+MHz_u
+FilsDiscHeader::FdCapability::GetOpChannelWidth() const
+{
+    switch (m_chWidth)
+    {
+    case 0:
+        return m_phyIdx == 0 ? MHz_u{22} : MHz_u{20}; // PHY Index 0 indicates 802.11b
+    case 1:
+        return MHz_u{40};
+    case 2:
+        return MHz_u{80};
+    case 3:
+        return MHz_u{160};
+    default:
+        NS_ABORT_MSG("Reserved value: " << +m_chWidth);
+    }
+    return MHz_u{0};
+}
+
+void
+FilsDiscHeader::FdCapability::SetMaxNss(uint8_t maxNss)
+{
+    NS_ABORT_MSG_IF(maxNss < 1, "NSS is equal to 0");
+    maxNss--;
+    // 4 is the maximum value for the Maximum Number of Spatial Streams subfield
+    m_maxNss = std::min<uint8_t>(maxNss, 4);
+}
+
+uint8_t
+FilsDiscHeader::FdCapability::GetMaxNss() const
+{
+    return m_maxNss + 1;
+}
+
+void
+FilsDiscHeader::FdCapability::SetStandard(WifiStandard standard)
+{
+    switch (standard)
+    {
+    case WIFI_STANDARD_80211b:
+        m_phyIdx = 0;
+        break;
+    case WIFI_STANDARD_80211a:
+    case WIFI_STANDARD_80211g:
+        m_phyIdx = 1;
+        break;
+    case WIFI_STANDARD_80211n:
+        m_phyIdx = 2;
+        break;
+    case WIFI_STANDARD_80211ac:
+        m_phyIdx = 3;
+        break;
+    case WIFI_STANDARD_80211ax:
+        m_phyIdx = 4;
+        break;
+    case WIFI_STANDARD_80211be:
+        m_phyIdx = 5;
+        break;
+    default:
+        NS_ABORT_MSG("Unsupported standard: " << standard);
+    }
+}
+
+WifiStandard
+FilsDiscHeader::FdCapability::GetStandard(WifiPhyBand band) const
+{
+    switch (m_phyIdx)
+    {
+    case 0:
+        return WIFI_STANDARD_80211b;
+    case 1:
+        NS_ABORT_MSG_IF(band != WIFI_PHY_BAND_2_4GHZ && band != WIFI_PHY_BAND_5GHZ,
+                        "Invalid PHY band (" << band << ") with PHY index of 1");
+        return band == WIFI_PHY_BAND_5GHZ ? WIFI_STANDARD_80211a : WIFI_STANDARD_80211g;
+    case 2:
+        return WIFI_STANDARD_80211n;
+    case 3:
+        return WIFI_STANDARD_80211ac;
+    case 4:
+        return WIFI_STANDARD_80211ax;
+    case 5:
+        return WIFI_STANDARD_80211be;
+    default:
+        NS_ABORT_MSG("Invalid PHY index: " << m_phyIdx);
+    }
+
+    return WIFI_STANDARD_UNSPECIFIED;
 }
 
 } // namespace ns3

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2019 Orange Labs
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Rediet <getachew.redieteab@orange.com>
  *         Muhammad Iqbal Rochman <muhiqbalcr@uchicago.edu>
@@ -73,13 +62,14 @@ VhtPpdu::SetVhtSigHeader(VhtSigHeader& vhtSig,
 {
     vhtSig.SetMuFlag(m_preamble == WIFI_PREAMBLE_VHT_MU);
     vhtSig.SetChannelWidth(txVector.GetChannelWidth());
-    vhtSig.SetShortGuardInterval(txVector.GetGuardInterval() == 400);
+    const auto sgi = txVector.GetGuardInterval().GetNanoSeconds() == 400;
+    vhtSig.SetShortGuardInterval(sgi);
     uint32_t nSymbols =
         (static_cast<double>(
              (ppduDuration - WifiPhy::CalculatePhyPreambleAndHeaderDuration(txVector))
                  .GetNanoSeconds()) /
-         (3200 + txVector.GetGuardInterval()));
-    if (txVector.GetGuardInterval() == 400)
+         (3200 + txVector.GetGuardInterval().GetNanoSeconds()));
+    if (sgi)
     {
         vhtSig.SetShortGuardIntervalDisambiguation((nSymbols % 10) == 9);
     }
@@ -104,7 +94,7 @@ VhtPpdu::SetTxVectorFromPhyHeaders(WifiTxVector& txVector,
     txVector.SetMode(VhtPhy::GetVhtMcs(vhtSig.GetSuMcs()));
     txVector.SetChannelWidth(vhtSig.GetChannelWidth());
     txVector.SetNss(vhtSig.GetNStreams());
-    txVector.SetGuardInterval(vhtSig.GetShortGuardInterval() ? 400 : 800);
+    txVector.SetGuardInterval(NanoSeconds(vhtSig.GetShortGuardInterval() ? 400 : 800));
     txVector.SetAggregation(GetPsdu()->IsAggregate());
 }
 
@@ -115,7 +105,7 @@ VhtPpdu::GetTxDuration() const
     const auto length = m_lSig.GetLength();
     const auto sgi = m_vhtSig.GetShortGuardInterval();
     const auto sgiDisambiguation = m_vhtSig.GetShortGuardIntervalDisambiguation();
-    const auto tSymbol = NanoSeconds(3200 + txVector.GetGuardInterval());
+    const auto tSymbol = NanoSeconds(3200) + txVector.GetGuardInterval();
     const auto preambleDuration = WifiPhy::CalculatePhyPreambleAndHeaderDuration(txVector);
     const auto calculatedDuration =
         MicroSeconds(((ceil(static_cast<double>(length + 3) / 3)) * 4) + 20);
@@ -158,17 +148,17 @@ VhtPpdu::VhtSigHeader::SetMuFlag(bool mu)
 }
 
 void
-VhtPpdu::VhtSigHeader::SetChannelWidth(uint16_t channelWidth)
+VhtPpdu::VhtSigHeader::SetChannelWidth(MHz_u channelWidth)
 {
-    if (channelWidth == 160)
+    if (channelWidth == MHz_u{160})
     {
         m_bw = 3;
     }
-    else if (channelWidth == 80)
+    else if (channelWidth == MHz_u{80})
     {
         m_bw = 2;
     }
-    else if (channelWidth == 40)
+    else if (channelWidth == MHz_u{40})
     {
         m_bw = 1;
     }
@@ -178,24 +168,24 @@ VhtPpdu::VhtSigHeader::SetChannelWidth(uint16_t channelWidth)
     }
 }
 
-uint16_t
+MHz_u
 VhtPpdu::VhtSigHeader::GetChannelWidth() const
 {
     if (m_bw == 3)
     {
-        return 160;
+        return MHz_u{160};
     }
     else if (m_bw == 2)
     {
-        return 80;
+        return MHz_u{80};
     }
     else if (m_bw == 1)
     {
-        return 40;
+        return MHz_u{40};
     }
     else
     {
-        return 20;
+        return MHz_u{20};
     }
 }
 

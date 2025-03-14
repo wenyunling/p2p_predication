@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  */
@@ -20,7 +9,7 @@
 #ifndef LTE_RLC_SEQUENCE_NUMBER_H
 #define LTE_RLC_SEQUENCE_NUMBER_H
 
-#include <ns3/assert.h>
+#include "ns3/assert.h"
 
 #include <iostream>
 #include <limits>
@@ -42,7 +31,7 @@ class SequenceNumber10
     /**
      * Constructor
      *
-     * \param value the value
+     * @param value the value
      */
     explicit SequenceNumber10(uint16_t value)
         : m_value(value % 1024),
@@ -53,7 +42,7 @@ class SequenceNumber10
     /**
      * Constructor
      *
-     * \param value the value
+     * @param value the value
      */
     SequenceNumber10(const SequenceNumber10& value)
         : m_value(value.m_value),
@@ -64,8 +53,8 @@ class SequenceNumber10
     /**
      * Assignment operator
      *
-     * \param value the value
-     * \returns SequenceNumber10
+     * @param value the value
+     * @returns SequenceNumber10
      */
     SequenceNumber10& operator=(uint16_t value)
     {
@@ -74,8 +63,8 @@ class SequenceNumber10
     }
 
     /**
-     * \brief Extracts the numeric value of the sequence number
-     * \returns the sequence number value
+     * @brief Extracts the numeric value of the sequence number
+     * @returns the sequence number value
      */
     uint16_t GetValue() const
     {
@@ -83,8 +72,8 @@ class SequenceNumber10
     }
 
     /**
-     * \brief Set modulus base
-     * \param modulusBase the modulus
+     * @brief Set modulus base
+     * @param modulusBase the modulus
      */
     void SetModulusBase(SequenceNumber10 modulusBase)
     {
@@ -92,8 +81,8 @@ class SequenceNumber10
     }
 
     /**
-     * \brief Set modulus base
-     * \param modulusBase the modulus
+     * @brief Set modulus base
+     * @param modulusBase the modulus
      */
     void SetModulusBase(uint16_t modulusBase)
     {
@@ -102,7 +91,7 @@ class SequenceNumber10
 
     /**
      * postfix ++ operator
-     * \returns SequenceNumber10
+     * @returns SequenceNumber10
      */
     SequenceNumber10 operator++(int)
     {
@@ -114,8 +103,8 @@ class SequenceNumber10
 
     /**
      * addition operator
-     * \param delta the amount to add
-     * \returns SequenceNumber10
+     * @param delta the amount to add
+     * @returns SequenceNumber10
      */
     SequenceNumber10 operator+(uint16_t delta) const
     {
@@ -126,8 +115,8 @@ class SequenceNumber10
 
     /**
      * subtraction operator
-     * \param delta the amount to subtract
-     * \returns SequenceNumber10
+     * @param delta the amount to subtract
+     * @returns SequenceNumber10
      */
     SequenceNumber10 operator-(uint16_t delta) const
     {
@@ -138,8 +127,8 @@ class SequenceNumber10
 
     /**
      * subtraction operator
-     * \param other the amount to subtract
-     * \returns SequenceNumber10
+     * @param other the amount to subtract
+     * @returns SequenceNumber10
      */
     uint16_t operator-(const SequenceNumber10& other) const
     {
@@ -149,8 +138,8 @@ class SequenceNumber10
 
     /**
      * greater than operator
-     * \param other the object to compare
-     * \returns true if greater than
+     * @param other the object to compare
+     * @returns true if greater than
      */
     bool operator>(const SequenceNumber10& other) const
     {
@@ -162,8 +151,8 @@ class SequenceNumber10
 
     /**
      * equality operator
-     * \param other the object to compare
-     * \returns true if equal
+     * @param other the object to compare
+     * @returns true if equal
      */
     bool operator==(const SequenceNumber10& other) const
     {
@@ -172,8 +161,8 @@ class SequenceNumber10
 
     /**
      * inequality operator
-     * \param other the object to compare
-     * \returns true if not equal
+     * @param other the object to compare
+     * @returns true if not equal
      */
     bool operator!=(const SequenceNumber10& other) const
     {
@@ -182,8 +171,8 @@ class SequenceNumber10
 
     /**
      * less than or equal operator
-     * \param other the object to compare
-     * \returns true if less than or equal
+     * @param other the object to compare
+     * @returns true if less than or equal
      */
     bool operator<=(const SequenceNumber10& other) const
     {
@@ -192,8 +181,8 @@ class SequenceNumber10
 
     /**
      * greater than or equal operator
-     * \param other the object to compare
-     * \returns true if greater than or equal
+     * @param other the object to compare
+     * @returns true if greater than or equal
      */
     bool operator>=(const SequenceNumber10& other) const
     {
@@ -202,8 +191,8 @@ class SequenceNumber10
 
     /**
      * less than operator
-     * \param other the object to compare
-     * \returns true if less than
+     * @param other the object to compare
+     * @returns true if less than
      */
     bool operator<(const SequenceNumber10& other) const
     {

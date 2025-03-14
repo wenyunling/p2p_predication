@@ -2,18 +2,7 @@
  * Copyright (c) 2010 TELEMATICS LAB, DEE - Politecnico di Bari
  * Copyright (c) 2018 Fraunhofer ESK : RLF extensions
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Giuseppe Piro  <g.piro@poliba.it>
  *         Marco Miozzo <marco.miozzo@cttc.es>
@@ -32,16 +21,17 @@
 #include "lte-ue-net-device.h"
 #include "lte-ue-power-control.h"
 
-#include <ns3/boolean.h>
-#include <ns3/double.h>
-#include <ns3/log.h>
-#include <ns3/node.h>
-#include <ns3/object-factory.h>
-#include <ns3/pointer.h>
-#include <ns3/simulator.h>
+#include "ns3/boolean.h"
+#include "ns3/double.h"
+#include "ns3/log.h"
+#include "ns3/node.h"
+#include "ns3/object-factory.h"
+#include "ns3/pointer.h"
+#include "ns3/simulator.h"
 
 #include <cfloat>
 #include <cmath>
+#include <numeric>
 
 namespace ns3
 {
@@ -74,7 +64,7 @@ class UeMemberLteUePhySapProvider : public LteUePhySapProvider
     /**
      * Constructor
      *
-     * \param phy the LTE UE Phy
+     * @param phy the LTE UE Phy
      */
     UeMemberLteUePhySapProvider(LteUePhy* phy);
 
@@ -121,22 +111,6 @@ UeMemberLteUePhySapProvider::NotifyConnectionSuccessful()
 // LteUePhy methods
 ////////////////////////////////////////
 
-/// Map each of UE PHY states to its string representation.
-static const std::string g_uePhyStateName[LteUePhy::NUM_STATES] = {
-    "CELL_SEARCH",
-    "SYNCHRONIZED",
-};
-
-/**
- * \param s The UE PHY state.
- * \return The string representation of the given state.
- */
-static inline const std::string&
-ToString(LteUePhy::State s)
-{
-    return g_uePhyStateName[s];
-}
-
 NS_OBJECT_ENSURE_REGISTERED(LteUePhy);
 
 LteUePhy::LteUePhy()
@@ -156,7 +130,7 @@ LteUePhy::LteUePhy(Ptr<LteSpectrumPhy> dlPhy, Ptr<LteSpectrumPhy> ulPhy)
       m_dataInterferencePowerUpdated(false),
       m_pssReceived(false),
       m_ueMeasurementsFilterPeriod(MilliSeconds(200)),
-      m_ueMeasurementsFilterLast(MilliSeconds(0)),
+      m_ueMeasurementsFilterLast(),
       m_rsrpSinrSampleCounter(0),
       m_imsi(0)
 {
@@ -607,19 +581,16 @@ LteUePhy::GenerateCqiRsrpRsrq(const SpectrumValue& sinr)
     {
         NS_ASSERT_MSG(m_rsReceivedPowerUpdated, " RS received power info obsolete");
         // RSRP evaluated as averaged received power among RBs
-        double sum = 0.0;
-        uint8_t rbNum = 0;
-        for (auto it = m_rsReceivedPower.ConstValuesBegin();
-             it != m_rsReceivedPower.ConstValuesEnd();
-             it++)
-        {
-            // convert PSD [W/Hz] to linear power [W] for the single RE
-            // we consider only one RE for the RS since the channel is
-            // flat within the same RB
-            double powerTxW = ((*it) * 180000.0) / 12.0;
-            sum += powerTxW;
-            rbNum++;
-        }
+        uint16_t rbNum = m_rsReceivedPower.GetValuesN();
+
+        // sum PSD [W/Hz] of all bands
+        double sum = std::reduce(m_rsReceivedPower.ConstValuesBegin(),
+                                 m_rsReceivedPower.ConstValuesEnd(),
+                                 0.0);
+
+        // convert PSD [W/Hz] to linear power [W]
+        sum *= (180000.0 / 12.0);
+
         double rsrp = (rbNum > 0) ? (sum / rbNum) : DBL_MAX;
         // averaged SINR among RBs
         double avSinr = ComputeAvgSinr(sinr);
@@ -643,57 +614,59 @@ LteUePhy::GenerateCqiRsrpRsrq(const SpectrumValue& sinr)
         m_rsrpSinrSampleCounter = 0;
     }
 
-    if (m_pssReceived)
+    if (!m_pssReceived)
     {
-        // measure instantaneous RSRQ now
-        NS_ASSERT_MSG(m_rsInterferencePowerUpdated, " RS interference power info obsolete");
+        return;
+    }
 
-        auto itPss = m_pssList.begin();
-        while (itPss != m_pssList.end())
+    // measure instantaneous RSRQ now
+    NS_ASSERT_MSG(m_rsInterferencePowerUpdated, " RS interference power info obsolete");
+
+    auto itPss = m_pssList.begin();
+    while (itPss != m_pssList.end())
+    {
+        uint16_t rbNum = 0;
+        double rssiSum = 0.0;
+
+        auto itIntN = m_rsInterferencePower.ConstValuesBegin();
+        auto itPj = m_rsReceivedPower.ConstValuesBegin();
+        for (itPj = m_rsReceivedPower.ConstValuesBegin();
+             itPj != m_rsReceivedPower.ConstValuesEnd();
+             itIntN++, itPj++)
         {
-            uint16_t rbNum = 0;
-            double rssiSum = 0.0;
+            rbNum++;
+            // convert PSD [W/Hz] to linear power [W] for the single RE
+            double interfPlusNoisePowerTxW = (*itIntN);
+            double signalPowerTxW = (*itPj);
+            rssiSum += (2 * (interfPlusNoisePowerTxW + signalPowerTxW));
+        }
+        rssiSum *= (180000.0 / 12.0);
 
-            auto itIntN = m_rsInterferencePower.ConstValuesBegin();
-            auto itPj = m_rsReceivedPower.ConstValuesBegin();
-            for (itPj = m_rsReceivedPower.ConstValuesBegin();
-                 itPj != m_rsReceivedPower.ConstValuesEnd();
-                 itIntN++, itPj++)
+        NS_ASSERT(rbNum == (*itPss).nRB);
+        double rsrq_dB = 10 * log10((*itPss).pssPsdSum / rssiSum);
+
+        if (rsrq_dB > m_pssReceptionThreshold)
+        {
+            NS_LOG_INFO(this << " PSS RNTI " << m_rnti << " cellId " << m_cellId << " has RSRQ "
+                             << rsrq_dB << " and RBnum " << rbNum);
+            // store measurements
+            auto itMeasMap = m_ueMeasurementsMap.find((*itPss).cellId);
+            if (itMeasMap != m_ueMeasurementsMap.end())
             {
-                rbNum++;
-                // convert PSD [W/Hz] to linear power [W] for the single RE
-                double interfPlusNoisePowerTxW = ((*itIntN) * 180000.0) / 12.0;
-                double signalPowerTxW = ((*itPj) * 180000.0) / 12.0;
-                rssiSum += (2 * (interfPlusNoisePowerTxW + signalPowerTxW));
+                (*itMeasMap).second.rsrqSum += rsrq_dB;
+                (*itMeasMap).second.rsrqNum++;
             }
-
-            NS_ASSERT(rbNum == (*itPss).nRB);
-            double rsrq_dB = 10 * log10((*itPss).pssPsdSum / rssiSum);
-
-            if (rsrq_dB > m_pssReceptionThreshold)
+            else
             {
-                NS_LOG_INFO(this << " PSS RNTI " << m_rnti << " cellId " << m_cellId << " has RSRQ "
-                                 << rsrq_dB << " and RBnum " << rbNum);
-                // store measurements
-                auto itMeasMap = m_ueMeasurementsMap.find((*itPss).cellId);
-                if (itMeasMap != m_ueMeasurementsMap.end())
-                {
-                    (*itMeasMap).second.rsrqSum += rsrq_dB;
-                    (*itMeasMap).second.rsrqNum++;
-                }
-                else
-                {
-                    NS_LOG_WARN("race condition of bug 2091 occurred");
-                }
+                NS_LOG_WARN("race condition of bug 2091 occurred");
             }
+        }
 
-            itPss++;
+        itPss++;
 
-        } // end of while (itPss != m_pssList.end ())
+    } // end of while (itPss != m_pssList.end ())
 
-        m_pssList.clear();
-
-    } // end of if (m_pssReceived)
+    m_pssList.clear();
 
 } // end of void LteUePhy::GenerateCtrlCqiReport (const SpectrumValue& sinr)
 
@@ -815,15 +788,10 @@ LteUePhy::ReportRsReceivedPower(const SpectrumValue& power)
 
     if (m_enableUplinkPowerControl)
     {
-        double sum = 0;
-        for (auto it = m_rsReceivedPower.ConstValuesBegin();
-             it != m_rsReceivedPower.ConstValuesEnd();
-             it++)
-        {
-            double powerTxW = ((*it) * 180000);
-            sum += powerTxW;
-        }
-        double rsrp = 10 * log10(sum) + 30;
+        double sum = std::reduce(m_rsReceivedPower.ConstValuesBegin(),
+                                 m_rsReceivedPower.ConstValuesEnd(),
+                                 0.0);
+        double rsrp = 10 * log10(sum * 180000) + 30;
 
         NS_LOG_INFO("RSRP: " << rsrp);
         m_powerControl->SetRsrp(rsrp);
@@ -1186,15 +1154,12 @@ LteUePhy::ReceivePss(uint16_t cellId, Ptr<SpectrumValue> p)
 {
     NS_LOG_FUNCTION(this << cellId << (*p));
 
-    double sum = 0.0;
-    uint16_t nRB = 0;
-    for (auto itPi = p->ConstValuesBegin(); itPi != p->ConstValuesEnd(); itPi++)
-    {
-        // convert PSD [W/Hz] to linear power [W] for the single RE
-        double powerTxW = ((*itPi) * 180000.0) / 12.0;
-        sum += powerTxW;
-        nRB++;
-    }
+    uint16_t nRB = p->GetValuesN();
+    // sum PSD [W/Hz] of all bands
+    double sum = std::reduce(p->ConstValuesBegin(), p->ConstValuesEnd(), 0.0);
+
+    // convert PSD [W/Hz] to linear power [W]
+    sum *= (180000.0 / 12.0);
 
     // measure instantaneous RSRP now
     double rsrp_dBm = 10 * log10(1000 * (sum / (double)nRB));
@@ -1342,6 +1307,7 @@ LteUePhy::SendSrs()
     NS_ASSERT(m_cellId > 0);
     // set the current tx power spectral density (full bandwidth)
     std::vector<int> dlRb;
+    dlRb.reserve(m_ulBandwidth);
     for (uint16_t i = 0; i < m_ulBandwidth; i++)
     {
         dlRb.push_back(i);
@@ -1467,10 +1433,10 @@ LteUePhy::DoSetDlBandwidth(uint16_t dlBandwidth)
         m_dlBandwidth = dlBandwidth;
 
         static const int Type0AllocationRbg[4] = {
-            10,  // RGB size 1
-            26,  // RGB size 2
-            63,  // RGB size 3
-            110, // RGB size 4
+            10,  // RBG size 1
+            26,  // RBG size 2
+            63,  // RBG size 3
+            110, // RBG size 4
         };       // see table 7.1.6.1-1 of 36.213
         for (int i = 0; i < 4; i++)
         {
@@ -1774,9 +1740,24 @@ LteUePhy::SwitchToState(State newState)
     NS_LOG_FUNCTION(this << newState);
     State oldState = m_state;
     m_state = newState;
-    NS_LOG_INFO(this << " cellId=" << m_cellId << " rnti=" << m_rnti << " UePhy "
-                     << ToString(oldState) << " --> " << ToString(newState));
+    NS_LOG_INFO(this << " cellId=" << m_cellId << " rnti=" << m_rnti << " UePhy " << oldState
+                     << " --> " << newState);
     m_stateTransitionTrace(m_cellId, m_rnti, oldState, newState);
+}
+
+std::ostream&
+operator<<(std::ostream& os, LteUePhy::State state)
+{
+    switch (state)
+    {
+    case LteUePhy::State::CELL_SEARCH:
+        return os << "CELL_SEARCH";
+    case LteUePhy::State::SYNCHRONIZED:
+        return os << "SYNCHRONIZED";
+    case LteUePhy::State::NUM_STATES:
+        return os << "NUM_STATES";
+    };
+    return os << "UNKNOWN(" << static_cast<uint32_t>(state) << ")";
 }
 
 } // namespace ns3

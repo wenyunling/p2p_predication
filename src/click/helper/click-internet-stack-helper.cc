@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2008 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  * Author: Faker Moatamri <faker.moatamri@sophia.inria.fr>
@@ -61,9 +50,9 @@ static InterfaceStreamMapIpv4
 /**
  * IPv4 Rx / Tx packet callback.
  *
- * \param p Packet.
- * \param ipv4 IPv4 stack.
- * \param interface Interface number.
+ * @param p Packet.
+ * @param ipv4 IPv4 stack.
+ * @param interface Interface number.
  */
 static void
 Ipv4L3ProtocolRxTxSink(Ptr<const Packet> p, Ptr<Ipv4> ipv4, uint32_t interface)
@@ -90,12 +79,12 @@ Ipv4L3ProtocolRxTxSink(Ptr<const Packet> p, Ptr<Ipv4> ipv4, uint32_t interface)
 /**
  * Packet dropped callback without context.
  *
- * \param stream Output stream.
- * \param header IPv4 header.
- * \param packet Packet.
- * \param reason Packet drop reason.
- * \param ipv4 IPv4 stack.
- * \param interface Interface number.
+ * @param stream Output stream.
+ * @param header IPv4 header.
+ * @param packet Packet.
+ * @param reason Packet drop reason.
+ * @param ipv4 IPv4 stack.
+ * @param interface Interface number.
  */
 static void
 Ipv4L3ProtocolDropSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
@@ -126,13 +115,13 @@ Ipv4L3ProtocolDropSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
 /**
  * Packet dropped callback with context.
  *
- * \param stream Output stream.
- * \param context Context.
- * \param header IPv4 header.
- * \param packet Packet.
- * \param reason Packet drop reason.
- * \param ipv4 IPv4 stack.
- * \param interface Interface number.
+ * @param stream Output stream.
+ * @param context Context.
+ * @param header IPv4 header.
+ * @param packet Packet.
+ * @param reason Packet drop reason.
+ * @param ipv4 IPv4 stack.
+ * @param interface Interface number.
  */
 static void
 Ipv4L3ProtocolDropSinkWithContext(Ptr<OutputStreamWrapper> stream,

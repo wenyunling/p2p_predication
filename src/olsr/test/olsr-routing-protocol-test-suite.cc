@@ -2,18 +2,7 @@
  * Copyright (c) 2004 Francisco J. Ros
  * Copyright (c) 2007 INESC Porto
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Francisco J. Ros  <fjrm@dif.um.es>
  *          Gustavo J. A. M. Carneiro <gjc@inescporto.pt>
@@ -25,16 +14,16 @@
 #include "ns3/test.h"
 
 /**
- * \ingroup olsr
- * \defgroup olsr-test olsr module tests
+ * @ingroup olsr
+ * @defgroup olsr-test olsr module tests
  */
 
 using namespace ns3;
 using namespace olsr;
 
 /**
- * \ingroup olsr-test
- * \ingroup tests
+ * @ingroup olsr-test
+ * @ingroup tests
  *
  * Testcase for MPR computation mechanism
  */
@@ -175,8 +164,8 @@ OlsrMprTestCase::DoRun()
 }
 
 /**
- * \ingroup olsr-test
- * \ingroup tests
+ * @ingroup olsr-test
+ * @ingroup tests
  *
  * OLSR protocol test suite
  */
@@ -187,9 +176,9 @@ class OlsrProtocolTestSuite : public TestSuite
 };
 
 OlsrProtocolTestSuite::OlsrProtocolTestSuite()
-    : TestSuite("routing-olsr", UNIT)
+    : TestSuite("routing-olsr", Type::UNIT)
 {
-    AddTestCase(new OlsrMprTestCase(), TestCase::QUICK);
+    AddTestCase(new OlsrMprTestCase(), TestCase::Duration::QUICK);
 }
 
 static OlsrProtocolTestSuite g_olsrProtocolTestSuite; //!< Static variable for test initialization

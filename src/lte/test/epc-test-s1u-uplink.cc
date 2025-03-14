@@ -2,18 +2,7 @@
  * Copyright (c) 2007,2008,2009 INRIA, UDCAST
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * The original version of UdpClient is by  Amine Ismail
  * <amine.ismail@sophia.inria.fr> <amine.ismail@udcast.com>
@@ -32,7 +21,11 @@
 #include "ns3/inet-socket-address.h"
 #include "ns3/internet-stack-helper.h"
 #include "ns3/ipv4-address-helper.h"
+#include "ns3/ipv4-interface.h"
+#include "ns3/ipv4-static-routing-helper.h"
+#include "ns3/ipv4-static-routing.h"
 #include "ns3/log.h"
+#include "ns3/mac48-address.h"
 #include "ns3/packet-sink-helper.h"
 #include "ns3/packet-sink.h"
 #include "ns3/point-to-point-epc-helper.h"
@@ -41,17 +34,13 @@
 #include "ns3/simulator.h"
 #include "ns3/test.h"
 #include "ns3/uinteger.h"
-#include <ns3/ipv4-interface.h>
-#include <ns3/ipv4-static-routing-helper.h>
-#include <ns3/ipv4-static-routing.h>
-#include <ns3/mac48-address.h>
 
 using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("EpcTestS1uUplink");
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
  * A Udp client. Sends UDP packet carrying sequence number and time
  * stamp but also including the EpsBearerTag. This tag is normally
@@ -65,8 +54,8 @@ class EpsBearerTagUdpClient : public Application
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -74,17 +63,17 @@ class EpsBearerTagUdpClient : public Application
     /**
      * Constructor
      *
-     * \param rnti the RNTI
-     * \param bid the BID
+     * @param rnti the RNTI
+     * @param bid the BID
      */
     EpsBearerTagUdpClient(uint16_t rnti, uint8_t bid);
 
     ~EpsBearerTagUdpClient() override;
 
     /**
-     * \brief set the remote address and port
-     * \param ip remote IP address
-     * \param port remote port
+     * @brief set the remote address and port
+     * @param ip remote IP address
+     * @param port remote port
      */
     void SetRemote(Ipv4Address ip, uint16_t port);
 
@@ -96,8 +85,8 @@ class EpsBearerTagUdpClient : public Application
     void StopApplication() override;
 
     /**
-     * \brief Schedule transmit function
-     * \param dt the delta time
+     * @brief Schedule transmit function
+     * @param dt the delta time
      */
     void ScheduleTransmit(Time dt);
     /// Send function
@@ -132,7 +121,7 @@ EpsBearerTagUdpClient::GetTypeId()
                 MakeUintegerChecker<uint32_t>())
             .AddAttribute("Interval",
                           "The time to wait between packets",
-                          TimeValue(Seconds(1.0)),
+                          TimeValue(Seconds(1)),
                           MakeTimeAccessor(&EpsBearerTagUdpClient::m_interval),
                           MakeTimeChecker())
             .AddAttribute("RemoteAddress",
@@ -207,7 +196,7 @@ EpsBearerTagUdpClient::StartApplication()
     }
 
     m_socket->SetRecvCallback(MakeNullCallback<void, Ptr<Socket>>());
-    m_sendEvent = Simulator::Schedule(Seconds(0.0), &EpsBearerTagUdpClient::Send, this);
+    m_sendEvent = Simulator::Schedule(Seconds(0), &EpsBearerTagUdpClient::Send, this);
 }
 
 void
@@ -248,19 +237,19 @@ EpsBearerTagUdpClient::Send()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Custom test structure to hold information of data transmitted in the uplink per UE
+ * @brief Custom test structure to hold information of data transmitted in the uplink per UE
  */
 struct UeUlTestData
 {
     /**
      * Constructor
      *
-     * \param n number of packets
-     * \param s packet size
-     * \param r the RNTI
-     * \param l the BID
+     * @param n number of packets
+     * @param s packet size
+     * @param r the RNTI
+     * @param l the BID
      */
     UeUlTestData(uint32_t n, uint32_t s, uint16_t r, uint8_t l);
 
@@ -282,9 +271,9 @@ UeUlTestData::UeUlTestData(uint32_t n, uint32_t s, uint16_t r, uint8_t l)
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Custom structure containing information about data sent in the uplink
+ * @brief Custom structure containing information about data sent in the uplink
  * of eNodeB. Includes the information of the data sent in the uplink per UE.
  */
 struct EnbUlTestData
@@ -293,9 +282,9 @@ struct EnbUlTestData
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief EpcS1uUlTestCase class
+ * @brief EpcS1uUlTestCase class
  */
 class EpcS1uUlTestCase : public TestCase
 {
@@ -303,8 +292,8 @@ class EpcS1uUlTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param name the reference name
-     * \param v the list of UE lists
+     * @param name the reference name
+     * @param v the list of UE lists
      */
     EpcS1uUlTestCase(std::string name, std::vector<EnbUlTestData> v);
     ~EpcS1uUlTestCase() override;
@@ -446,8 +435,8 @@ EpcS1uUlTestCase::DoRun()
                 "ns3::UdpSocketFactory",
                 InetSocketAddress(Ipv4Address::GetAny(), udpSinkPort));
             ApplicationContainer sinkApp = packetSinkHelper.Install(remoteHost);
-            sinkApp.Start(Seconds(1.0));
-            sinkApp.Stop(Seconds(10.0));
+            sinkApp.Start(Seconds(1));
+            sinkApp.Stop(Seconds(10));
             enbit->ues[u].serverApp = sinkApp.Get(0)->GetObject<PacketSink>();
 
             Time interPacketInterval = Seconds(0.01);
@@ -462,8 +451,8 @@ EpcS1uUlTestCase::DoRun()
             ue->AddApplication(client);
             ApplicationContainer clientApp;
             clientApp.Add(client);
-            clientApp.Start(Seconds(2.0));
-            clientApp.Stop(Seconds(10.0));
+            clientApp.Start(Seconds(2));
+            clientApp.Stop(Seconds(10));
             enbit->ues[u].clientApp = client;
 
             uint64_t imsi = ++imsiCounter;
@@ -508,14 +497,14 @@ class EpcS1uUlTestSuite : public TestSuite
 } g_epcS1uUlTestSuiteInstance;
 
 EpcS1uUlTestSuite::EpcS1uUlTestSuite()
-    : TestSuite("epc-s1u-uplink", SYSTEM)
+    : TestSuite("epc-s1u-uplink", Type::SYSTEM)
 {
     std::vector<EnbUlTestData> v1;
     EnbUlTestData e1;
     UeUlTestData f1(1, 100, 1, 1);
     e1.ues.push_back(f1);
     v1.push_back(e1);
-    AddTestCase(new EpcS1uUlTestCase("1 eNB, 1UE", v1), TestCase::QUICK);
+    AddTestCase(new EpcS1uUlTestCase("1 eNB, 1UE", v1), TestCase::Duration::QUICK);
 
     std::vector<EnbUlTestData> v2;
     EnbUlTestData e2;
@@ -524,12 +513,12 @@ EpcS1uUlTestSuite::EpcS1uUlTestSuite()
     UeUlTestData f2_2(2, 200, 2, 1);
     e2.ues.push_back(f2_2);
     v2.push_back(e2);
-    AddTestCase(new EpcS1uUlTestCase("1 eNB, 2UEs", v2), TestCase::QUICK);
+    AddTestCase(new EpcS1uUlTestCase("1 eNB, 2UEs", v2), TestCase::Duration::QUICK);
 
     std::vector<EnbUlTestData> v3;
     v3.push_back(e1);
     v3.push_back(e2);
-    AddTestCase(new EpcS1uUlTestCase("2 eNBs", v3), TestCase::QUICK);
+    AddTestCase(new EpcS1uUlTestCase("2 eNBs", v3), TestCase::Duration::QUICK);
 
     EnbUlTestData e3;
     UeUlTestData f3_1(3, 50, 1, 1);
@@ -542,33 +531,37 @@ EpcS1uUlTestSuite::EpcS1uUlTestSuite()
     v4.push_back(e3);
     v4.push_back(e1);
     v4.push_back(e2);
-    AddTestCase(new EpcS1uUlTestCase("3 eNBs", v4), TestCase::QUICK);
+    AddTestCase(new EpcS1uUlTestCase("3 eNBs", v4), TestCase::Duration::QUICK);
 
     std::vector<EnbUlTestData> v5;
     EnbUlTestData e5;
     UeUlTestData f5(10, 3000, 1, 1);
     e5.ues.push_back(f5);
     v5.push_back(e5);
-    AddTestCase(new EpcS1uUlTestCase("1 eNB, 10 pkts 3000 bytes each", v5), TestCase::QUICK);
+    AddTestCase(new EpcS1uUlTestCase("1 eNB, 10 pkts 3000 bytes each", v5),
+                TestCase::Duration::QUICK);
 
     std::vector<EnbUlTestData> v6;
     EnbUlTestData e6;
     UeUlTestData f6(50, 3000, 1, 1);
     e6.ues.push_back(f6);
     v6.push_back(e6);
-    AddTestCase(new EpcS1uUlTestCase("1 eNB, 50 pkts 3000 bytes each", v6), TestCase::QUICK);
+    AddTestCase(new EpcS1uUlTestCase("1 eNB, 50 pkts 3000 bytes each", v6),
+                TestCase::Duration::QUICK);
 
     std::vector<EnbUlTestData> v7;
     EnbUlTestData e7;
     UeUlTestData f7(10, 15000, 1, 1);
     e7.ues.push_back(f7);
     v7.push_back(e7);
-    AddTestCase(new EpcS1uUlTestCase("1 eNB, 10 pkts 15000 bytes each", v7), TestCase::QUICK);
+    AddTestCase(new EpcS1uUlTestCase("1 eNB, 10 pkts 15000 bytes each", v7),
+                TestCase::Duration::QUICK);
 
     std::vector<EnbUlTestData> v8;
     EnbUlTestData e8;
     UeUlTestData f8(100, 15000, 1, 1);
     e8.ues.push_back(f8);
     v8.push_back(e8);
-    AddTestCase(new EpcS1uUlTestCase("1 eNB, 100 pkts 15000 bytes each", v8), TestCase::QUICK);
+    AddTestCase(new EpcS1uUlTestCase("1 eNB, 100 pkts 15000 bytes each", v8),
+                TestCase::Duration::QUICK);
 }

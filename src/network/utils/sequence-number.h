@@ -1,18 +1,7 @@
 //
 // Copyright (c) 2008-2010 INESC Porto
 //
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// SPDX-License-Identifier: GPL-2.0-only
 //
 // Author: Gustavo J. A. M. Carneiro  <gjc@inescporto.pt> <gjcarneiro@gmail.com>
 //
@@ -30,14 +19,14 @@ namespace ns3
 {
 
 /**
- * \ingroup network
- * \defgroup seq-counters Sequence Counter
- * \brief "sequence number" classes
+ * @ingroup network
+ * @defgroup seq-counters Sequence Counter
+ * @brief "sequence number" classes
  */
 
 /**
- * \ingroup seq-counters
- * \brief Generic "sequence number" class
+ * @ingroup seq-counters
+ * @brief Generic "sequence number" class
  *
  * This class can be used to handle sequence numbers.  In networking
  * protocols, sequence numbers are fixed precision integer numbers
@@ -67,8 +56,8 @@ class SequenceNumber
     }
 
     /**
-     * \brief Constructs a SequenceNumber with the given value
-     * \param value the sequence number value
+     * @brief Constructs a SequenceNumber with the given value
+     * @param value the sequence number value
      */
     explicit SequenceNumber(NUMERIC_TYPE value)
         : m_value(value)
@@ -76,8 +65,8 @@ class SequenceNumber
     }
 
     /**
-     * \brief Constructs a SequenceNumber from a copy
-     * \param value sequence number to copy
+     * @brief Constructs a SequenceNumber from a copy
+     * @param value sequence number to copy
      */
     SequenceNumber(const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& value)
         : m_value(value.m_value)
@@ -85,9 +74,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Constructs a SequenceNumber from an assignment of given value
-     * \param value sequence number to copy
-     * \returns reference to the assignee
+     * @brief Constructs a SequenceNumber from an assignment of given value
+     * @param value sequence number to copy
+     * @returns reference to the assignee
      */
     SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& operator=(NUMERIC_TYPE value)
     {
@@ -96,9 +85,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Constructs a SequenceNumber from an assignment of another sequence number
-     * \param value sequence number to copy
-     * \returns reference to the assignee
+     * @brief Constructs a SequenceNumber from an assignment of another sequence number
+     * @param value sequence number to copy
+     * @returns reference to the assignee
      */
     SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& operator=(
         const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& value)
@@ -116,8 +105,8 @@ class SequenceNumber
 #endif
 
     /**
-     * \brief Extracts the numeric value of the sequence number
-     * \returns the sequence number value
+     * @brief Extracts the numeric value of the sequence number
+     * @returns the sequence number value
      */
     NUMERIC_TYPE GetValue() const
     {
@@ -125,8 +114,8 @@ class SequenceNumber
     }
 
     /**
-     * \brief Prefix increment operator
-     * \returns incremented sequence number
+     * @brief Prefix increment operator
+     * @returns incremented sequence number
      */
     SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE> operator++()
     {
@@ -135,8 +124,8 @@ class SequenceNumber
     }
 
     /**
-     * \brief Postfix increment operator
-     * \returns incremented sequence number
+     * @brief Postfix increment operator
+     * @returns incremented sequence number
      */
     SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE> operator++(int)
     {
@@ -146,8 +135,8 @@ class SequenceNumber
     }
 
     /**
-     * \brief Prefix decrement operator
-     * \returns decremented sequence number
+     * @brief Prefix decrement operator
+     * @returns decremented sequence number
      */
     SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE> operator--()
     {
@@ -156,8 +145,8 @@ class SequenceNumber
     }
 
     /**
-     * \brief Postfix decrement operator
-     * \returns decremented sequence number
+     * @brief Postfix decrement operator
+     * @returns decremented sequence number
      */
     SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE> operator--(int)
     {
@@ -167,9 +156,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Plus equals operator
-     * \param value value to add to sequence number
-     * \returns incremented sequence number
+     * @brief Plus equals operator
+     * @param value value to add to sequence number
+     * @returns incremented sequence number
      */
     SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& operator+=(SIGNED_TYPE value)
     {
@@ -178,9 +167,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Minus equals operator
-     * \param value value to subtract from sequence number
-     * \returns decremented sequence number
+     * @brief Minus equals operator
+     * @param value value to subtract from sequence number
+     * @returns decremented sequence number
      */
     SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& operator-=(SIGNED_TYPE value)
     {
@@ -189,9 +178,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Operator defining addition of two sequence numbers
-     * \param other sequence number added to this
-     * \returns sequence number representing sum
+     * @brief Operator defining addition of two sequence numbers
+     * @param other sequence number added to this
+     * @returns sequence number representing sum
      */
     SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE> operator+(
         const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& other) const
@@ -200,9 +189,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Addition operator for adding numeric value to sequence number
-     * \param delta value to add to sequence number
-     * \returns sequence number representing sum
+     * @brief Addition operator for adding numeric value to sequence number
+     * @param delta value to add to sequence number
+     * @returns sequence number representing sum
      */
     SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE> operator+(SIGNED_TYPE delta) const
     {
@@ -210,9 +199,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Subtraction operator for subtracting numeric value from sequence number
-     * \param delta value to subtract from sequence number
-     * \returns sequence number representing difference
+     * @brief Subtraction operator for subtracting numeric value from sequence number
+     * @param delta value to subtract from sequence number
+     * @returns sequence number representing difference
      */
     SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE> operator-(SIGNED_TYPE delta) const
     {
@@ -220,9 +209,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Subtraction operator for subtracting sequence number from sequence number
-     * \param other sequence number to subtract from this sequence number
-     * \returns numeric value representing the difference
+     * @brief Subtraction operator for subtracting sequence number from sequence number
+     * @param other sequence number to subtract from this sequence number
+     * @returns numeric value representing the difference
      */
     SIGNED_TYPE operator-(const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& other) const
     {
@@ -275,8 +264,8 @@ class SequenceNumber
      *      S1 > S2 AND S1 - S2 <= MAXVALUE/2 OR
      *      S2 > S1 AND S2 - S1 > MAXVALUE/2
      *
-     * \param other sequence number to compare to this one
-     * \returns true if this sequence number is greater than other
+     * @param other sequence number to compare to this one
+     * @returns true if this sequence number is greater than other
      */
     bool operator>(const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& other) const
     {
@@ -287,9 +276,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Equality operator for comparing sequence number
-     * \param other sequence number to compare to this sequence number
-     * \returns true if the sequence numbers are equal
+     * @brief Equality operator for comparing sequence number
+     * @param other sequence number to compare to this sequence number
+     * @returns true if the sequence numbers are equal
      */
     bool operator==(const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& other) const
     {
@@ -297,9 +286,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Inequality operator for comparing sequence numbers
-     * \param other sequence number to compare to this sequence number
-     * \returns true if the sequence numbers are not equal
+     * @brief Inequality operator for comparing sequence numbers
+     * @param other sequence number to compare to this sequence number
+     * @returns true if the sequence numbers are not equal
      */
     bool operator!=(const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& other) const
     {
@@ -307,9 +296,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Less than or equal operator for comparing sequence numbers
-     * \param other sequence number to compare to this sequence number
-     * \returns true if this sequence number is less than or equal to other
+     * @brief Less than or equal operator for comparing sequence numbers
+     * @param other sequence number to compare to this sequence number
+     * @returns true if this sequence number is less than or equal to other
      */
     bool operator<=(const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& other) const
     {
@@ -317,9 +306,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Greater than or equal operator for comparing sequence numbers
-     * \param other sequence number to compare to this sequence number
-     * \returns true if this sequence number is greater than or equal to other
+     * @brief Greater than or equal operator for comparing sequence numbers
+     * @param other sequence number to compare to this sequence number
+     * @returns true if this sequence number is greater than or equal to other
      */
     bool operator>=(const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& other) const
     {
@@ -327,9 +316,9 @@ class SequenceNumber
     }
 
     /**
-     * \brief Less than operator for comparing sequence numbers
-     * \param other sequence number to compare to this sequence number
-     * \returns true if this sequence number is less than other
+     * @brief Less than operator for comparing sequence numbers
+     * @param other sequence number to compare to this sequence number
+     * @returns true if this sequence number is less than other
      */
     bool operator<(const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& other) const
     {
@@ -337,20 +326,20 @@ class SequenceNumber
     }
 
     /**
-     * \brief For printing sequence number
-     * \param os output stream
-     * \param val sequence number to display
-     * \returns output stream os
+     * @brief For printing sequence number
+     * @param os output stream
+     * @param val sequence number to display
+     * @returns output stream os
      */
     template <typename NUMERIC_TYPE2, typename SIGNED_TYPE2>
     friend std::ostream& operator<<(std::ostream& os,
                                     const SequenceNumber<NUMERIC_TYPE2, SIGNED_TYPE2>& val);
 
     /**
-     * \brief For loading sequence number from input streams
-     * \param is input stream
-     * \param val sequence number to load
-     * \returns input stream is
+     * @brief For loading sequence number from input streams
+     * @param is input stream
+     * @param val sequence number to load
+     * @returns input stream is
      */
     template <typename NUMERIC_TYPE2, typename SIGNED_TYPE2>
     friend std::istream& operator>>(std::istream& is,
@@ -390,11 +379,11 @@ class SequenceNumber
 };
 
 /**
- * \brief Stream insertion operator.
+ * @brief Stream insertion operator.
  *
- * \param os the stream
- * \param val the value
- * \returns a reference to the stream
+ * @param os the stream
+ * @param val the value
+ * @returns a reference to the stream
  */
 template <typename NUMERIC_TYPE, typename SIGNED_TYPE>
 std::ostream&
@@ -405,11 +394,11 @@ operator<<(std::ostream& os, const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& va
 }
 
 /**
- * \brief Stream extraction operator.
+ * @brief Stream extraction operator.
  *
- * \param is the stream
- * \param val the value
- * \returns a reference to the stream
+ * @param is the stream
+ * @param val the value
+ * @returns a reference to the stream
  */
 template <typename NUMERIC_TYPE, typename SIGNED_TYPE>
 std::istream&
@@ -420,17 +409,17 @@ operator>>(std::istream& is, const SequenceNumber<NUMERIC_TYPE, SIGNED_TYPE>& va
 }
 
 /**
- * \ingroup seq-counters
+ * @ingroup seq-counters
  * 32 bit Sequence number.
  */
 typedef SequenceNumber<uint32_t, int32_t> SequenceNumber32;
 /**
- * \ingroup seq-counters
+ * @ingroup seq-counters
  * 16 bit Sequence number.
  */
 typedef SequenceNumber<uint16_t, int16_t> SequenceNumber16;
 /**
- * \ingroup seq-counters
+ * @ingroup seq-counters
  * 8 bit Sequence number.
  */
 typedef SequenceNumber<uint8_t, int8_t> SequenceNumber8;
@@ -439,21 +428,21 @@ namespace TracedValueCallback
 {
 
 /**
- * \ingroup seq-counters
+ * @ingroup seq-counters
  * TracedValue callback signature for SequenceNumber32
  *
- * \param [in] oldValue original value of the traced variable
- * \param [in] newValue new value of the traced variable
+ * @param [in] oldValue original value of the traced variable
+ * @param [in] newValue new value of the traced variable
  */
 typedef void (*SequenceNumber32)(SequenceNumber32 oldValue, SequenceNumber32 newValue);
 
 } // namespace TracedValueCallback
 
 /**
- * \ingroup seq-counters
+ * @ingroup seq-counters
  *
  * ns3::TypeNameGet<SequenceNumber32>() specialization.
- * \returns The type name as a string.
+ * @returns The type name as a string.
  */
 TYPENAMEGET_DEFINE(SequenceNumber32);
 

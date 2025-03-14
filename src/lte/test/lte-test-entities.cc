@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  */
@@ -185,7 +174,7 @@ void
 LteTestRrc::Start()
 {
     NS_LOG_FUNCTION(this);
-    NS_ASSERT_MSG(m_arrivalTime != Time(0), "Arrival time must be different from 0");
+    NS_ASSERT_MSG(!m_arrivalTime.IsZero(), "Arrival time must be different from 0");
 
     // Stats
     m_txPdus++;
@@ -496,7 +485,7 @@ LteTestMac::SendTxOpportunity(Time time, uint32_t bytes)
 
     if (m_txOpportunityMode == RANDOM_MODE)
     {
-        if (m_txOppTime != Seconds(0))
+        if (!m_txOppTime.IsZero())
         {
             Simulator::Schedule(m_txOppTime,
                                 &LteTestMac::SendTxOpportunity,
@@ -529,7 +518,7 @@ LteTestMac::SetTxOpportunityMode(uint8_t mode)
 
     if (m_txOpportunityMode == RANDOM_MODE)
     {
-        if (m_txOppTime != Seconds(0.0))
+        if (!m_txOppTime.IsZero())
         {
             SendTxOpportunity(m_txOppTime, m_txOppSize);
         }

@@ -1,18 +1,7 @@
 /*
  *  Copyright (c) 2009 INRIA, UDcast
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  *         Mohamed Amine Ismail <amine.ismail@sophia.inria.fr>
  *
@@ -24,15 +13,15 @@
 using namespace ns3;
 
 /**
- * \ingroup wimax
- * \defgroup wimax-test wimax module tests
+ * @ingroup wimax
+ * @defgroup wimax-test wimax module tests
  */
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Test the DSA request message.
+ * @brief Test the DSA request message.
  */
 class DsaRequestTestCase : public TestCase
 {
@@ -111,10 +100,10 @@ DsaRequestTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Ns3 Wimax Mac Messages Test Suite
+ * @brief Ns3 Wimax Mac Messages Test Suite
  */
 class Ns3WimaxMacMessagesTestSuite : public TestSuite
 {
@@ -123,9 +112,9 @@ class Ns3WimaxMacMessagesTestSuite : public TestSuite
 };
 
 Ns3WimaxMacMessagesTestSuite::Ns3WimaxMacMessagesTestSuite()
-    : TestSuite("wimax-mac-messages", UNIT)
+    : TestSuite("wimax-mac-messages", Type::UNIT)
 {
-    AddTestCase(new DsaRequestTestCase, TestCase::QUICK);
+    AddTestCase(new DsaRequestTestCase, TestCase::Duration::QUICK);
 }
 
 static Ns3WimaxMacMessagesTestSuite ns3WimaxMacMessagesTestSuite; ///< the test suite

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2022 Universita' degli Studi di Napoli Federico II
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Stefano Avallone <stavallo@unina.it>
  */
@@ -35,8 +24,8 @@ NS_LOG_COMPONENT_DEFINE("WifiIeFragmentTest");
 static bool g_extendedIe = false;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
  * Subelement to test fragmentation. Its content is a sequence of bytes
  * of configurable size.
@@ -50,8 +39,8 @@ class TestWifiSubElement : public WifiInformationElement
      * Construct a test subelement containing a sequence of bytes of the given
      * size and with the given initial value.
      *
-     * \param count the number of bytes to append
-     * \param start the initial value for the sequence of bytes to add
+     * @param count the number of bytes to append
+     * @param start the initial value for the sequence of bytes to add
      */
     TestWifiSubElement(uint16_t count, uint8_t start);
 
@@ -107,8 +96,8 @@ TestWifiSubElement::DeserializeInformationField(Buffer::Iterator start, uint16_t
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
  * Information Element to test IE fragmentation. Its content is one or more
  * test subelements.
@@ -118,7 +107,7 @@ class TestWifiInformationElement : public WifiInformationElement
   public:
     /**
      * Constructor
-     * \param extended whether this IE includes an Element ID Extension field
+     * @param extended whether this IE includes an Element ID Extension field
      */
     TestWifiInformationElement(bool extended);
 
@@ -127,7 +116,7 @@ class TestWifiInformationElement : public WifiInformationElement
     /**
      * Append the given subelement.
      *
-     * \param subelement the subelement to append
+     * @param subelement the subelement to append
      */
     void AddSubelement(TestWifiSubElement&& subelement);
 
@@ -206,8 +195,8 @@ TestWifiInformationElement::DeserializeInformationField(Buffer::Iterator start, 
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
  * Test header that can contain multiple test information elements.
  */
@@ -220,19 +209,19 @@ class TestHeader
     ~TestHeader() override = default;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
     /**
-     * \return the TypeId for this object.
+     * @return the TypeId for this object.
      */
     TypeId GetInstanceTypeId() const override;
 
   private:
     /**
-     * \param optElem the MultiLinkElement object to initialize for deserializing the
+     * @param optElem the MultiLinkElement object to initialize for deserializing the
      *                information element into
      */
     void InitForDeserialization(std::optional<TestWifiInformationElement>& optElem);
@@ -263,17 +252,17 @@ TestHeader::InitForDeserialization(std::optional<TestWifiInformationElement>& op
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test fragmentation of Information Elements
+ * @brief Test fragmentation of Information Elements
  */
 class WifiIeFragmentationTest : public HeaderSerializationTestCase
 {
   public:
     /**
      * Constructor
-     * \param extended whether this IE includes an Element ID Extension field
+     * @param extended whether this IE includes an Element ID Extension field
      */
     WifiIeFragmentationTest(bool extended);
     ~WifiIeFragmentationTest() override = default;
@@ -281,17 +270,17 @@ class WifiIeFragmentationTest : public HeaderSerializationTestCase
     /**
      * Serialize the given element in a buffer.
      *
-     * \param element the given element
-     * \return the buffer in which the given element has been serialized
+     * @param element the given element
+     * @return the buffer in which the given element has been serialized
      */
     Buffer SerializeIntoBuffer(const WifiInformationElement& element);
 
     /**
      * Check that the given buffer contains the given value at the given position.
      *
-     * \param buffer the given buffer
-     * \param position the given position (starting at 0)
-     * \param value the given value
+     * @param buffer the given buffer
+     * @param position the given position (starting at 0)
+     * @param value the given value
      */
     void CheckSerializedByte(const Buffer& buffer, uint32_t position, uint8_t value);
 
@@ -588,10 +577,10 @@ WifiIeFragmentationTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief wifi Information Element fragmentation Test Suite
+ * @brief wifi Information Element fragmentation Test Suite
  */
 class WifiIeFragmentationTestSuite : public TestSuite
 {
@@ -600,10 +589,10 @@ class WifiIeFragmentationTestSuite : public TestSuite
 };
 
 WifiIeFragmentationTestSuite::WifiIeFragmentationTestSuite()
-    : TestSuite("wifi-ie-fragment", UNIT)
+    : TestSuite("wifi-ie-fragment", Type::UNIT)
 {
-    AddTestCase(new WifiIeFragmentationTest(false), TestCase::QUICK);
-    AddTestCase(new WifiIeFragmentationTest(true), TestCase::QUICK);
+    AddTestCase(new WifiIeFragmentationTest(false), TestCase::Duration::QUICK);
+    AddTestCase(new WifiIeFragmentationTest(true), TestCase::Duration::QUICK);
 }
 
 static WifiIeFragmentationTestSuite g_wifiIeFragmentationTestSuite; ///< the test suite

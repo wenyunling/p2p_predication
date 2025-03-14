@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 The Boeing Company
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Tom Henderson <thomas.r.henderson@boeing.com>
  */
@@ -36,28 +25,28 @@
    ./ns3 run "lr-wpan-error-distance-plot --txPower= 0 --rxSensitivity=-92"
 
 */
-#include <ns3/abort.h>
-#include <ns3/callback.h>
-#include <ns3/command-line.h>
-#include <ns3/constant-position-mobility-model.h>
-#include <ns3/gnuplot.h>
-#include <ns3/log.h>
-#include <ns3/lr-wpan-error-model.h>
-#include <ns3/lr-wpan-mac.h>
-#include <ns3/lr-wpan-net-device.h>
-#include <ns3/lr-wpan-spectrum-value-helper.h>
-#include <ns3/mac16-address.h>
-#include <ns3/multi-model-spectrum-channel.h>
-#include <ns3/net-device.h>
-#include <ns3/node.h>
-#include <ns3/nstime.h>
-#include <ns3/packet.h>
-#include <ns3/propagation-loss-model.h>
-#include <ns3/simulator.h>
-#include <ns3/single-model-spectrum-channel.h>
-#include <ns3/spectrum-value.h>
-#include <ns3/test.h>
-#include <ns3/uinteger.h>
+#include "ns3/abort.h"
+#include "ns3/callback.h"
+#include "ns3/command-line.h"
+#include "ns3/constant-position-mobility-model.h"
+#include "ns3/gnuplot.h"
+#include "ns3/log.h"
+#include "ns3/lr-wpan-error-model.h"
+#include "ns3/lr-wpan-mac.h"
+#include "ns3/lr-wpan-net-device.h"
+#include "ns3/lr-wpan-spectrum-value-helper.h"
+#include "ns3/mac16-address.h"
+#include "ns3/multi-model-spectrum-channel.h"
+#include "ns3/net-device.h"
+#include "ns3/node.h"
+#include "ns3/nstime.h"
+#include "ns3/packet.h"
+#include "ns3/propagation-loss-model.h"
+#include "ns3/simulator.h"
+#include "ns3/single-model-spectrum-channel.h"
+#include "ns3/spectrum-value.h"
+#include "ns3/test.h"
+#include "ns3/uinteger.h"
 
 #include <fstream>
 #include <iostream>
@@ -65,6 +54,7 @@
 #include <vector>
 
 using namespace ns3;
+using namespace ns3::lrwpan;
 
 uint32_t g_packetsReceived = 0; //!< number of packets received
 
@@ -72,8 +62,8 @@ NS_LOG_COMPONENT_DEFINE("LrWpanErrorDistancePlot");
 
 /**
  * Function called when a Data indication is invoked
- * \param params MCPS data indication parameters
- * \param p packet
+ * @param params MCPS data indication parameters
+ * @param p packet
  */
 void
 LrWpanErrorDistanceCallback(McpsDataIndicationParams params, Ptr<Packet> p)

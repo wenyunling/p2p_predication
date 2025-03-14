@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2015 Danilo Abrignani
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Danilo Abrignani <danilo.abrignani@unibo.it>
  *
@@ -27,9 +16,9 @@
 namespace ns3
 {
 /**
- * \ingroup lte
+ * @ingroup lte
  *
- * \brief Service Access Point (SAP) offered by the component carrier manager (CCM)
+ * @brief Service Access Point (SAP) offered by the component carrier manager (CCM)
  *  by MAC to CCM.
  *
  * This is the *Component Carrier Manager SAP Provider*, i.e., the part of the SAP
@@ -42,26 +31,26 @@ class LteCcmMacSapProvider
     virtual ~LteCcmMacSapProvider();
 
     /**
-     * \brief Add the Buffer Status Report to the list.
-     * \param bsr LteEnbComponentCarrierManager used this function to
+     * @brief Add the Buffer Status Report to the list.
+     * @param bsr LteEnbComponentCarrierManager used this function to
      *  send back an uplink BSR to some of the MAC instances
      */
     virtual void ReportMacCeToScheduler(MacCeListElement_s bsr) = 0;
 
     /**
-     * \brief Report SR to the right scheduler
-     * \param rnti RNTI of the user that requested the SR
+     * @brief Report SR to the right scheduler
+     * @param rnti RNTI of the user that requested the SR
      *
-     * \see LteCcmMacSapUser::UlReceiveSr
+     * @see LteCcmMacSapUser::UlReceiveSr
      */
     virtual void ReportSrToScheduler(uint16_t rnti) = 0;
 
 }; // end of class LteCcmMacSapProvider
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
- * \brief Service Access Point (SAP) offered by MAC to the
+ * @brief Service Access Point (SAP) offered by MAC to the
  *        component carrier manager (CCM).
  *
  *
@@ -74,17 +63,17 @@ class LteCcmMacSapUser : public LteMacSapUser
   public:
     ~LteCcmMacSapUser() override;
     /**
-     * \brief When the Primary Component carrier receive a buffer status report
+     * @brief When the Primary Component carrier receive a buffer status report
      *  it is sent to the CCM.
-     * \param bsr Buffer Status Report received from a Ue
-     * \param componentCarrierId
+     * @param bsr Buffer Status Report received from a Ue
+     * @param componentCarrierId
      */
     virtual void UlReceiveMacCe(MacCeListElement_s bsr, uint8_t componentCarrierId) = 0;
 
     /**
-     * \brief The MAC received a SR
-     * \param rnti RNTI of the UE that requested a SR
-     * \param componentCarrierId CC that received the SR
+     * @brief The MAC received a SR
+     * @param rnti RNTI of the UE that requested a SR
+     * @param componentCarrierId CC that received the SR
      *
      * NOTE: Not implemented in the LTE module. The FemtoForum API requires
      * that this function gets as parameter a struct  SchedUlSrInfoReqParameters.
@@ -96,9 +85,9 @@ class LteCcmMacSapUser : public LteMacSapUser
     virtual void UlReceiveSr(uint16_t rnti, uint8_t componentCarrierId) = 0;
 
     /**
-     * \brief Notifies component carrier manager about physical resource block occupancy
-     * \param prbOccupancy The physical resource block occupancy
-     * \param componentCarrierId The component carrier id
+     * @brief Notifies component carrier manager about physical resource block occupancy
+     * @param prbOccupancy The physical resource block occupancy
+     * @param componentCarrierId The component carrier id
      */
     virtual void NotifyPrbOccupancy(double prbOccupancy, uint8_t componentCarrierId) = 0;
 
@@ -112,7 +101,7 @@ class MemberLteCcmMacSapProvider : public LteCcmMacSapProvider
     /**
      * Constructor
      *
-     * \param owner the owner class
+     * @param owner the owner class
      */
     MemberLteCcmMacSapProvider(C* owner);
     // inherited from LteCcmRrcSapProvider
@@ -151,7 +140,7 @@ class MemberLteCcmMacSapUser : public LteCcmMacSapUser
     /**
      * Constructor
      *
-     * \param owner the owner class
+     * @param owner the owner class
      */
     MemberLteCcmMacSapUser(C* owner);
     // inherited from LteCcmRrcSapUser

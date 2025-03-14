@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Marco Miozzo <marco.miozzo@cttc.es>,
  *         Nicola Baldo <nbaldo@cttc.es>
@@ -28,9 +17,9 @@
 using namespace ns3;
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief This system test program creates different test cases with a single eNB and
+ * @brief This system test program creates different test cases with a single eNB and
  * several UEs, all having the same Radio Bearer specification. In each test
  * case, the UEs see the same SINR from the eNB; different test cases are
  * implemented obtained by using different SINR values and different numbers of
@@ -44,13 +33,13 @@ class LenaFdTbfqFfMacSchedulerTestCase1 : public TestCase
     /**
      * Constructor
      *
-     * \param nUser number of UE nodes
-     * \param dist distance between nodes
-     * \param thrRefDl DL throughput reference
-     * \param thrRefUl UL throughput reference
-     * \param packetSize packet size
-     * \param interval time interval
-     * \param errorModelEnabled error model enabled?
+     * @param nUser number of UE nodes
+     * @param dist distance between nodes
+     * @param thrRefDl DL throughput reference
+     * @param thrRefUl UL throughput reference
+     * @param packetSize packet size
+     * @param interval time interval
+     * @param errorModelEnabled error model enabled?
      */
     LenaFdTbfqFfMacSchedulerTestCase1(uint16_t nUser,
                                       double dist,
@@ -65,9 +54,9 @@ class LenaFdTbfqFfMacSchedulerTestCase1 : public TestCase
     /**
      *  Builds the test name string based on provided parameter values
      *
-     * \param nUser number of UE nodes
-     * \param dist distance between nodes
-     * \returns name string
+     * @param nUser number of UE nodes
+     * @param dist distance between nodes
+     * @returns name string
      */
     static std::string BuildNameString(uint16_t nUser, double dist);
     void DoRun() override;
@@ -81,9 +70,9 @@ class LenaFdTbfqFfMacSchedulerTestCase1 : public TestCase
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test case is similar to the one defined in
+ * @brief Test case is similar to the one defined in
  * LenaFdTbfqFfMacSchedulerTestCase1, with the difference that UEs are
  * placed in such a way to experience different SINRs from eNodeB.
  */
@@ -93,11 +82,11 @@ class LenaFdTbfqFfMacSchedulerTestCase2 : public TestCase
     /**
      * Constructor
      *
-     * \param dist distance between nodes
-     * \param estThrFdTbfqDl estimated DL throughput
-     * \param packetSize packet size
-     * \param interval time interval
-     * \param errorModelEnabled indicates whether the error model is enabled
+     * @param dist distance between nodes
+     * @param estThrFdTbfqDl estimated DL throughput
+     * @param packetSize packet size
+     * @param interval time interval
+     * @param errorModelEnabled indicates whether the error model is enabled
      */
     LenaFdTbfqFfMacSchedulerTestCase2(std::vector<double> dist,
                                       std::vector<uint32_t> estThrFdTbfqDl,
@@ -110,9 +99,9 @@ class LenaFdTbfqFfMacSchedulerTestCase2 : public TestCase
     /**
      *  Builds the test name string based on provided parameter values
      *
-     * \param nUser number of UE nodes
-     * \param dist distance between nodes
-     * \returns name string
+     * @param nUser number of UE nodes
+     * @param dist distance between nodes
+     * @returns name string
      */
     static std::string BuildNameString(uint16_t nUser, std::vector<double> dist);
     void DoRun() override;
@@ -125,9 +114,9 @@ class LenaFdTbfqFfMacSchedulerTestCase2 : public TestCase
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test suit for FdTbfqFfMacScheduler test.
+ * @brief Test suit for FdTbfqFfMacScheduler test.
  */
 class LenaTestFdTbfqFfMacSchedulerSuite : public TestSuite
 {

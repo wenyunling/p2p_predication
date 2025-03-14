@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2014 Piotr Gawlowicz
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Piotr Gawlowicz <gawlowicz.p@gmail.com>
  *
@@ -29,7 +18,7 @@ namespace ns3
 {
 
 /**
- * \brief Service Access Point (SAP) offered by the Frequency Reuse algorithm
+ * @brief Service Access Point (SAP) offered by the Frequency Reuse algorithm
  *        instance to the MAC Scheduler instance.
  *
  * This is the *LteFfrSapProvider*, i.e., the part of the SAP
@@ -42,8 +31,8 @@ class LteFfrSapProvider
     virtual ~LteFfrSapProvider();
 
     /**
-     * \brief Get vector of available RBG in DL for this Cell
-     * \return vector of size (m_dlBandwidth/RbgSize); false indicates
+     * @brief Get vector of available RBG in DL for this Cell
+     * @return vector of size (m_dlBandwidth/RbgSize); false indicates
      *                   that RBG is free to use, true otherwise
      *
      * This function is called by MAC Scheduler in the beginning of DL
@@ -54,11 +43,11 @@ class LteFfrSapProvider
     virtual std::vector<bool> GetAvailableDlRbg() = 0;
 
     /**
-     * \brief Check if UE can be served on i-th RB in DL
-     * \param i RBG ID
-     * \param rnti Radio Network Temporary Identity, an integer identifying the UE
+     * @brief Check if UE can be served on i-th RB in DL
+     * @param i RBG ID
+     * @param rnti Radio Network Temporary Identity, an integer identifying the UE
      *             where the report originates from
-     * \return true if UE can be served on i-th RB, false otherwise
+     * @return true if UE can be served on i-th RB, false otherwise
      *
      * This function is called by MAC Scheduler during DL scheduling process
      * to check if UE is allowed to be served with i-th RBG. Frequency Reuse
@@ -69,8 +58,8 @@ class LteFfrSapProvider
     virtual bool IsDlRbgAvailableForUe(int i, uint16_t rnti) = 0;
 
     /**
-     * \brief Get vector of available RB in UL for this Cell
-     * \return vector of size m_ulBandwidth; false indicates
+     * @brief Get vector of available RB in UL for this Cell
+     * @return vector of size m_ulBandwidth; false indicates
      *                    that RB is free to use, true otherwise
      *
      * This function is called by MAC Scheduler in the beginning of UL
@@ -81,11 +70,11 @@ class LteFfrSapProvider
     virtual std::vector<bool> GetAvailableUlRbg() = 0;
 
     /**
-     * \brief Check if UE can be served on i-th RB in UL
-     * \param i RB ID
-     * \param rnti Radio Network Temporary Identity, an integer identifying the UE
+     * @brief Check if UE can be served on i-th RB in UL
+     * @param i RB ID
+     * @param rnti Radio Network Temporary Identity, an integer identifying the UE
      *             where the report originates from
-     * \return true if UE can be served on i-th RB, false otherwise
+     * @return true if UE can be served on i-th RB, false otherwise
      *
      * This function is called by MAC Scheduler during UL scheduling process
      * to check if UE is allowed to be served with i-th RB. Frequency Reuse
@@ -96,41 +85,41 @@ class LteFfrSapProvider
     virtual bool IsUlRbgAvailableForUe(int i, uint16_t rnti) = 0;
 
     /**
-     * \brief ReportDlCqiInfo
-     * \param params the struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters
+     * @brief ReportDlCqiInfo
+     * @param params the struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters
      */
     virtual void ReportDlCqiInfo(
         const FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& params) = 0;
 
     /**
-     * \brief ReportUlCqiInfo
-     * \param params the struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters
+     * @brief ReportUlCqiInfo
+     * @param params the struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters
      */
     virtual void ReportUlCqiInfo(
         const FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& params) = 0;
 
     /**
-     * \brief ReportUlCqiInfo
-     * \param ulCqiMap the UL CQI map
+     * @brief ReportUlCqiInfo
+     * @param ulCqiMap the UL CQI map
      */
     virtual void ReportUlCqiInfo(std::map<uint16_t, std::vector<double>> ulCqiMap) = 0;
 
     /**
-     * \brief GetTpc
-     * \param rnti the RNTI
-     * \returns the TCP
+     * @brief GetTpc
+     * @param rnti the RNTI
+     * @returns the TCP
      */
     virtual uint8_t GetTpc(uint16_t rnti) = 0;
 
     /**
-     * \brief Get the minimum continuous Ul bandwidth
-     * \returns the minimum continuous UL bandwidth
+     * @brief Get the minimum continuous Ul bandwidth
+     * @returns the minimum continuous UL bandwidth
      */
     virtual uint16_t GetMinContinuousUlBandwidth() = 0;
 }; // end of class LteFfrSapProvider
 
 /**
- * \brief Service Access Point (SAP) offered by the eNodeB RRC instance to the
+ * @brief Service Access Point (SAP) offered by the eNodeB RRC instance to the
  *        Frequency Reuse algorithm instance.
  *
  * This is the *LteFfrSapUser*, i.e., the part of the SAP that
@@ -144,7 +133,7 @@ class LteFfrSapUser
 }; // end of class LteFfrSapUser
 
 /**
- * \brief Template for the implementation of the LteFfrSapProvider
+ * @brief Template for the implementation of the LteFfrSapProvider
  *        as a member of an owner class of type C to which all methods are
  *        forwarded.
  */
@@ -155,7 +144,7 @@ class MemberLteFfrSapProvider : public LteFfrSapProvider
     /**
      * Constructor
      *
-     * \param owner the owner class
+     * @param owner the owner class
      */
     MemberLteFfrSapProvider(C* owner);
 
@@ -250,7 +239,7 @@ MemberLteFfrSapProvider<C>::GetMinContinuousUlBandwidth()
 }
 
 /**
- * \brief Template for the implementation of the LteFfrSapUser
+ * @brief Template for the implementation of the LteFfrSapUser
  *        as a member of an owner class of type C to which all methods are
  *        forwarded.
  */
@@ -261,7 +250,7 @@ class MemberLteFfrSapUser : public LteFfrSapUser
     /**
      * Constructor
      *
-     * \param owner the owner class
+     * @param owner the owner class
      */
     MemberLteFfrSapUser(C* owner);
 

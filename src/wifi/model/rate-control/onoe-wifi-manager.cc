@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2003,2007 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
@@ -31,7 +20,7 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("OnoeWifiManager");
 
 /**
- * \brief hold per-remote-station state for ONOE Wifi manager.
+ * @brief hold per-remote-station state for ONOE Wifi manager.
  *
  * This struct extends from WifiRemoteStation struct to hold additional
  * information required by the ONOE Wifi manager
@@ -61,7 +50,7 @@ OnoeWifiManager::GetTypeId()
             .AddConstructor<OnoeWifiManager>()
             .AddAttribute("UpdatePeriod",
                           "The interval between decisions about rate control changes",
-                          TimeValue(Seconds(1.0)),
+                          TimeValue(Seconds(1)),
                           MakeTimeAccessor(&OnoeWifiManager::m_updatePeriod),
                           MakeTimeChecker())
             .AddAttribute("RaiseThreshold",
@@ -168,7 +157,7 @@ OnoeWifiManager::DoReportDataOk(WifiRemoteStation* st,
                                 double ackSnr,
                                 WifiMode ackMode,
                                 double dataSnr,
-                                uint16_t dataChannelWidth,
+                                MHz_u dataChannelWidth,
                                 uint8_t dataNss)
 {
     NS_LOG_FUNCTION(this << st << ackSnr << ackMode << dataSnr << dataChannelWidth << +dataNss);
@@ -290,7 +279,7 @@ OnoeWifiManager::UpdateMode(OnoeWifiRemoteStation* station)
 }
 
 WifiTxVector
-OnoeWifiManager::DoGetDataTxVector(WifiRemoteStation* st, uint16_t allowedWidth)
+OnoeWifiManager::DoGetDataTxVector(WifiRemoteStation* st, MHz_u allowedWidth)
 {
     NS_LOG_FUNCTION(this << st << allowedWidth);
     auto station = static_cast<OnoeWifiRemoteStation*>(st);
@@ -334,10 +323,10 @@ OnoeWifiManager::DoGetDataTxVector(WifiRemoteStation* st, uint16_t allowedWidth)
             rateIndex = station->m_txrate;
         }
     }
-    uint16_t channelWidth = GetChannelWidth(station);
-    if (channelWidth > 20 && channelWidth != 22)
+    auto channelWidth = GetChannelWidth(station);
+    if (channelWidth > MHz_u{20} && channelWidth != MHz_u{22})
     {
-        channelWidth = 20;
+        channelWidth = MHz_u{20};
     }
     WifiMode mode = GetSupported(station, rateIndex);
     uint64_t rate = mode.GetDataRate(channelWidth);
@@ -350,7 +339,7 @@ OnoeWifiManager::DoGetDataTxVector(WifiRemoteStation* st, uint16_t allowedWidth)
         mode,
         GetDefaultTxPowerLevel(),
         GetPreambleForTransmission(mode.GetModulationClass(), GetShortPreambleEnabled()),
-        800,
+        NanoSeconds(800),
         1,
         1,
         0,
@@ -363,10 +352,10 @@ OnoeWifiManager::DoGetRtsTxVector(WifiRemoteStation* st)
 {
     NS_LOG_FUNCTION(this << st);
     auto station = static_cast<OnoeWifiRemoteStation*>(st);
-    uint16_t channelWidth = GetChannelWidth(station);
-    if (channelWidth > 20 && channelWidth != 22)
+    auto channelWidth = GetChannelWidth(station);
+    if (channelWidth > MHz_u{20} && channelWidth != MHz_u{22})
     {
-        channelWidth = 20;
+        channelWidth = MHz_u{20};
     }
     UpdateMode(station);
     WifiMode mode;
@@ -382,7 +371,7 @@ OnoeWifiManager::DoGetRtsTxVector(WifiRemoteStation* st)
         mode,
         GetDefaultTxPowerLevel(),
         GetPreambleForTransmission(mode.GetModulationClass(), GetShortPreambleEnabled()),
-        800,
+        NanoSeconds(800),
         1,
         1,
         0,

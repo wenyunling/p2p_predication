@@ -2,18 +2,7 @@
  * Copyright (c) 2005,2006 INRIA
  * Copyright (c) 2007 Emmanuelle Laprise
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  * TimeStep support by Emmanuelle Laprise <emmanuelle.laprise@bluekazoo.ca>
@@ -28,8 +17,8 @@
 #include <sstream>
 
 /**
- * \file
- * \ingroup time
+ * @file
+ * @ingroup time
  * ns3::Time, ns3::TimeWithUnit
  * and ns3::TimeValue attribute value implementations.
  */
@@ -53,8 +42,8 @@ const int32_t UNIT_COEFF[Time::LAST] = {315360, 864, 36, 6, 1, 1, 1, 1, 1, 1};
 
 /**
  * Scale a unit to the smallest unit.
- * \param u The unit to scale
- * \returns The value of \pname{u} in terms of the smallest defined unit.
+ * @param u The unit to scale
+ * @returns The value of \pname{u} in terms of the smallest defined unit.
  */
 long double
 Scale(Time::Unit u)
@@ -64,7 +53,7 @@ Scale(Time::Unit u)
 
 /**
  * Initializer for \c UNIT_VALUE
- * \returns The array of scale factors between units.
+ * @returns The array of scale factors between units.
  */
 long double*
 InitUnitValue()
@@ -296,7 +285,7 @@ void
 Time::ClearMarkedTimes()
 {
     /**
-     * \internal
+     * @internal
      *
      * We're called by Simulator::Run, which knows nothing about the mutex,
      * so we need a critical section here.

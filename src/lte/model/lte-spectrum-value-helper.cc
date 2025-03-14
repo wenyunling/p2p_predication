@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 TELEMATICS LAB, DEE - Politecnico di Bari
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Giuseppe Piro  <g.piro@poliba.it>
  *         Nicola Baldo <nbaldo@cttc.es>
@@ -20,8 +9,8 @@
 
 #include "lte-spectrum-value-helper.h"
 
-#include <ns3/fatal-error.h>
-#include <ns3/log.h>
+#include "ns3/fatal-error.h"
+#include "ns3/log.h"
 
 #include <cmath>
 #include <map>
@@ -31,14 +20,14 @@ namespace std
 {
 
 /**
- * \brief Stream insertion operator.
+ * @brief Stream insertion operator.
  *
- * \note This function scope is strictly local, and can not be
+ * @note This function scope is strictly local, and can not be
  * used in other source files.
  *
- * \param [in] os The reference to the output stream.
- * \param [in] v The std::vector<int>.
- * \returns The reference to the output stream.
+ * @param [in] os The reference to the output stream.
+ * @param [in] v The std::vector<int>.
+ * @returns The reference to the output stream.
  */
 ostream&
 operator<<(ostream& os, const vector<int>& v)
@@ -216,8 +205,8 @@ struct LteSpectrumModelId
     /**
      * Constructor
      *
-     * \param f earfcn
-     * \param b bandwidth
+     * @param f earfcn
+     * @param b bandwidth
      */
     LteSpectrumModelId(uint32_t f, uint8_t b);
     uint32_t earfcn;    ///< EARFCN
@@ -233,9 +222,9 @@ LteSpectrumModelId::LteSpectrumModelId(uint32_t f, uint8_t b)
 /**
  * Constructor
  *
- * \param a lhs
- * \param b rhs
- * \returns true if earfcn less than of if earfcn equal and bandwidth less than
+ * @param a lhs
+ * @param b rhs
+ * @returns true if earfcn less than of if earfcn equal and bandwidth less than
  */
 bool
 operator<(const LteSpectrumModelId& a, const LteSpectrumModelId& b)

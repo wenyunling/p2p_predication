@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 Andrea Sacco
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Andrea Sacco <andrea.sacco85@gmail.com>
  */
@@ -25,13 +14,26 @@
 #include "ns3/test.h"
 
 using namespace ns3;
+using namespace ns3::energy;
+
+// NS_DEPRECATED_3_43() - tag for future removal
+// LiIonEnergySource was deprecated in commit
+// https://gitlab.com/nsnam/ns-3-dev/-/commit/086913b0
+//
+// The new battery model is illustrated in
+// `src/energy/examples/generic-battery-discharge-example.cc`
+//
+// A GenericBatteryModelTestCase is being developed in MR 2181
+// https://gitlab.com/nsnam/ns-3-dev/-/merge_requests/2181
+// which will be in
+// `src/energy/test/generic-battery-model-test.cc`
 
 NS_LOG_COMPONENT_DEFINE("LiIonEnergySourceTestSuite");
 
 /**
- * \ingroup energy-tests
+ * @ingroup energy-tests
  *
- * \brief LiIon battery Test
+ * @brief LiIon battery Test
  */
 class LiIonEnergyTestCase : public TestCase
 {
@@ -60,7 +62,10 @@ LiIonEnergyTestCase::DoRun()
     m_node = CreateObject<Node>();
 
     Ptr<SimpleDeviceEnergyModel> sem = CreateObject<SimpleDeviceEnergyModel>();
+
+    NS_WARNING_PUSH_DEPRECATED;
     Ptr<LiIonEnergySource> es = CreateObject<LiIonEnergySource>();
+    NS_WARNING_POP;
 
     es->SetNode(m_node);
     sem->SetEnergySource(es);
@@ -81,9 +86,9 @@ LiIonEnergyTestCase::DoRun()
 }
 
 /**
- * \ingroup energy-tests
+ * @ingroup energy-tests
  *
- * \brief LiIon battery TestSuite
+ * @brief LiIon battery TestSuite
  */
 class LiIonEnergySourceTestSuite : public TestSuite
 {
@@ -92,9 +97,9 @@ class LiIonEnergySourceTestSuite : public TestSuite
 };
 
 LiIonEnergySourceTestSuite::LiIonEnergySourceTestSuite()
-    : TestSuite("li-ion-energy-source", UNIT)
+    : TestSuite("li-ion-energy-source", Type::UNIT)
 {
-    AddTestCase(new LiIonEnergyTestCase, TestCase::QUICK);
+    AddTestCase(new LiIonEnergyTestCase, TestCase::Duration::QUICK);
 }
 
 /// create an instance of the test suite

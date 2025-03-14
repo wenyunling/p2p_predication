@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
@@ -26,8 +15,8 @@
 #include <tuple>
 
 /**
- * \file
- * \ingroup attribute_Vector
+ * @file
+ * @ingroup geometry
  * ns3::Vector, ns3::Vector2D and ns3::Vector3D attribute value implementations.
  */
 
@@ -201,6 +190,24 @@ operator-(const Vector3D& a, const Vector3D& b)
     return Vector3D(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
+Vector3D
+operator*(const Vector3D& a, double b)
+{
+    return Vector3D(a.x * b, a.y * b, a.z * b);
+}
+
+Vector3D
+operator*(double a, const Vector3D& b)
+{
+    return Vector3D(b.x * a, b.y * a, b.z * a);
+}
+
+double
+operator*(const Vector3D& a, const Vector3D& b)
+{
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
 std::ostream&
 operator<<(std::ostream& os, const Vector2D& vector)
 {
@@ -266,6 +273,24 @@ Vector2D
 operator-(const Vector2D& a, const Vector2D& b)
 {
     return Vector2D(a.x - b.x, a.y - b.y);
+}
+
+Vector2D
+operator*(const Vector2D& a, double b)
+{
+    return Vector2D(a.x * b, a.y * b);
+}
+
+Vector2D
+operator*(double a, const Vector2D& b)
+{
+    return Vector2D(b.x * a, b.y * a);
+}
+
+double
+operator*(const Vector2D& a, const Vector2D& b)
+{
+    return a.x * b.x + a.y * b.y;
 }
 
 } // namespace ns3

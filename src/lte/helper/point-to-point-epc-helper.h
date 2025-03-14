@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011-2019 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors:
  *   Jaume Nin <jnin@cttc.es>
@@ -30,8 +19,8 @@ namespace ns3
 {
 
 /**
- * \ingroup lte
- * \brief Create an EPC network with PointToPoint links in the backhaul network.
+ * @ingroup lte
+ * @brief Create an EPC network with PointToPoint links in the backhaul network.
  *
  * This Helper extends NoBackhaulEpcHelper creating PointToPoint links in the
  * backhaul network (i.e. in the S1-U and S1-MME interfaces)
@@ -52,7 +41,7 @@ class PointToPointEpcHelper : public NoBackhaulEpcHelper
     // inherited from Object
     /**
      * Register this type.
-     * \return The object TypeId.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;

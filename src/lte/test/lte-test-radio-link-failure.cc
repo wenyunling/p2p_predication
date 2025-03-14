@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2018 Fraunhofer ESK
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Vignesh Babu <ns3-dev@esk.fraunhofer.de>
  *
@@ -46,7 +35,7 @@ NS_LOG_COMPONENT_DEFINE("LteRadioLinkFailureTest");
  * Test Suite
  */
 LteRadioLinkFailureTestSuite::LteRadioLinkFailureTestSuite()
-    : TestSuite("lte-radio-link-failure", SYSTEM)
+    : TestSuite("lte-radio-link-failure", Type::SYSTEM)
 {
     std::vector<Vector> uePositionList;
     std::vector<Vector> enbPositionList;
@@ -73,7 +62,7 @@ LteRadioLinkFailureTestSuite::LteRadioLinkFailureTestSuite()
                                                 enbPositionList,
                                                 ueJumpAwayPosition,
                                                 checkConnectedList),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // One eNB: Real RRC PROTOCOL
     AddTestCase(new LteRadioLinkFailureTestCase(1,
@@ -84,7 +73,7 @@ LteRadioLinkFailureTestSuite::LteRadioLinkFailureTestSuite()
                                                 enbPositionList,
                                                 ueJumpAwayPosition,
                                                 checkConnectedList),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // Two eNBs: Ideal RRC PROTOCOL
 
@@ -99,7 +88,7 @@ LteRadioLinkFailureTestSuite::LteRadioLinkFailureTestSuite()
                                                 enbPositionList,
                                                 ueJumpAwayPosition,
                                                 checkConnectedList),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // Two eNBs: Ideal RRC PROTOCOL
     AddTestCase(new LteRadioLinkFailureTestCase(2,
@@ -110,12 +99,12 @@ LteRadioLinkFailureTestSuite::LteRadioLinkFailureTestSuite()
                                                 enbPositionList,
                                                 ueJumpAwayPosition,
                                                 checkConnectedList),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
 } // end of LteRadioLinkFailureTestSuite::LteRadioLinkFailureTestSuite ()
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteRadioLinkFailureTestSuite g_lteRadioLinkFailureTestSuite;

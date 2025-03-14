@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2022 Tokushima University, Japan.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author:  Alberto Gallegos Ramonet <alramonet@is.tokushima-u.ac.jp>
  */
@@ -38,17 +27,18 @@
  * complete.
  */
 
-#include <ns3/core-module.h>
-#include <ns3/lr-wpan-module.h>
-#include <ns3/mobility-module.h>
-#include <ns3/netanim-module.h>
-#include <ns3/network-module.h>
-#include <ns3/propagation-module.h>
-#include <ns3/spectrum-module.h>
+#include "ns3/core-module.h"
+#include "ns3/lr-wpan-module.h"
+#include "ns3/mobility-module.h"
+#include "ns3/netanim-module.h"
+#include "ns3/network-module.h"
+#include "ns3/propagation-module.h"
+#include "ns3/spectrum-module.h"
 
 #include <iostream>
 
 using namespace ns3;
+using namespace ns3::lrwpan;
 
 NodeContainer nodes;
 NodeContainer coordinators;
@@ -88,7 +78,7 @@ ScanConfirm(Ptr<LrWpanNetDevice> device, MlmeScanConfirmParams params)
     // with the highest LQI value obtained from a passive scan and make
     // sure this coordinator allows association.
 
-    if (params.m_status == LrWpanMacStatus::SUCCESS)
+    if (params.m_status == MacStatus::SUCCESS)
     {
         // Select the coordinator with the highest LQI from the PAN Descriptor List
         int maxLqi = 0;
@@ -137,16 +127,16 @@ ScanConfirm(Ptr<LrWpanNetDevice> device, MlmeScanConfirmParams params)
                     CapabilityField capability;
 
                     if (params.m_panDescList[panDescIndex].m_coorAddrMode ==
-                        LrWpanAddressMode::SHORT_ADDR)
+                        AddressMode::SHORT_ADDR)
                     {
-                        assocParams.m_coordAddrMode = LrWpanAddressMode::SHORT_ADDR;
+                        assocParams.m_coordAddrMode = AddressMode::SHORT_ADDR;
                         assocParams.m_coordShortAddr =
                             params.m_panDescList[panDescIndex].m_coorShortAddr;
                         capability.SetShortAddrAllocOn(true);
                     }
-                    else if (assocParams.m_coordAddrMode == LrWpanAddressMode::EXT_ADDR)
+                    else if (assocParams.m_coordAddrMode == AddressMode::EXT_ADDR)
                     {
-                        assocParams.m_coordAddrMode = LrWpanAddressMode::EXT_ADDR;
+                        assocParams.m_coordAddrMode = AddressMode::EXT_ADDR;
                         assocParams.m_coordExtAddr =
                             params.m_panDescList[panDescIndex].m_coorExtAddr;
                         assocParams.m_coordShortAddr = Mac16Address("ff:fe");
@@ -209,7 +199,7 @@ AssociateIndication(Ptr<LrWpanNetDevice> device, MlmeAssociateIndicationParams p
     MlmeAssociateResponseParams assocRespParams;
 
     assocRespParams.m_extDevAddr = params.m_extDevAddr;
-    assocRespParams.m_status = LrWpanMacStatus::SUCCESS;
+    assocRespParams.m_status = MacStatus::SUCCESS;
     CapabilityField capability;
     capability.SetCapability(params.capabilityInfo);
 
@@ -248,14 +238,14 @@ CommStatusIndication(Ptr<LrWpanNetDevice> device, MlmeCommStatusIndicationParams
     // and is only here for demonstration purposes.
     switch (params.m_status)
     {
-    case LrWpanMacStatus::TRANSACTION_EXPIRED:
+    case MacStatus::TRANSACTION_EXPIRED:
         std::cout << Simulator::Now().As(Time::S) << " Coordinator " << device->GetNode()->GetId()
                   << " [" << device->GetMac()->GetShortAddress() << " | "
                   << device->GetMac()->GetExtendedAddress() << "]"
                   << " MLME-comm-status.indication: Transaction for device " << params.m_dstExtAddr
                   << " EXPIRED in pending transaction list\n";
         break;
-    case LrWpanMacStatus::NO_ACK:
+    case MacStatus::NO_ACK:
         std::cout << Simulator::Now().As(Time::S) << " Coordinator " << device->GetNode()->GetId()
                   << " [" << device->GetMac()->GetShortAddress() << " | "
                   << device->GetMac()->GetExtendedAddress() << "]"
@@ -263,7 +253,7 @@ CommStatusIndication(Ptr<LrWpanNetDevice> device, MlmeCommStatusIndicationParams
                   << " device registered in the pending transaction list\n";
         break;
 
-    case LrWpanMacStatus::CHANNEL_ACCESS_FAILURE:
+    case MacStatus::CHANNEL_ACCESS_FAILURE:
         std::cout << Simulator::Now().As(Time::S) << " Coordinator " << device->GetNode()->GetId()
                   << " [" << device->GetMac()->GetShortAddress() << " | "
                   << device->GetMac()->GetExtendedAddress() << "]"
@@ -282,7 +272,7 @@ AssociateConfirm(Ptr<LrWpanNetDevice> device, MlmeAssociateConfirmParams params)
     // Used by device higher layer to inform the results of a
     // association procedure from its mac layer.This is implemented by other protocol stacks
     // and is only here for demonstration purposes.
-    if (params.m_status == LrWpanMacStatus::SUCCESS)
+    if (params.m_status == MacStatus::SUCCESS)
     {
         std::cout << Simulator::Now().As(Time::S) << " Node " << device->GetNode()->GetId() << " ["
                   << device->GetMac()->GetShortAddress() << " | "
@@ -292,7 +282,7 @@ AssociateConfirm(Ptr<LrWpanNetDevice> device, MlmeAssociateConfirmParams params)
                   << " | CoordShort: " << device->GetMac()->GetCoordShortAddress()
                   << " | CoordExt: " << device->GetMac()->GetCoordExtAddress() << ")\n";
     }
-    else if (params.m_status == LrWpanMacStatus::NO_ACK)
+    else if (params.m_status == MacStatus::NO_ACK)
     {
         std::cout << Simulator::Now().As(Time::S) << " Node " << device->GetNode()->GetId() << " ["
                   << device->GetMac()->GetShortAddress() << " | "
@@ -311,7 +301,7 @@ AssociateConfirm(Ptr<LrWpanNetDevice> device, MlmeAssociateConfirmParams params)
 static void
 PollConfirm(Ptr<LrWpanNetDevice> device, MlmePollConfirmParams params)
 {
-    if (params.m_status == LrWpanMacStatus::CHANNEL_ACCESS_FAILURE)
+    if (params.m_status == MacStatus::CHANNEL_ACCESS_FAILURE)
     {
         std::cout
             << Simulator::Now().As(Time::S) << " Node " << device->GetNode()->GetId() << " ["
@@ -319,14 +309,14 @@ PollConfirm(Ptr<LrWpanNetDevice> device, MlmePollConfirmParams params)
             << device->GetMac()->GetExtendedAddress() << "]"
             << " MLME-poll.confirm:  CHANNEL ACCESS problem when sending a data request command.\n";
     }
-    else if (params.m_status == LrWpanMacStatus::NO_ACK)
+    else if (params.m_status == MacStatus::NO_ACK)
     {
         std::cout << Simulator::Now().As(Time::S) << " Node " << device->GetNode()->GetId() << " ["
                   << device->GetMac()->GetShortAddress() << " | "
                   << device->GetMac()->GetExtendedAddress() << "]"
                   << " MLME-poll.confirm: Data Request Command FAILED (NO ACK).\n";
     }
-    else if (params.m_status != LrWpanMacStatus::SUCCESS)
+    else if (params.m_status != MacStatus::SUCCESS)
     {
         std::cout << Simulator::Now().As(Time::S) << " Node " << device->GetNode()->GetId() << " ["
                   << device->GetMac()->GetShortAddress() << " | "
@@ -368,17 +358,9 @@ main(int argc, char* argv[])
     mobility.SetPositionAllocator(listPositionAlloc);
     mobility.Install(coordinators);
 
-    Ptr<SingleModelSpectrumChannel> channel = CreateObject<SingleModelSpectrumChannel>();
-    Ptr<LogDistancePropagationLossModel> propModel =
-        CreateObject<LogDistancePropagationLossModel>();
-    Ptr<ConstantSpeedPropagationDelayModel> delayModel =
-        CreateObject<ConstantSpeedPropagationDelayModel>();
-
-    channel->AddPropagationLossModel(propModel);
-    channel->SetPropagationDelayModel(delayModel);
-
     LrWpanHelper lrWpanHelper;
-    lrWpanHelper.SetChannel(channel);
+    lrWpanHelper.SetPropagationDelayModel("ns3::ConstantSpeedPropagationDelayModel");
+    lrWpanHelper.AddPropagationLossModel("ns3::LogDistancePropagationLossModel");
 
     NetDeviceContainer lrwpanDevices = lrWpanHelper.Install(nodes);
     lrwpanDevices.Add(lrWpanHelper.Install(coordinators));
@@ -460,7 +442,7 @@ main(int argc, char* argv[])
     params.m_logCh = 12;
 
     Simulator::ScheduleWithContext(coor1Device->GetNode()->GetId(),
-                                   Seconds(2.0),
+                                   Seconds(2),
                                    &LrWpanMac::MlmeStartRequest,
                                    coor1Device->GetMac(),
                                    params);
@@ -474,7 +456,7 @@ main(int argc, char* argv[])
     params2.m_logCh = 14;
 
     Simulator::ScheduleWithContext(coor2Device->GetNode()->GetId(),
-                                   Seconds(2.0),
+                                   Seconds(2),
                                    &LrWpanMac::MlmeStartRequest,
                                    coor2Device->GetMac(),
                                    params2);

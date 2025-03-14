@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2014 Universidad de la República - Uruguay
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Matías Richart <mrichart@fing.edu.uy>
  */
@@ -24,7 +13,7 @@
  * highlighting the power adaptation.
  *
  * This simulation consist of 2 nodes, one AP and one STA.
- * The AP generates UDP traffic with a CBR of 54 Mbps to the STA.
+ * The AP generates UDP traffic with a CBR of 400 Mbps to the STA.
  * The AP can use any power and rate control mechanism and the STA uses
  * only Minstrel rate control.
  * The STA can be configured to move away from (or towards to) the AP.
@@ -81,39 +70,39 @@ class NodeStatistics
   public:
     /**
      * Constructor
-     * \param aps AP devices
-     * \param stas STA devices
+     * @param aps AP devices
+     * @param stas STA devices
      */
     NodeStatistics(NetDeviceContainer aps, NetDeviceContainer stas);
 
     /**
      * RX callback
-     * \param path path
-     * \param packet received packet
-     * \param from sender
+     * @param path path
+     * @param packet received packet
+     * @param from sender
      */
     void RxCallback(std::string path, Ptr<const Packet> packet, const Address& from);
     /**
      * Set node position
-     * \param node the node
-     * \param position the position
+     * @param node the node
+     * @param position the position
      */
     void SetPosition(Ptr<Node> node, Vector position);
     /**
      * Advance node position
-     * \param node the node
-     * \param stepsSize the size of a step
-     * \param stepsTime the time interval between steps
+     * @param node the node
+     * @param stepsSize the size of a step
+     * @param stepsTime the time interval between steps
      */
     void AdvancePosition(Ptr<Node> node, int stepsSize, int stepsTime);
     /**
      * Get node position
-     * \param node the node
-     * \return the position
+     * @param node the node
+     * @return the position
      */
     Vector GetPosition(Ptr<Node> node);
     /**
-     * \return the gnuplot 2d dataset
+     * @return the gnuplot 2d dataset
      */
     Gnuplot2dDataset GetDatafile();
 
@@ -173,8 +162,8 @@ NodeStatistics::GetDatafile()
 /**
  * Callback for 'Rate' trace source
  *
- * \param oldRate old MCS rate (bits/sec)
- * \param newRate new MCS rate (bits/sec)
+ * @param oldRate old MCS rate (bits/sec)
+ * @param newRate new MCS rate (bits/sec)
  */
 void
 RateCallback(uint64_t oldRate, uint64_t newRate)
@@ -185,21 +174,21 @@ RateCallback(uint64_t oldRate, uint64_t newRate)
 int
 main(int argc, char* argv[])
 {
-    uint32_t rtsThreshold = 65535;
-    std::string staManager = "ns3::MinstrelHtWifiManager";
-    std::string apManager = "ns3::MinstrelHtWifiManager";
-    std::string standard = "802.11n-5GHz";
-    std::string outputFileName = "minstrelHT";
-    uint32_t BeMaxAmpduSize = 65535;
-    bool shortGuardInterval = false;
-    uint32_t chWidth = 20;
-    int ap1_x = 0;
-    int ap1_y = 0;
-    int sta1_x = 5;
-    int sta1_y = 0;
-    int steps = 100;
-    int stepsSize = 1;
-    int stepsTime = 1;
+    uint32_t rtsThreshold{65535};
+    std::string staManager{"ns3::MinstrelHtWifiManager"};
+    std::string apManager{"ns3::MinstrelHtWifiManager"};
+    std::string standard{"802.11n-5GHz"};
+    std::string outputFileName{"minstrelHT"};
+    uint32_t BeMaxAmpduSize{65535};
+    bool shortGuardInterval{false};
+    uint32_t chWidth{20};
+    int ap1_x{0};
+    int ap1_y{0};
+    int sta1_x{5};
+    int sta1_y{0};
+    int steps{100};
+    int stepsSize{1};
+    int stepsTime{1};
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("staManager", "Rate adaptation manager of the STA", staManager);
@@ -224,7 +213,7 @@ main(int argc, char* argv[])
     int simuTime = steps * stepsTime;
 
     if (standard != "802.11a" && standard != "802.11b" && standard != "802.11g" &&
-        standard == "802.11n-2.4GHz" && standard != "802.11n-5GHz" && standard != "802.11ac")
+        standard != "802.11n-2.4GHz" && standard != "802.11n-5GHz" && standard != "802.11ac")
     {
         NS_FATAL_ERROR("Standard " << standard << " is not supported by this program");
     }

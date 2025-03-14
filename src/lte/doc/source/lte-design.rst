@@ -288,7 +288,7 @@ The control interfaces that are modeled explicitly are the S1-MME, the S11, and 
 interfaces. The X2 interface is also modeled explicitly and it is described in more
 detail in section :ref:`sec-x2`
 
-The S1-MME, the S11 and the S5 interfaces are modeled using procotol data units sent
+The S1-MME, the S11 and the S5 interfaces are modeled using protocol data units sent
 over its respective links. These interfaces use the SCTP protocol as transport protocol
 but currently, the SCTP protocol is not modeled in the ns-3 simulator, so the
 UDP protocol is used instead of the SCTP protocol.
@@ -1169,7 +1169,7 @@ a traffic flow of user :math:`i` is characterized by following parameters:
 
  * :math:`t_{i}`: packet arrival rate (byte/sec )
  * :math:`r_{i}`: token generation rate (byte/sec)
- * :math:`p_{i}`: token pool size (byte)
+ * :math:`p_{i}`: token pool size (byte)
  * :math:`E_{i}`: counter that records the number of token borrowed from or given to the token bank by flow :math:`i` ;
    :math:`E_{i}` can be smaller than zero
 
@@ -1183,7 +1183,7 @@ users having the same token generation rate, traffic rate and token pool size, u
 has more opportunity to borrow tokens from bank. In addition, TBFQ can police the traffic by setting the token
 generation rate to limit the throughput.  Additionally, TBFQ also maintains following three parameters for each flow:
 
- * Debt limit :math:`d_{i}`: if :math:`E_{i}` belows this threshold, user i cannot further borrow tokens from bank. This is for
+ * Debt limit :math:`d_{i}`: if :math:`E_{i}` is below this threshold, user i cannot further borrow tokens from bank. This is for
    preventing malicious UE to borrow too much tokens.
  * Credit limit :math:`c_{i}`: the maximum number of tokens UE i can borrow from the bank in one time.
  * Credit threshold :math:`C`: once :math:`E_{i}` reaches debt limit, UE i must store :math:`C` tokens to bank in order to further
@@ -2893,7 +2893,7 @@ the procedure.
    |            |          |            | COMPLETE    |          |            |
    +------------+----------+------------+-------------+----------+------------+
    | Connection | eNodeB   | Send RRC   | Never       | 30 ms    | Remove UE  |
-   | rejected   | RRC      | CONNECTION |             |          | context    |
+   | rejected   | RRC      | CONNECTION |             |          | context    |
    | timeout    |          | REJECT     |             |          |            |
    +------------+----------+------------+-------------+----------+------------+
 

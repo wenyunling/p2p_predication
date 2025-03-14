@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2017 Alexander Krotov
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Alexander Krotov <krotov@iitp.ru>
  *
@@ -20,25 +9,25 @@
 
 #include "lte-test-primary-cell-change.h"
 
-#include <ns3/boolean.h>
-#include <ns3/double.h>
-#include <ns3/friis-spectrum-propagation-loss.h>
-#include <ns3/integer.h>
-#include <ns3/internet-stack-helper.h>
-#include <ns3/ipv4-address-helper.h>
-#include <ns3/ipv4-interface-container.h>
-#include <ns3/ipv4-static-routing-helper.h>
-#include <ns3/log.h>
-#include <ns3/lte-enb-net-device.h>
-#include <ns3/lte-helper.h>
-#include <ns3/lte-ue-net-device.h>
-#include <ns3/lte-ue-rrc.h>
-#include <ns3/mobility-helper.h>
-#include <ns3/net-device-container.h>
-#include <ns3/node-container.h>
-#include <ns3/point-to-point-epc-helper.h>
-#include <ns3/point-to-point-helper.h>
-#include <ns3/simulator.h>
+#include "ns3/boolean.h"
+#include "ns3/double.h"
+#include "ns3/friis-spectrum-propagation-loss.h"
+#include "ns3/integer.h"
+#include "ns3/internet-stack-helper.h"
+#include "ns3/ipv4-address-helper.h"
+#include "ns3/ipv4-interface-container.h"
+#include "ns3/ipv4-static-routing-helper.h"
+#include "ns3/log.h"
+#include "ns3/lte-enb-net-device.h"
+#include "ns3/lte-helper.h"
+#include "ns3/lte-ue-net-device.h"
+#include "ns3/lte-ue-rrc.h"
+#include "ns3/mobility-helper.h"
+#include "ns3/net-device-container.h"
+#include "ns3/node-container.h"
+#include "ns3/point-to-point-epc-helper.h"
+#include "ns3/point-to-point-helper.h"
+#include "ns3/simulator.h"
 
 using namespace ns3;
 
@@ -49,55 +38,55 @@ NS_LOG_COMPONENT_DEFINE("LtePrimaryCellChangeTest");
  */
 
 LtePrimaryCellChangeTestSuite::LtePrimaryCellChangeTestSuite()
-    : TestSuite("lte-primary-cell-change", SYSTEM)
+    : TestSuite("lte-primary-cell-change", Type::SYSTEM)
 {
     // Test that handover from eNB to eNB with one carrier works within this framework.
     AddTestCase(new LtePrimaryCellChangeTestCase("ideal RRC, RngRun=1", true, 1, 1, 0, 1),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LtePrimaryCellChangeTestCase("real RRC, RngRun=1", false, 1, 1, 0, 1),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // Test that handover between first carriers of eNBs works.
     AddTestCase(new LtePrimaryCellChangeTestCase("ideal RRC, RngRun=1", true, 1, 2, 0, 2),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LtePrimaryCellChangeTestCase("real RRC, RngRun=1", false, 1, 2, 0, 2),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // Test that handover from second carrier of first eNB to first carrier of second eNB works.
     AddTestCase(new LtePrimaryCellChangeTestCase("ideal RRC, RngRun=1", true, 1, 2, 1, 2),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LtePrimaryCellChangeTestCase("real RRC, RngRun=1", false, 1, 2, 1, 2),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // Test that handover from first carrier of first eNB to first carrier of second eNB works.
     AddTestCase(new LtePrimaryCellChangeTestCase("ideal RRC, RngRun=1", true, 1, 2, 0, 3),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LtePrimaryCellChangeTestCase("real RRC, RngRun=1", false, 1, 2, 0, 3),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // Test that handover from second carrier of first eNB to second carrier of second eNB works.
     AddTestCase(new LtePrimaryCellChangeTestCase("ideal RRC, RngRun=1", true, 1, 2, 1, 3),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LtePrimaryCellChangeTestCase("real RRC, RngRun=1", false, 1, 2, 1, 3),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // Test intra-eNB inter-frequency handover.
     AddTestCase(new LtePrimaryCellChangeTestCase("ideal RRC, RngRun=1", true, 1, 2, 0, 1),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LtePrimaryCellChangeTestCase("real RRC, RngRun=1", false, 1, 2, 0, 1),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LtePrimaryCellChangeTestCase("ideal RRC, RngRun=1", true, 1, 2, 1, 0),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LtePrimaryCellChangeTestCase("real RRC, RngRun=1", false, 1, 2, 1, 0),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LtePrimaryCellChangeTestCase("ideal RRC, RngRun=1", true, 1, 4, 3, 1),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LtePrimaryCellChangeTestCase("real RRC, RngRun=1", false, 1, 4, 3, 1),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 } // end of LtePrimaryCellChangeTestSuite::LtePrimaryCellChangeTestSuite ()
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LtePrimaryCellChangeTestSuite g_ltePrimaryCellChangeTestSuite;
@@ -193,10 +182,10 @@ LtePrimaryCellChangeTestCase::DoRun()
                                 ->GetCellId();
 
     lteHelper->AddX2Interface(enbNodes);
-    lteHelper->HandoverRequest(Seconds(1.0), ueDev, sourceEnbDev, targetCellId);
+    lteHelper->HandoverRequest(Seconds(1), ueDev, sourceEnbDev, targetCellId);
 
     // Run simulation.
-    Simulator::Stop(Seconds(2.0));
+    Simulator::Stop(Seconds(2));
     Simulator::Run();
 
     uint16_t expectedCellId = targetCellId;

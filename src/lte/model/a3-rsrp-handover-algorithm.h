@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2013 Budiarto Herman
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Budiarto Herman <budiarto.herman@magister.fi>
  *
@@ -25,13 +14,13 @@
 #include "lte-handover-management-sap.h"
 #include "lte-rrc-sap.h"
 
-#include <ns3/nstime.h>
+#include "ns3/nstime.h"
 
 namespace ns3
 {
 
 /**
- * \brief Implementation of the strongest cell handover algorithm, based on RSRP
+ * @brief Implementation of the strongest cell handover algorithm, based on RSRP
  *        measurements and Event A3.
  *
  * The algorithm utilizes Event A3 (Section 5.5.4.4 of 3GPP TS 36.331) UE
@@ -58,7 +47,7 @@ namespace ns3
  *                                               TimeValue (MilliSeconds (256)));
  *     NetDeviceContainer enbLteDevs = lteHelper->InstallEnbDevice (enbNodes);
  *
- * \note Setting the handover algorithm type and attributes after the call to
+ * @note Setting the handover algorithm type and attributes after the call to
  *       LteHelper::InstallEnbDevice does not have any effect to the devices
  *       that have already been installed.
  */
@@ -71,8 +60,8 @@ class A3RsrpHandoverAlgorithm : public LteHandoverAlgorithm
     ~A3RsrpHandoverAlgorithm() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -96,8 +85,8 @@ class A3RsrpHandoverAlgorithm : public LteHandoverAlgorithm
      * Determines if a neighbour cell is a valid destination for handover.
      * Currently always return true.
      *
-     * \param cellId The cell ID of the neighbour cell.
-     * \return True if the cell is a valid destination for handover.
+     * @param cellId The cell ID of the neighbour cell.
+     * @return True if the cell is a valid destination for handover.
      */
     bool IsValidNeighbour(uint16_t cellId);
 

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007-2009 Strasbourg University
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Sebastien Vincent <vincent@clarinet.u-strasbg.fr>
  */
@@ -444,21 +433,17 @@ Ipv6StaticRouting::LookupStatic(Ipv6Address dst, Ptr<NetDevice> interface)
                 uint32_t interfaceIdx = route->GetInterface();
                 rtentry = Create<Ipv6Route>();
 
-                if (route->GetGateway().IsAny())
+                if (route->GetGateway().IsAny() || !route->GetDest().IsAny())
                 {
                     rtentry->SetSource(
                         m_ipv6->SourceAddressSelection(interfaceIdx, route->GetDest()));
-                }
-                else if (route->GetDest().IsAny()) /* default route */
-                {
-                    rtentry->SetSource(m_ipv6->SourceAddressSelection(
-                        interfaceIdx,
-                        route->GetPrefixToUse().IsAny() ? dst : route->GetPrefixToUse()));
                 }
                 else
                 {
-                    rtentry->SetSource(
-                        m_ipv6->SourceAddressSelection(interfaceIdx, route->GetDest()));
+                    // Default route
+                    rtentry->SetSource(m_ipv6->SourceAddressSelection(
+                        interfaceIdx,
+                        route->GetPrefixToUse().IsAny() ? dst : route->GetPrefixToUse()));
                 }
 
                 rtentry->SetDestination(route->GetDest());

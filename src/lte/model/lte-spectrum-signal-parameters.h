@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  * Modified by Marco Miozzo <mmiozzo@cttc.es> (add data and ctrl diversity)
@@ -21,7 +10,7 @@
 #ifndef LTE_SPECTRUM_SIGNAL_PARAMETERS_H
 #define LTE_SPECTRUM_SIGNAL_PARAMETERS_H
 
-#include <ns3/spectrum-signal-parameters.h>
+#include "ns3/spectrum-signal-parameters.h"
 
 #include <list>
 
@@ -32,7 +21,7 @@ class PacketBurst;
 class LteControlMessage;
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * Signal parameters for Lte
  */
@@ -47,7 +36,7 @@ struct LteSpectrumSignalParameters : public SpectrumSignalParameters
 
     /**
      * copy constructor
-     * \param p the LteSpectrumSignalParameters to copy
+     * @param p the LteSpectrumSignalParameters to copy
      */
     LteSpectrumSignalParameters(const LteSpectrumSignalParameters& p);
 
@@ -58,7 +47,7 @@ struct LteSpectrumSignalParameters : public SpectrumSignalParameters
 };
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * Signal parameters for Lte Data Frame (PDSCH), and eventually after some
  * control messages through other control channel embedded in PDSCH
@@ -75,7 +64,7 @@ struct LteSpectrumSignalParametersDataFrame : public SpectrumSignalParameters
 
     /**
      * copy constructor
-     * \param p the LteSpectrumSignalParametersDataFrame to copy
+     * @param p the LteSpectrumSignalParametersDataFrame to copy
      */
     LteSpectrumSignalParametersDataFrame(const LteSpectrumSignalParametersDataFrame& p);
 
@@ -90,7 +79,7 @@ struct LteSpectrumSignalParametersDataFrame : public SpectrumSignalParameters
 };
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * Signal parameters for Lte DL Ctrl Frame (RS, PCFICH and PDCCH)
  */
@@ -105,7 +94,7 @@ struct LteSpectrumSignalParametersDlCtrlFrame : public SpectrumSignalParameters
 
     /**
      * copy constructor
-     * \param p the LteSpectrumSignalParametersDlCtrlFrame to copy
+     * @param p the LteSpectrumSignalParametersDlCtrlFrame to copy
      */
     LteSpectrumSignalParametersDlCtrlFrame(const LteSpectrumSignalParametersDlCtrlFrame& p);
 
@@ -116,7 +105,7 @@ struct LteSpectrumSignalParametersDlCtrlFrame : public SpectrumSignalParameters
 };
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * Signal parameters for Lte SRS Frame
  */
@@ -131,7 +120,7 @@ struct LteSpectrumSignalParametersUlSrsFrame : public SpectrumSignalParameters
 
     /**
      * copy constructor
-     * \param p the LteSpectrumSignalParametersUlSrsFrame to copy
+     * @param p the LteSpectrumSignalParametersUlSrsFrame to copy
      */
     LteSpectrumSignalParametersUlSrsFrame(const LteSpectrumSignalParametersUlSrsFrame& p);
 

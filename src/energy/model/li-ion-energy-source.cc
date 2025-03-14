@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 Andrea Sacco
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Andrea Sacco <andrea.sacco85@gmail.com>
  */
@@ -29,16 +18,18 @@
 
 namespace ns3
 {
+namespace energy
+{
 
 NS_LOG_COMPONENT_DEFINE("LiIonEnergySource");
-
 NS_OBJECT_ENSURE_REGISTERED(LiIonEnergySource);
 
 TypeId
 LiIonEnergySource::GetTypeId()
 {
     static TypeId tid =
-        TypeId("ns3::LiIonEnergySource")
+        TypeId("ns3::energy::LiIonEnergySource")
+            .AddDeprecatedName("ns3::LiIonEnergySource")
             .SetParent<EnergySource>()
             .SetGroupName("Energy")
             .AddConstructor<LiIonEnergySource>()
@@ -101,7 +92,7 @@ LiIonEnergySource::GetTypeId()
                           MakeDoubleChecker<double>())
             .AddAttribute("PeriodicEnergyUpdateInterval",
                           "Time between two consecutive periodic energy updates.",
-                          TimeValue(Seconds(1.0)),
+                          TimeValue(Seconds(1)),
                           MakeTimeAccessor(&LiIonEnergySource::SetEnergyUpdateInterval,
                                            &LiIonEnergySource::GetEnergyUpdateInterval),
                           MakeTimeChecker())
@@ -114,7 +105,7 @@ LiIonEnergySource::GetTypeId()
 
 LiIonEnergySource::LiIonEnergySource()
     : m_drainedCapacity(0.0),
-      m_lastUpdateTime(Seconds(0.0))
+      m_lastUpdateTime()
 {
     NS_LOG_FUNCTION(this);
 }
@@ -317,4 +308,5 @@ LiIonEnergySource::GetVoltage(double i) const
     return V;
 }
 
+} // namespace energy
 } // namespace ns3

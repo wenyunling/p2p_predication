@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #ifndef INTERNET_TRACE_HELPER_H
@@ -30,7 +19,7 @@ namespace ns3
 {
 
 /**
- * \ingroup ipv4Helpers
+ * @ingroup ipv4Helpers
  *
  * @brief Base class providing common user-level pcap operations for helpers
  * representing IPv4 protocols .
@@ -104,8 +93,8 @@ class PcapHelperForIpv4
      * @brief Enable pcap output on all Ipv4 and interface pairs existing in the
      * nodes provided in the container.
      *
-     * \param prefix Filename prefix to use for pcap files.
-     * \param n container of nodes.
+     * @param prefix Filename prefix to use for pcap files.
+     * @param n container of nodes.
      */
     void EnablePcapIpv4(std::string prefix, NodeContainer n);
 
@@ -135,7 +124,7 @@ class PcapHelperForIpv4
 };
 
 /**
- * \ingroup ipv4Helpers
+ * @ingroup ipv4Helpers
  *
  * @brief Base class providing common user-level ascii trace operations for
  * helpers representing IPv4 protocols .
@@ -260,8 +249,8 @@ class AsciiTraceHelperForIpv4
      * @brief Enable ascii trace output on all Ipv4 and interface pairs existing
      * in the nodes provided in the container.
      *
-     * \param prefix Filename prefix to use for ascii files.
-     * \param n container of nodes.
+     * @param prefix Filename prefix to use for ascii files.
+     * @param n container of nodes.
      */
     void EnableAsciiIpv4(std::string prefix, NodeContainer n);
 
@@ -271,7 +260,7 @@ class AsciiTraceHelperForIpv4
      *
      * @param stream An OutputStreamWrapper representing an existing file to use
      *               when writing trace data.
-     * \param n container of nodes.
+     * @param n container of nodes.
      */
     void EnableAsciiIpv4(Ptr<OutputStreamWrapper> stream, NodeContainer n);
 
@@ -420,7 +409,7 @@ class AsciiTraceHelperForIpv4
 };
 
 /**
- * \ingroup ipv6Helpers
+ * @ingroup ipv6Helpers
  *
  * @brief Base class providing common user-level pcap operations for helpers
  * representing IPv6 protocols .
@@ -494,8 +483,8 @@ class PcapHelperForIpv6
      * @brief Enable pcap output on all Ipv6 and interface pairs existing in the
      * nodes provided in the container.
      *
-     * \param prefix Filename prefix to use for pcap files.
-     * \param n container of nodes.
+     * @param prefix Filename prefix to use for pcap files.
+     * @param n container of nodes.
      */
     void EnablePcapIpv6(std::string prefix, NodeContainer n);
 
@@ -525,7 +514,7 @@ class PcapHelperForIpv6
 };
 
 /**
- * \ingroup ipv6Helpers
+ * @ingroup ipv6Helpers
  *
  * @brief Base class providing common user-level ascii trace operations for
  * helpers representing IPv6 protocols .
@@ -650,8 +639,8 @@ class AsciiTraceHelperForIpv6
      * @brief Enable ascii trace output on all Ipv6 and interface pairs existing
      * in the nodes provided in the container.
      *
-     * \param prefix Filename prefix to use for ascii files.
-     * \param n container of nodes.
+     * @param prefix Filename prefix to use for ascii files.
+     * @param n container of nodes.
      */
     void EnableAsciiIpv6(std::string prefix, NodeContainer n);
 
@@ -661,7 +650,7 @@ class AsciiTraceHelperForIpv6
      *
      * @param stream An OutputStreamWrapper representing an existing file to use
      *               when writing trace data.
-     * \param n container of nodes.
+     * @param n container of nodes.
      */
     void EnableAsciiIpv6(Ptr<OutputStreamWrapper> stream, NodeContainer n);
 

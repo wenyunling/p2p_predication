@@ -1,36 +1,26 @@
 /*
  * Copyright (c) 2011 The Boeing Company
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Gary Pei <guangyu.pei@boeing.com>
  */
-#include <ns3/log.h>
-#include <ns3/lr-wpan-mac.h>
-#include <ns3/lr-wpan-phy.h>
-#include <ns3/packet.h>
-#include <ns3/simulator.h>
-#include <ns3/single-model-spectrum-channel.h>
-#include <ns3/test.h>
+#include "ns3/log.h"
+#include "ns3/lr-wpan-mac.h"
+#include "ns3/lr-wpan-phy.h"
+#include "ns3/packet.h"
+#include "ns3/simulator.h"
+#include "ns3/single-model-spectrum-channel.h"
+#include "ns3/test.h"
 
 using namespace ns3;
+using namespace ns3::lrwpan;
 
 /**
- * \ingroup lr-wpan-test
- * \ingroup tests
+ * @ingroup lr-wpan-test
+ * @ingroup tests
  *
- * \brief LrWpan PLME and PD Interfaces Test
+ * @brief LrWpan PLME and PD Interfaces Test
  */
 class LrWpanPlmeAndPdInterfaceTestCase : public TestCase
 {
@@ -42,10 +32,10 @@ class LrWpanPlmeAndPdInterfaceTestCase : public TestCase
     void DoRun() override;
 
     /**
-     * \brief Receives a PdData indication
-     * \param psduLength The PSDU length.
-     * \param p The packet.
-     * \param lqi The LQI.
+     * @brief Receives a PdData indication
+     * @param psduLength The PSDU length.
+     * @param p The packet.
+     * @param lqi The LQI.
      */
     void ReceivePdDataIndication(uint32_t psduLength, Ptr<Packet> p, uint8_t lqi);
 };
@@ -92,10 +82,10 @@ LrWpanPlmeAndPdInterfaceTestCase::DoRun()
 }
 
 /**
- * \ingroup lr-wpan-test
- * \ingroup tests
+ * @ingroup lr-wpan-test
+ * @ingroup tests
  *
- * \brief LrWpan PLME and PD Interfaces TestSuite
+ * @brief LrWpan PLME and PD Interfaces TestSuite
  */
 class LrWpanPlmeAndPdInterfaceTestSuite : public TestSuite
 {
@@ -104,9 +94,9 @@ class LrWpanPlmeAndPdInterfaceTestSuite : public TestSuite
 };
 
 LrWpanPlmeAndPdInterfaceTestSuite::LrWpanPlmeAndPdInterfaceTestSuite()
-    : TestSuite("lr-wpan-plme-pd-sap", UNIT)
+    : TestSuite("lr-wpan-plme-pd-sap", Type::UNIT)
 {
-    AddTestCase(new LrWpanPlmeAndPdInterfaceTestCase, TestCase::QUICK);
+    AddTestCase(new LrWpanPlmeAndPdInterfaceTestCase, TestCase::Duration::QUICK);
 }
 
 // Do not forget to allocate an instance of this TestSuite

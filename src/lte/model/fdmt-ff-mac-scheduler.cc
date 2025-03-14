@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Marco Miozzo <marco.miozzo@cttc.es>
  * Modification: Dizhi Zhou <dizhi.zhou@gmail.com>    // modify codes related to downlink scheduler
@@ -23,11 +12,11 @@
 #include "lte-amc.h"
 #include "lte-vendor-specific-parameters.h"
 
-#include <ns3/boolean.h>
-#include <ns3/log.h>
-#include <ns3/math.h>
-#include <ns3/pointer.h>
-#include <ns3/simulator.h>
+#include "ns3/boolean.h"
+#include "ns3/log.h"
+#include "ns3/math.h"
+#include "ns3/pointer.h"
+#include "ns3/simulator.h"
 
 #include <cfloat>
 #include <set>
@@ -39,10 +28,10 @@ NS_LOG_COMPONENT_DEFINE("FdMtFfMacScheduler");
 
 /// FdMtType0AllocationRbg size array
 static const int FdMtType0AllocationRbg[4] = {
-    10,  // RGB size 1
-    26,  // RGB size 2
-    63,  // RGB size 3
-    110, // RGB size 4
+    10,  // RBG size 1
+    26,  // RBG size 2
+    63,  // RBG size 3
+    110, // RBG size 4
 };       // see table 7.1.6.1-1 of 36.213
 
 NS_OBJECT_ENSURE_REGISTERED(FdMtFfMacScheduler);
@@ -854,111 +843,112 @@ FdMtFfMacScheduler::DoSchedDlTriggerReq(
     for (int i = 0; i < rbgNum; i++)
     {
         NS_LOG_INFO(this << " ALLOCATION for RBG " << i << " of " << rbgNum);
-        if (!rbgMap.at(i))
+        if (rbgMap.at(i))
         {
-            auto itMax = m_flowStatsDl.end();
-            double rcqiMax = 0.0;
-            for (auto it = m_flowStatsDl.begin(); it != m_flowStatsDl.end(); it++)
+            continue;
+        }
+
+        auto itMax = m_flowStatsDl.end();
+        double rcqiMax = 0.0;
+        for (auto it = m_flowStatsDl.begin(); it != m_flowStatsDl.end(); it++)
+        {
+            auto itRnti = rntiAllocated.find(*it);
+            if (itRnti != rntiAllocated.end() || !HarqProcessAvailability(*it))
             {
-                auto itRnti = rntiAllocated.find(*it);
-                if (itRnti != rntiAllocated.end() || !HarqProcessAvailability(*it))
+                // UE already allocated for HARQ or without HARQ process available -> drop it
+                if (itRnti != rntiAllocated.end())
                 {
-                    // UE already allocated for HARQ or without HARQ process available -> drop it
-                    if (itRnti != rntiAllocated.end())
-                    {
-                        NS_LOG_DEBUG(this << " RNTI discarded for HARQ tx" << (uint16_t)(*it));
-                    }
-                    if (!HarqProcessAvailability(*it))
-                    {
-                        NS_LOG_DEBUG(this << " RNTI discarded for HARQ id" << (uint16_t)(*it));
-                    }
-                    continue;
+                    NS_LOG_DEBUG(this << " RNTI discarded for HARQ tx" << (uint16_t)(*it));
                 }
-
-                auto itCqi = m_a30CqiRxed.find(*it);
-                auto itTxMode = m_uesTxMode.find(*it);
-                if (itTxMode == m_uesTxMode.end())
+                if (!HarqProcessAvailability(*it))
                 {
-                    NS_FATAL_ERROR("No Transmission Mode info on user " << (*it));
+                    NS_LOG_DEBUG(this << " RNTI discarded for HARQ id" << (uint16_t)(*it));
                 }
-                auto nLayer = TransmissionModesLayers::TxMode2LayerNum((*itTxMode).second);
-                std::vector<uint8_t> sbCqi;
-                if (itCqi == m_a30CqiRxed.end())
-                {
-                    sbCqi = std::vector<uint8_t>(nLayer, 1); // start with lowest value
-                }
-                else
-                {
-                    sbCqi = (*itCqi).second.m_higherLayerSelected.at(i).m_sbCqi;
-                }
-                uint8_t cqi1 = sbCqi.at(0);
-                uint8_t cqi2 = 0;
-                if (sbCqi.size() > 1)
-                {
-                    cqi2 = sbCqi.at(1);
-                }
-                if ((cqi1 > 0) ||
-                    (cqi2 > 0)) // CQI == 0 means "out of range" (see table 7.2.3-1 of 36.213)
-                {
-                    if (LcActivePerFlow(*it) > 0)
-                    {
-                        // this UE has data to transmit
-                        double achievableRate = 0.0;
-                        uint8_t mcs = 0;
-                        for (uint8_t k = 0; k < nLayer; k++)
-                        {
-                            if (sbCqi.size() > k)
-                            {
-                                mcs = m_amc->GetMcsFromCqi(sbCqi.at(k));
-                            }
-                            else
-                            {
-                                // no info on this subband -> worst MCS
-                                mcs = 0;
-                            }
-                            achievableRate += ((m_amc->GetDlTbSizeFromMcs(mcs, rbgSize) / 8) /
-                                               0.001); // = TB size / TTI
-                        }
+                continue;
+            }
 
-                        double rcqi = achievableRate;
-                        NS_LOG_INFO(this << " RNTI " << (*it) << " MCS " << (uint32_t)mcs
-                                         << " achievableRate " << achievableRate << " RCQI "
-                                         << rcqi);
-
-                        if (rcqi > rcqiMax)
-                        {
-                            rcqiMax = rcqi;
-                            itMax = it;
-                        }
-                    }
-                } // end if cqi
-
-            } // end for m_rlcBufferReq
-
-            if (itMax == m_flowStatsDl.end())
+            auto itCqi = m_a30CqiRxed.find(*it);
+            auto itTxMode = m_uesTxMode.find(*it);
+            if (itTxMode == m_uesTxMode.end())
             {
-                // no UE available for this RB
-                NS_LOG_INFO(this << " any UE found");
+                NS_FATAL_ERROR("No Transmission Mode info on user " << (*it));
+            }
+            auto nLayer = TransmissionModesLayers::TxMode2LayerNum((*itTxMode).second);
+            std::vector<uint8_t> sbCqi;
+            if (itCqi == m_a30CqiRxed.end())
+            {
+                sbCqi = std::vector<uint8_t>(nLayer, 1); // start with lowest value
             }
             else
             {
-                rbgMap.at(i) = true;
-                auto itMap = allocationMap.find(*itMax);
-                if (itMap == allocationMap.end())
-                {
-                    // insert new element
-                    std::vector<uint16_t> tempMap;
-                    tempMap.push_back(i);
-                    allocationMap[*itMax] = tempMap;
-                }
-                else
-                {
-                    (*itMap).second.push_back(i);
-                }
-                NS_LOG_INFO(this << " UE assigned " << (*itMax));
+                sbCqi = (*itCqi).second.m_higherLayerSelected.at(i).m_sbCqi;
             }
-        } // end for RBG free
-    }     // end for RBGs
+            uint8_t cqi1 = sbCqi.at(0);
+            uint8_t cqi2 = 0;
+            if (sbCqi.size() > 1)
+            {
+                cqi2 = sbCqi.at(1);
+            }
+            if ((cqi1 > 0) ||
+                (cqi2 > 0)) // CQI == 0 means "out of range" (see table 7.2.3-1 of 36.213)
+            {
+                if (LcActivePerFlow(*it) > 0)
+                {
+                    // this UE has data to transmit
+                    double achievableRate = 0.0;
+                    uint8_t mcs = 0;
+                    for (uint8_t k = 0; k < nLayer; k++)
+                    {
+                        if (sbCqi.size() > k)
+                        {
+                            mcs = m_amc->GetMcsFromCqi(sbCqi.at(k));
+                        }
+                        else
+                        {
+                            // no info on this subband -> worst MCS
+                            mcs = 0;
+                        }
+                        achievableRate += ((m_amc->GetDlTbSizeFromMcs(mcs, rbgSize) / 8) /
+                                           0.001); // = TB size / TTI
+                    }
+
+                    double rcqi = achievableRate;
+                    NS_LOG_INFO(this << " RNTI " << (*it) << " MCS " << (uint32_t)mcs
+                                     << " achievableRate " << achievableRate << " RCQI " << rcqi);
+
+                    if (rcqi > rcqiMax)
+                    {
+                        rcqiMax = rcqi;
+                        itMax = it;
+                    }
+                }
+            } // end if cqi
+
+        } // end for m_rlcBufferReq
+
+        if (itMax == m_flowStatsDl.end())
+        {
+            // no UE available for this RB
+            NS_LOG_INFO(this << " any UE found");
+        }
+        else
+        {
+            rbgMap.at(i) = true;
+            auto itMap = allocationMap.find(*itMax);
+            if (itMap == allocationMap.end())
+            {
+                // insert new element
+                std::vector<uint16_t> tempMap;
+                tempMap.push_back(i);
+                allocationMap[*itMax] = tempMap;
+            }
+            else
+            {
+                (*itMap).second.push_back(i);
+            }
+            NS_LOG_INFO(this << " UE assigned " << (*itMax));
+        }
+    } // end for RBGs
 
     // generate the transmission opportunities by grouping the RBGs of the same RNTI and
     // creating the correspondent DCIs
@@ -980,7 +970,7 @@ FdMtFfMacScheduler::DoSchedDlTriggerReq(
             // Set to max value, to avoid divide by 0 below
             lcActives = (uint16_t)65535; // UINT16_MAX;
         }
-        uint16_t RgbPerRnti = (*itMap).second.size();
+        uint16_t RbgPerRnti = (*itMap).second.size();
         auto itCqi = m_a30CqiRxed.find((*itMap).first);
         auto itTxMode = m_uesTxMode.find((*itMap).first);
         if (itTxMode == m_uesTxMode.end())
@@ -1047,7 +1037,7 @@ FdMtFfMacScheduler::DoSchedDlTriggerReq(
         for (uint8_t j = 0; j < nLayer; j++)
         {
             newDci.m_mcs.push_back(m_amc->GetMcsFromCqi(worstCqi.at(j)));
-            int tbSize = (m_amc->GetDlTbSizeFromMcs(newDci.m_mcs.at(j), RgbPerRnti * rbgSize) /
+            int tbSize = (m_amc->GetDlTbSizeFromMcs(newDci.m_mcs.at(j), RbgPerRnti * rbgSize) /
                           8); // (size of TB in bytes according to table 7.1.7.2.1-1 of 36.213)
             newDci.m_tbsSize.push_back(tbSize);
             NS_LOG_INFO(this << " Layer " << (uint16_t)j << " MCS selected"
@@ -1218,25 +1208,23 @@ FdMtFfMacScheduler::EstimateUlSinr(uint16_t rnti, uint16_t rb)
         // no cqi info about this UE
         return NO_SINR;
     }
-    else
+
+    // take the average SINR value among the available
+    double sinrSum = 0;
+    unsigned int sinrNum = 0;
+    for (uint32_t i = 0; i < m_cschedCellConfig.m_ulBandwidth; i++)
     {
-        // take the average SINR value among the available
-        double sinrSum = 0;
-        unsigned int sinrNum = 0;
-        for (uint32_t i = 0; i < m_cschedCellConfig.m_ulBandwidth; i++)
+        double sinr = (*itCqi).second.at(i);
+        if (sinr != NO_SINR)
         {
-            double sinr = (*itCqi).second.at(i);
-            if (sinr != NO_SINR)
-            {
-                sinrSum += sinr;
-                sinrNum++;
-            }
+            sinrSum += sinr;
+            sinrNum++;
         }
-        double estimatedSinr = (sinrNum > 0) ? (sinrSum / sinrNum) : DBL_MAX;
-        // store the value
-        (*itCqi).second.at(rb) = estimatedSinr;
-        return estimatedSinr;
     }
+    double estimatedSinr = (sinrNum > 0) ? (sinrSum / sinrNum) : DBL_MAX;
+    // store the value
+    (*itCqi).second.at(rb) = estimatedSinr;
+    return estimatedSinr;
 }
 
 void
@@ -1959,7 +1947,7 @@ void
 FdMtFfMacScheduler::TransmissionModeConfigurationUpdate(uint16_t rnti, uint8_t txMode)
 {
     NS_LOG_FUNCTION(this << " RNTI " << rnti << " txMode " << (uint16_t)txMode);
-    FfMacCschedSapUser::CschedUeConfigUpdateIndParameters params;
+    FfMacCschedSapUser::CschedUeConfigUpdateIndParameters params{};
     params.m_rnti = rnti;
     params.m_transmissionMode = txMode;
     m_cschedSapUser->CschedUeConfigUpdateInd(params);

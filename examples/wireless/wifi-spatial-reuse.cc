@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2019 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Sébastien Deronne <sebastien.deronne@gmail.com>
  */
@@ -79,7 +68,7 @@
 //  thus increasing the amount of generated traffic by setting the
 //  interval argument to a lower value is necessary to see the
 //  benefits of spatial reuse in this scenario. This can, for
-//  instance, be accomplished by setting --interval=0.0001.
+//  instance, be accomplished by setting --interval=100us.
 //
 //  Spatial reuse reset events are traced in two text files:
 //  - wifi-spatial-reuse-resets-bss-1.txt (for STA 1)
@@ -156,29 +145,29 @@ ResetTrace(std::string context,
 int
 main(int argc, char* argv[])
 {
-    double duration = 10.0;      // seconds
-    double d1 = 30.0;            // meters
-    double d2 = 30.0;            // meters
-    double d3 = 150.0;           // meters
-    double powSta1 = 10.0;       // dBm
-    double powSta2 = 10.0;       // dBm
-    double powAp1 = 21.0;        // dBm
-    double powAp2 = 21.0;        // dBm
-    double ccaEdTrSta1 = -62;    // dBm
-    double ccaEdTrSta2 = -62;    // dBm
-    double ccaEdTrAp1 = -62;     // dBm
-    double ccaEdTrAp2 = -62;     // dBm
-    double minimumRssi = -82;    // dBm
-    int channelWidth = 20;       // MHz
-    uint32_t payloadSize = 1500; // bytes
-    uint32_t mcs = 0;            // MCS value
-    double interval = 0.001;     // seconds
-    bool enableObssPd = true;
-    double obssPdThreshold = -72.0; // dBm
+    Time duration{"10s"};
+    meter_u d1{30.0};
+    meter_u d2{30.0};
+    meter_u d3{150.0};
+    dBm_u powSta1{10.0};
+    dBm_u powSta2{10.0};
+    dBm_u powAp1{21.0};
+    dBm_u powAp2{21.0};
+    dBm_u ccaEdTrSta1{-62};
+    dBm_u ccaEdTrSta2{-62};
+    dBm_u ccaEdTrAp1{-62};
+    dBm_u ccaEdTrAp2{-62};
+    dBm_u minimumRssi{-82};
+    int channelWidth{20};       // MHz
+    uint32_t payloadSize{1500}; // bytes
+    uint32_t mcs{0};            // MCS value
+    Time interval{"1ms"};
+    bool enableObssPd{true};
+    dBm_u obssPdThreshold{-72.0};
 
     CommandLine cmd(__FILE__);
-    cmd.AddValue("duration", "Duration of simulation (s)", duration);
-    cmd.AddValue("interval", "Inter packet interval (s)", interval);
+    cmd.AddValue("duration", "Duration of simulation", duration);
+    cmd.AddValue("interval", "Inter packet interval", interval);
     cmd.AddValue("enableObssPd", "Enable/disable OBSS_PD", enableObssPd);
     cmd.AddValue("d1", "Distance between STA1 and AP1 (m)", d1);
     cmd.AddValue("d2", "Distance between STA2 and AP2 (m)", d2);
@@ -330,7 +319,7 @@ main(int argc, char* argv[])
         wifiStaNodes.Get(0)->AddApplication(client);
         client->SetAttribute("PacketSize", UintegerValue(payloadSize));
         client->SetAttribute("MaxPackets", UintegerValue(0));
-        client->SetAttribute("Interval", TimeValue(Seconds(interval)));
+        client->SetAttribute("Interval", TimeValue(interval));
         Ptr<PacketSocketServer> server = CreateObject<PacketSocketServer>();
         server->SetLocal(socketAddr);
         wifiApNodes.Get(0)->AddApplication(server);
@@ -347,7 +336,7 @@ main(int argc, char* argv[])
         wifiStaNodes.Get(1)->AddApplication(client);
         client->SetAttribute("PacketSize", UintegerValue(payloadSize));
         client->SetAttribute("MaxPackets", UintegerValue(0));
-        client->SetAttribute("Interval", TimeValue(Seconds(interval)));
+        client->SetAttribute("Interval", TimeValue(interval));
         Ptr<PacketSocketServer> server = CreateObject<PacketSocketServer>();
         server->SetLocal(socketAddr);
         wifiApNodes.Get(1)->AddApplication(server);
@@ -368,14 +357,14 @@ main(int argc, char* argv[])
     // Pass in the context string "2" to allow the trace to distinguish objects
     hePhyB->GetObssPdAlgorithm()->TraceConnect("Reset", "2", MakeCallback(&ResetTrace));
 
-    Simulator::Stop(Seconds(duration));
+    Simulator::Stop(duration);
     Simulator::Run();
 
     Simulator::Destroy();
 
     for (uint32_t i = 0; i < 2; i++)
     {
-        double throughput = static_cast<double>(bytesReceived[2 + i]) * 8 / 1000 / 1000 / duration;
+        const auto throughput = bytesReceived[2 + i] * 8.0 / duration.GetMicroSeconds();
         std::cout << "Throughput for BSS " << i + 1 << ": " << throughput << " Mbit/s" << std::endl;
     }
 

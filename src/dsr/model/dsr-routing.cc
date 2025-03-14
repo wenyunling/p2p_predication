@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Yufei Cheng
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Yufei Cheng   <yfcheng@ittc.ku.edu>
  *
@@ -136,7 +125,7 @@ DsrRouting::GetTypeId()
             .AddAttribute(
                 "PassiveBuffer",
                 "The passive buffer to manage "
-                "promisucously received passive ack.",
+                "promiscuously received passive ack.",
                 PointerValue(nullptr),
                 MakePointerAccessor(&DsrRouting::SetPassiveBuffer, &DsrRouting::GetPassiveBuffer),
                 MakePointerChecker<DsrPassiveBuffer>())
@@ -337,7 +326,7 @@ DsrRouting::GetTypeId()
                           MakeUintegerChecker<uint32_t>())
             .AddAttribute("MaxNetworkQueueDelay",
                           "The max time for a packet to stay in the network queue.",
-                          TimeValue(Seconds(30.0)),
+                          TimeValue(Seconds(30)),
                           MakeTimeAccessor(&DsrRouting::m_maxNetworkDelay),
                           MakeTimeChecker())
             .AddAttribute("NumPriorityQueues",
@@ -964,7 +953,7 @@ DsrRouting::CheckSendBuffer()
                     // m_downTarget (newPacket, m_mainAddress, nextHop, GetProtocolNumber (),
                     // m_ipv4Route);
 
-                    /// \todo New DsrNetworkQueueEntry
+                    /// @todo New DsrNetworkQueueEntry
                     DsrNetworkQueueEntry newEntry(newPacket,
                                                   m_mainAddress,
                                                   nextHop,
@@ -1122,7 +1111,7 @@ DsrRouting::PromiscReceive(Ptr<NetDevice> device,
     /*
      * Message type 2 means the data packet, we will further process the data
      * packet for delivery notification, safely ignore control packet
-     * Another check here is our own address, if this is the data destinated for us,
+     * Another check here is our own address, if this is the data destined for us,
      * process it further, otherwise, just ignore it
      */
     Ipv4Address ourAddress = m_ipv4->GetAddress(1, 0).GetLocal();
@@ -1455,7 +1444,7 @@ DsrRouting::SendUnreachError(Ipv4Address unreachNode,
 
         // m_downTarget (newPacket, m_mainAddress, nextHop, GetProtocolNumber (), m_ipv4Route);
 
-        /// \todo New DsrNetworkQueueEntry
+        /// @todo New DsrNetworkQueueEntry
         DsrNetworkQueueEntry newEntry(newPacket,
                                       m_mainAddress,
                                       nextHop,
@@ -1505,7 +1494,7 @@ DsrRouting::ForwardErrPacket(DsrOptionRerrUnreachHeader& rerr,
 
     // m_downTarget (packet, m_mainAddress, nextHop, GetProtocolNumber (), route);
 
-    /// \todo New DsrNetworkQueueEntry
+    /// @todo New DsrNetworkQueueEntry
     DsrNetworkQueueEntry newEntry(packet, m_mainAddress, nextHop, Simulator::Now(), route);
 
     if (dsrNetworkQueue->Enqueue(newEntry))
@@ -1743,7 +1732,7 @@ DsrRouting::SendPacket(Ptr<Packet> packet,
 
     // m_downTarget (packet, source, nextHop, GetProtocolNumber (), m_ipv4Route);
 
-    /// \todo New DsrNetworkQueueEntry
+    /// @todo New DsrNetworkQueueEntry
     DsrNetworkQueueEntry newEntry(packet, source, nextHop, Simulator::Now(), m_ipv4Route);
 
     if (dsrNetworkQueue->Enqueue(newEntry))
@@ -2083,7 +2072,7 @@ DsrRouting::SendPacketFromBuffer(const DsrOptionSRHeader& sourceRoute,
                     // m_downTarget (newPacket, m_mainAddress, nextHop, GetProtocolNumber (),
                     // m_ipv4Route);
 
-                    /// \todo New DsrNetworkQueueEntry
+                    /// @todo New DsrNetworkQueueEntry
                     DsrNetworkQueueEntry newEntry(newPacket,
                                                   m_mainAddress,
                                                   nextHop,
@@ -2519,7 +2508,7 @@ DsrRouting::SalvagePacket(Ptr<const Packet> packet,
 
         // m_downTarget (p, m_mainAddress, nextHop, GetProtocolNumber (), m_ipv4Route);
 
-        /// \todo New DsrNetworkQueueEntry
+        /// @todo New DsrNetworkQueueEntry
         DsrNetworkQueueEntry newEntry(p, m_mainAddress, nextHop, Simulator::Now(), m_ipv4Route);
 
         if (dsrNetworkQueue->Enqueue(newEntry))
@@ -3304,7 +3293,7 @@ DsrRouting::SendRequest(Ptr<Packet> packet, Ipv4Address source)
 
     // m_downTarget (packet, source, m_broadcast, GetProtocolNumber (), 0);
 
-    /// \todo New DsrNetworkQueueEntry
+    /// @todo New DsrNetworkQueueEntry
     DsrNetworkQueueEntry newEntry(packet, source, m_broadcast, Simulator::Now(), nullptr);
     if (dsrNetworkQueue->Enqueue(newEntry))
     {
@@ -3419,7 +3408,7 @@ DsrRouting::SendReply(Ptr<Packet> packet,
 
     // m_downTarget (packet, source, nextHop, GetProtocolNumber (), route);
 
-    /// \todo New DsrNetworkQueueEntry
+    /// @todo New DsrNetworkQueueEntry
     DsrNetworkQueueEntry newEntry(packet, source, nextHop, Simulator::Now(), route);
     if (dsrNetworkQueue->Enqueue(newEntry))
     {
@@ -3504,7 +3493,7 @@ DsrRouting::SendAck(uint16_t ackId,
 
     // m_downTarget (packet, m_mainAddress, destination, GetProtocolNumber (), route);
 
-    /// \todo New DsrNetworkQueueEntry
+    /// @todo New DsrNetworkQueueEntry
     DsrNetworkQueueEntry newEntry(packet, m_mainAddress, destination, Simulator::Now(), route);
     if (dsrNetworkQueue->Enqueue(newEntry))
     {

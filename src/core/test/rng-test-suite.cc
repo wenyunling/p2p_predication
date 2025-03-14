@@ -1,16 +1,5 @@
 /*
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #include "ns3/double.h"
@@ -27,24 +16,24 @@
 using namespace ns3;
 
 /**
- * \file
- * \ingroup rng-tests
+ * @file
+ * @ingroup rng-tests
  * Random number generators tests.
  */
 
 /**
- * \ingroup core-tests
- * \defgroup rng-tests Random number generators tests
+ * @ingroup core-tests
+ * @defgroup rng-tests Random number generators tests
  */
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  *
  * Fill an array with increasing values, in the [start, end] range.
- * \param array The array to fill.
- * \param n The size of the array.
- * \param start The start value.
- * \param end The end value.
+ * @param array The array to fill.
+ * @param n The size of the array.
+ * @param start The start value.
+ * @param end The end value.
  */
 void
 FillHistoRangeUniformly(double* array, uint32_t n, double start, double end)
@@ -60,7 +49,7 @@ FillHistoRangeUniformly(double* array, uint32_t n, double start, double end)
 }
 
 /**
- * \ingroup core-tests
+ * @ingroup core-tests
  *
  * Test case for uniform distribution random number generator.
  */
@@ -79,8 +68,8 @@ class RngUniformTestCase : public TestCase
 
     /**
      * Run a chi-squared test on the results of the random number generator.
-     * \param u The random number generator.
-     * \return the chi-squared test result.
+     * @param u The random number generator.
+     * @return the chi-squared test result.
      */
     double ChiSquaredTest(Ptr<UniformRandomVariable> u);
 
@@ -153,7 +142,7 @@ RngUniformTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  *
  * Test case for normal distribution random number generator.
  */
@@ -172,8 +161,8 @@ class RngNormalTestCase : public TestCase
 
     /**
      * Run a chi-squared test on the results of the random number generator.
-     * \param n The random number generator.
-     * \return the chi-squared test result.
+     * @param n The random number generator.
+     * @return the chi-squared test result.
      */
     double ChiSquaredTest(Ptr<NormalRandomVariable> n);
 
@@ -260,7 +249,7 @@ RngNormalTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  *
  * Test case for exponential distribution random number generator.
  */
@@ -279,8 +268,8 @@ class RngExponentialTestCase : public TestCase
 
     /**
      * Run a chi-squared test on the results of the random number generator.
-     * \param n The random number generator.
-     * \return the chi-squared test result.
+     * @param n The random number generator.
+     * @return the chi-squared test result.
      */
     double ChiSquaredTest(Ptr<ExponentialRandomVariable> n);
 
@@ -366,7 +355,7 @@ RngExponentialTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  *
  * Test case for pareto distribution random number generator.
  */
@@ -385,8 +374,8 @@ class RngParetoTestCase : public TestCase
 
     /**
      * Run a chi-squared test on the results of the random number generator.
-     * \param p The random number generator.
-     * \return the chi-squared test result.
+     * @param p The random number generator.
+     * @return the chi-squared test result.
      */
     double ChiSquaredTest(Ptr<ParetoRandomVariable> p);
 
@@ -477,9 +466,9 @@ RngParetoTestCase::DoRun()
 }
 
 /**
- * \ingroup rng-tests
+ * @ingroup rng-tests
  *
- * \brief The random number generators Test Suite.
+ * @brief The random number generators Test Suite.
  */
 class RngTestSuite : public TestSuite
 {
@@ -488,12 +477,12 @@ class RngTestSuite : public TestSuite
 };
 
 RngTestSuite::RngTestSuite()
-    : TestSuite("random-number-generators", UNIT)
+    : TestSuite("random-number-generators", Type::UNIT)
 {
-    AddTestCase(new RngUniformTestCase, TestCase::QUICK);
-    AddTestCase(new RngNormalTestCase, TestCase::QUICK);
-    AddTestCase(new RngExponentialTestCase, TestCase::QUICK);
-    AddTestCase(new RngParetoTestCase, TestCase::QUICK);
+    AddTestCase(new RngUniformTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new RngNormalTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new RngExponentialTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new RngParetoTestCase, TestCase::Duration::QUICK);
 }
 
 static RngTestSuite g_rngTestSuite; //!< Static variable for test initialization

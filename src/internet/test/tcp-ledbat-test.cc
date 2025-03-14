@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2016 NITK Surathkal
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Ankit Deepak <adadeepak8@gmail.com>
  *
@@ -30,24 +19,24 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("TcpLedbatTestSuite");
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief LEDBAT should be same as NewReno during slow start, and when timestamps are disabled
+ * @brief LEDBAT should be same as NewReno during slow start, and when timestamps are disabled
  */
 class TcpLedbatToNewReno : public TestCase
 {
   public:
     /**
-     * \brief Constructor
+     * @brief Constructor
      *
-     * \param cWnd congestion window
-     * \param segmentSize segment size
-     * \param ssThresh slow start threshold
-     * \param segmentsAcked segments acked
-     * \param highTxMark high tx mark
-     * \param lastAckedSeq last acked seq
-     * \param rtt RTT
-     * \param name Name of the test
+     * @param cWnd congestion window
+     * @param segmentSize segment size
+     * @param ssThresh slow start threshold
+     * @param segmentsAcked segments acked
+     * @param highTxMark high tx mark
+     * @param lastAckedSeq last acked seq
+     * @param rtt RTT
+     * @param name Name of the test
      */
     TcpLedbatToNewReno(uint32_t cWnd,
                        uint32_t segmentSize,
@@ -60,7 +49,8 @@ class TcpLedbatToNewReno : public TestCase
 
   private:
     void DoRun() override;
-    /** \brief Execute the test
+    /**
+     * @brief Execute the test
      */
     void ExecuteTest();
 
@@ -96,7 +86,7 @@ TcpLedbatToNewReno::TcpLedbatToNewReno(uint32_t cWnd,
 void
 TcpLedbatToNewReno::DoRun()
 {
-    Simulator::Schedule(Seconds(0.0), &TcpLedbatToNewReno::ExecuteTest, this);
+    Simulator::Schedule(Seconds(0), &TcpLedbatToNewReno::ExecuteTest, this);
     Simulator::Run();
     Simulator::Destroy();
 }
@@ -130,24 +120,24 @@ TcpLedbatToNewReno::ExecuteTest()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Test to validate cWnd increment in LEDBAT
+ * @brief Test to validate cWnd increment in LEDBAT
  */
 class TcpLedbatIncrementTest : public TestCase
 {
   public:
     /**
-     * \brief Constructor
+     * @brief Constructor
      *
-     * \param cWnd congestion window
-     * \param segmentSize segment size
-     * \param ssThresh slow start threshold
-     * \param segmentsAcked segments acked
-     * \param highTxMark high tx mark
-     * \param lastAckedSeq last acked seq
-     * \param rtt RTT
-     * \param name Name of the test
+     * @param cWnd congestion window
+     * @param segmentSize segment size
+     * @param ssThresh slow start threshold
+     * @param segmentsAcked segments acked
+     * @param highTxMark high tx mark
+     * @param lastAckedSeq last acked seq
+     * @param rtt RTT
+     * @param name Name of the test
      */
     TcpLedbatIncrementTest(uint32_t cWnd,
                            uint32_t segmentSize,
@@ -160,7 +150,8 @@ class TcpLedbatIncrementTest : public TestCase
 
   private:
     void DoRun() override;
-    /** \brief Execute the test
+    /**
+     * @brief Execute the test
      */
     void ExecuteTest();
 
@@ -196,7 +187,7 @@ TcpLedbatIncrementTest::TcpLedbatIncrementTest(uint32_t cWnd,
 void
 TcpLedbatIncrementTest::DoRun()
 {
-    Simulator::Schedule(Seconds(0.0), &TcpLedbatIncrementTest::ExecuteTest, this);
+    Simulator::Schedule(Seconds(0), &TcpLedbatIncrementTest::ExecuteTest, this);
     Simulator::Run();
     Simulator::Destroy();
 }
@@ -231,24 +222,24 @@ TcpLedbatIncrementTest::ExecuteTest()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Test to validate cWnd decrement in LEDBAT
+ * @brief Test to validate cWnd decrement in LEDBAT
  */
 class TcpLedbatDecrementTest : public TestCase
 {
   public:
     /**
-     * \brief Constructor
+     * @brief Constructor
      *
-     * \param cWnd congestion window
-     * \param segmentSize segment size
-     * \param ssThresh slow start threshold
-     * \param segmentsAcked segments acked
-     * \param highTxMark high tx mark
-     * \param lastAckedSeq last acked seq
-     * \param rtt RTT
-     * \param name Name of the test
+     * @param cWnd congestion window
+     * @param segmentSize segment size
+     * @param ssThresh slow start threshold
+     * @param segmentsAcked segments acked
+     * @param highTxMark high tx mark
+     * @param lastAckedSeq last acked seq
+     * @param rtt RTT
+     * @param name Name of the test
      */
     TcpLedbatDecrementTest(uint32_t cWnd,
                            uint32_t segmentSize,
@@ -261,7 +252,8 @@ class TcpLedbatDecrementTest : public TestCase
 
   private:
     void DoRun() override;
-    /** \brief Execute the test
+    /**
+     * @brief Execute the test
      */
     void ExecuteTest();
 
@@ -297,7 +289,7 @@ TcpLedbatDecrementTest::TcpLedbatDecrementTest(uint32_t cWnd,
 void
 TcpLedbatDecrementTest::DoRun()
 {
-    Simulator::Schedule(Seconds(0.0), &TcpLedbatDecrementTest::ExecuteTest, this);
+    Simulator::Schedule(Seconds(0), &TcpLedbatDecrementTest::ExecuteTest, this);
     Simulator::Run();
     Simulator::Destroy();
 }
@@ -335,15 +327,15 @@ TcpLedbatDecrementTest::ExecuteTest()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief TCP Ledbat TestSuite
+ * @brief TCP Ledbat TestSuite
  */
 class TcpLedbatTestSuite : public TestSuite
 {
   public:
     TcpLedbatTestSuite()
-        : TestSuite("tcp-ledbat-test", UNIT)
+        : TestSuite("tcp-ledbat-test", Type::UNIT)
     {
         AddTestCase(new TcpLedbatToNewReno(2 * 1446,
                                            1446,
@@ -353,7 +345,7 @@ class TcpLedbatTestSuite : public TestSuite
                                            SequenceNumber32(3216),
                                            MilliSeconds(100),
                                            "LEDBAT falls to New Reno for slowstart"),
-                    TestCase::QUICK);
+                    TestCase::Duration::QUICK);
         AddTestCase(new TcpLedbatToNewReno(4 * 1446,
                                            1446,
                                            2 * 1446,
@@ -362,7 +354,7 @@ class TcpLedbatTestSuite : public TestSuite
                                            SequenceNumber32(3216),
                                            MilliSeconds(100),
                                            "LEDBAT falls to New Reno if timestamps are not found"),
-                    TestCase::QUICK);
+                    TestCase::Duration::QUICK);
         AddTestCase(new TcpLedbatIncrementTest(2 * 1446,
                                                1446,
                                                4 * 1446,
@@ -371,7 +363,7 @@ class TcpLedbatTestSuite : public TestSuite
                                                SequenceNumber32(3216),
                                                MilliSeconds(100),
                                                "LEDBAT increment test"),
-                    TestCase::QUICK);
+                    TestCase::Duration::QUICK);
         AddTestCase(new TcpLedbatDecrementTest(2 * 1446,
                                                1446,
                                                4 * 1446,
@@ -380,7 +372,7 @@ class TcpLedbatTestSuite : public TestSuite
                                                SequenceNumber32(3216),
                                                MilliSeconds(100),
                                                "LEDBAT decrement test"),
-                    TestCase::QUICK);
+                    TestCase::Duration::QUICK);
     }
 };
 

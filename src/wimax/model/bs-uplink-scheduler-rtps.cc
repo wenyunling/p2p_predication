@@ -2,18 +2,7 @@
  * Copyright (c) 2007,2008 INRIA
  *               2009 TELEMATICS LAB, Politecnico di Bari
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Giuseppe Piro <g.piro@poliba.it>
  */
@@ -720,14 +709,11 @@ UplinkSchedulerRtps::SetupServiceFlow(SSRecord* ssRecord, ServiceFlow* serviceFl
         serviceFlow->SetUnsolicitedPollingInterval(interval);
     }
     break;
-    case ServiceFlow::SF_TYPE_NRTPS: {
+    case ServiceFlow::SF_TYPE_NRTPS:
         // no real-time guarantees are given to NRTPS, serviced based on available bandwidth
-    }
-    break;
-    case ServiceFlow::SF_TYPE_BE: {
+    case ServiceFlow::SF_TYPE_BE:
         // no real-time guarantees are given to BE, serviced based on available bandwidth
-    }
-    break;
+        break;
     default:
         NS_FATAL_ERROR("Invalid scheduling type");
     }

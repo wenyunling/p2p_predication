@@ -1,24 +1,13 @@
 /*
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: George Riley <riley@ece.gatech.edu>
  *
  */
 
 /**
- * \file
- * \ingroup mpi
+ * @file
+ * @ingroup mpi
  *  Implementation of classes  ns3::LbtsMessage and ns3::DistributedSimulatorImpl.
  */
 
@@ -273,7 +262,7 @@ DistributedSimulatorImpl::CalculateLookAhead()
 void
 DistributedSimulatorImpl::BoundLookAhead(const Time lookAhead)
 {
-    if (lookAhead > Time(0))
+    if (lookAhead.IsStrictlyPositive())
     {
         NS_LOG_FUNCTION(this << lookAhead);
         m_lookAhead = Min(m_lookAhead, lookAhead);
@@ -616,7 +605,7 @@ DistributedSimulatorImpl::IsExpired(const EventId& id) const
 Time
 DistributedSimulatorImpl::GetMaximumSimulationTime() const
 {
-    /// \todo I am fairly certain other compilers use other non-standard
+    /// @todo I am fairly certain other compilers use other non-standard
     /// post-fixes to indicate 64 bit constants.
     return TimeStep(0x7fffffffffffffffLL);
 }

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2020, University of Padova, Dep. of Information Engineering, SIGNET lab
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  */
 
@@ -58,7 +47,7 @@ static Ptr<ThreeGppSpectrumPropagationLossModel>
 static Ptr<ChannelConditionModel> m_condModel; //!< the ChannelConditionModel object
 
 /*
- * \brief A structure that holds the parameters for the ComputeSnr
+ * @brief A structure that holds the parameters for the ComputeSnr
  * function. In this way the problem with the limited
  * number of parameters of method Schedule is avoided.
  */
@@ -74,9 +63,9 @@ struct ComputeSnrParams
 
 /**
  * Perform the beamforming using the DFT beamforming method
- * \param thisDevice the device performing the beamforming
- * \param thisAntenna the antenna object associated to thisDevice
- * \param otherDevice the device towards which point the beam
+ * @param thisDevice the device performing the beamforming
+ * @param thisAntenna the antenna object associated to thisDevice
+ * @param otherDevice the device towards which point the beam
  */
 static void
 DoBeamforming(Ptr<NetDevice> thisDevice,
@@ -98,7 +87,7 @@ DoBeamforming(Ptr<NetDevice> thisDevice,
 
 /**
  * Compute the average SNR
- * \param params A structure that holds a bunch of parameters needed by ComputSnr function to
+ * @param params A structure that holds a bunch of parameters needed by ComputSnr function to
  * calculate the average SNR
  */
 static void
@@ -149,7 +138,7 @@ ComputeSnr(const ComputeSnrParams& params)
 /**
  * Generates a GNU-plottable file representing the buildings deployed in the
  * scenario
- * \param filename the name of the output file
+ * @param filename the name of the output file
  */
 void
 PrintGnuplottableBuildingListToFile(std::string filename)
@@ -265,7 +254,7 @@ main(int argc, char* argv[])
         double vRx = vScatt / 2;
         txMob = CreateObject<WaypointMobilityModel>();
         rxMob = CreateObject<WaypointMobilityModel>();
-        Time nextWaypoint = Seconds(0.0);
+        Time nextWaypoint;
         txMob->GetObject<WaypointMobilityModel>()->AddWaypoint(
             Waypoint(nextWaypoint, Vector(maxAxisX / 2 - streetWidth / 2, 1.0, 1.5)));
         nextWaypoint += Seconds((maxAxisY - streetWidth) / 2 / vTx);
@@ -275,7 +264,7 @@ main(int argc, char* argv[])
         nextWaypoint += Seconds((maxAxisX - streetWidth) / 2 / vTx);
         txMob->GetObject<WaypointMobilityModel>()->AddWaypoint(
             Waypoint(nextWaypoint, Vector(0.0, maxAxisY / 2 - streetWidth / 2, 1.5)));
-        nextWaypoint = Seconds(0.0);
+        nextWaypoint = Seconds(0);
         rxMob->GetObject<WaypointMobilityModel>()->AddWaypoint(
             Waypoint(nextWaypoint, Vector(maxAxisX / 2 - streetWidth / 2, 0.0, 1.5)));
         nextWaypoint += Seconds(maxAxisY / vRx);

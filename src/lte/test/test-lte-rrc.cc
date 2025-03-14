@@ -1,27 +1,16 @@
 /*
  * Copyright (c) 2012 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  *         Budiarto Herman <budiarto.herman@magister.fi>
  */
 
-#include <ns3/core-module.h>
-#include <ns3/lte-module.h>
-#include <ns3/mobility-module.h>
-#include <ns3/network-module.h>
+#include "ns3/core-module.h"
+#include "ns3/lte-module.h"
+#include "ns3/mobility-module.h"
+#include "ns3/network-module.h"
 
 #include <cmath>
 
@@ -30,9 +19,9 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("LteRrcTest");
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test rrc connection establishment.
+ * @brief Test rrc connection establishment.
  */
 class LteRrcConnectionEstablishmentTestCase : public TestCase
 {
@@ -40,17 +29,17 @@ class LteRrcConnectionEstablishmentTestCase : public TestCase
     /**
      *
      *
-     * \param nUes number of UEs in the test
-     * \param nBearers number of bearers to be setup in each connection
-     * \param tConnBase connection time base value for all UEs in ms
-     * \param tConnIncrPerUe additional connection time increment for each UE index (0...nUes-1) in
+     * @param nUes number of UEs in the test
+     * @param nBearers number of bearers to be setup in each connection
+     * @param tConnBase connection time base value for all UEs in ms
+     * @param tConnIncrPerUe additional connection time increment for each UE index (0...nUes-1) in
      * ms
-     * \param delayDiscStart expected duration to perform connection establishment in ms
-     * \param errorExpected if true, test case will wait a bit longer to accommodate for
+     * @param delayDiscStart expected duration to perform connection establishment in ms
+     * @param errorExpected if true, test case will wait a bit longer to accommodate for
      * transmission error
-     * \param useIdealRrc If set to false, real RRC protocol model will be used
-     * \param admitRrcConnectionRequest If set to false, eNb will not allow UE connections
-     * \param description additional description of the test case
+     * @param useIdealRrc If set to false, real RRC protocol model will be used
+     * @param admitRrcConnectionRequest If set to false, eNb will not allow UE connections
+     * @param description additional description of the test case
      */
     LteRrcConnectionEstablishmentTestCase(uint32_t nUes,
                                           uint32_t nBearers,
@@ -69,16 +58,16 @@ class LteRrcConnectionEstablishmentTestCase : public TestCase
     /**
      * Build name string function
      *
-     * \param nUes number of UEs in the test
-     * \param nBearers number of bearers to be setup in each connection
-     * \param tConnBase connection time base value for all UEs in ms
-     * \param tConnIncrPerUe additional connection time increment for each UE index (0...nUes-1)
+     * @param nUes number of UEs in the test
+     * @param nBearers number of bearers to be setup in each connection
+     * @param tConnBase connection time base value for all UEs in ms
+     * @param tConnIncrPerUe additional connection time increment for each UE index (0...nUes-1)
      * in ms
-     * \param delayDiscStart expected duration to perform connection establishment in ms
-     * \param useIdealRrc If set to false, real RRC protocol model will be used
-     * \param admitRrcConnectionRequest If set to false, eNb will not allow UE connections
-     * \param description additional description of the test case
-     * \returns the name string
+     * @param delayDiscStart expected duration to perform connection establishment in ms
+     * @param useIdealRrc If set to false, real RRC protocol model will be used
+     * @param admitRrcConnectionRequest If set to false, eNb will not allow UE connections
+     * @param description additional description of the test case
+     * @returns the name string
      */
     static std::string BuildNameString(uint32_t nUes,
                                        uint32_t nBearers,
@@ -90,28 +79,28 @@ class LteRrcConnectionEstablishmentTestCase : public TestCase
                                        std::string description = "");
     /**
      * Connect function
-     * \param ueDevice the UE device
-     * \param enbDevice the ENB device
+     * @param ueDevice the UE device
+     * @param enbDevice the ENB device
      */
     void Connect(Ptr<NetDevice> ueDevice, Ptr<NetDevice> enbDevice);
     /**
      * Check connected function
-     * \param ueDevice the UE device
-     * \param enbDevice the ENB device
+     * @param ueDevice the UE device
+     * @param enbDevice the ENB device
      */
     void CheckConnected(Ptr<NetDevice> ueDevice, Ptr<NetDevice> enbDevice);
     /**
      * Check not connected function
-     * \param ueDevice the UE device
-     * \param enbDevice the ENB device
+     * @param ueDevice the UE device
+     * @param enbDevice the ENB device
      */
     void CheckNotConnected(Ptr<NetDevice> ueDevice, Ptr<NetDevice> enbDevice);
     /**
      * Connection established callback function
-     * \param context the context string
-     * \param imsi the IMSI
-     * \param cellId the cell ID
-     * \param rnti the RNTI
+     * @param context the context string
+     * @param imsi the IMSI
+     * @param cellId the cell ID
+     * @param rnti the RNTI
      */
     void ConnectionEstablishedCallback(std::string context,
                                        uint64_t imsi,
@@ -119,11 +108,11 @@ class LteRrcConnectionEstablishmentTestCase : public TestCase
                                        uint16_t rnti);
     /**
      * Connection timeout callback function
-     * \param context the context string
-     * \param imsi the IMSI
-     * \param cellId the cell ID
-     * \param rnti the RNTI
-     * \param connEstFailCount the T300 timer expiration counter value
+     * @param context the context string
+     * @param imsi the IMSI
+     * @param cellId the cell ID
+     * @param rnti the RNTI
+     * @param connEstFailCount the T300 timer expiration counter value
      */
     void ConnectionTimeoutCallback(std::string context,
                                    uint64_t imsi,
@@ -582,9 +571,9 @@ LteRrcConnectionEstablishmentTestCase::ConnectionTimeoutCallback(std::string con
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Lte Rrc Connection Establishment Error Test Case
+ * @brief Lte Rrc Connection Establishment Error Test Case
  */
 class LteRrcConnectionEstablishmentErrorTestCase : public LteRrcConnectionEstablishmentTestCase
 {
@@ -592,9 +581,9 @@ class LteRrcConnectionEstablishmentErrorTestCase : public LteRrcConnectionEstabl
     /**
      *
      *
-     * \param jumpAwayTime the time when all the UEs 'teleport' to a pre-defined
+     * @param jumpAwayTime the time when all the UEs 'teleport' to a pre-defined
      *                     high-interference position and stay there for 100 ms
-     * \param description additional description of the test case
+     * @param description additional description of the test case
      */
     LteRrcConnectionEstablishmentErrorTestCase(Time jumpAwayTime, std::string description = "");
 
@@ -762,9 +751,9 @@ LteRrcConnectionEstablishmentErrorTestCase::JumpBack()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Lte Rrc Test Suite
+ * @brief Lte Rrc Test Suite
  */
 class LteRrcTestSuite : public TestSuite
 {
@@ -773,7 +762,7 @@ class LteRrcTestSuite : public TestSuite
 };
 
 LteRrcTestSuite::LteRrcTestSuite()
-    : TestSuite("lte-rrc", SYSTEM)
+    : TestSuite("lte-rrc", Type::SYSTEM)
 {
     //  LogComponentEnableAll (LOG_PREFIX_ALL);
     //  LogComponentEnable ("LteRrcTest", LOG_LEVEL_ALL);
@@ -790,64 +779,64 @@ LteRrcTestSuite::LteRrcTestSuite()
         // admitRrcConnectionRequest
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(1, 0, 0, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(1, 0, 100, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(1, 1, 0, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(1, 1, 100, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(1, 2, 0, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(1, 2, 100, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(2, 0, 20, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(2, 0, 20, 10, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(2, 0, 20, 100, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(2, 1, 20, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(2, 1, 20, 10, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(2, 1, 20, 100, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(2, 2, 20, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(2, 2, 20, 10, 1, false, useIdealRrc, true),
-            TestCase::QUICK);
+            TestCase::Duration::QUICK);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(2, 2, 20, 100, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(3, 0, 20, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(4, 0, 20, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(4, 0, 20, 300, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(20, 0, 10, 1, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(50, 0, 0, 0, 1, false, useIdealRrc, true),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
 
         // Test cases to check admitRrcConnectionRequest=false
         //                                                     nUes      tConnBase delayDiscStart
@@ -857,28 +846,28 @@ LteRrcTestSuite::LteRrcTestSuite()
         //                                                        admitRrcConnectionRequest
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(1, 0, 0, 0, 1, false, useIdealRrc, false),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(1, 2, 100, 0, 1, false, useIdealRrc, false),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(2, 0, 20, 0, 1, false, useIdealRrc, false),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(2, 1, 20, 0, 1, false, useIdealRrc, false),
-            TestCase::QUICK);
+            TestCase::Duration::QUICK);
         AddTestCase(
             new LteRrcConnectionEstablishmentTestCase(3, 0, 20, 0, 1, false, useIdealRrc, false),
-            TestCase::EXTENSIVE);
+            TestCase::Duration::EXTENSIVE);
     }
 
     // Test cases with transmission error
     AddTestCase(new LteRrcConnectionEstablishmentErrorTestCase(Seconds(0.020214),
                                                                "failure at RRC Connection Request"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new LteRrcConnectionEstablishmentErrorTestCase(Seconds(0.025),
                                                                "failure at RRC Connection Setup"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     /*
      * With RLF implementation we now do support the Idle mode,
      * thus it solve Bug 1762 Comment #25.
@@ -886,11 +875,11 @@ LteRrcTestSuite::LteRrcTestSuite()
     AddTestCase(
         new LteRrcConnectionEstablishmentErrorTestCase(Seconds(0.030),
                                                        "failure at RRC Connection Setup Complete"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteRrcTestSuite g_lteRrcTestSuiteInstance;

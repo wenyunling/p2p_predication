@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2016 Universita' degli Studi di Napoli Federico II
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Stefano Avallone <stavallo@unina.it>
  */
@@ -41,10 +30,10 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("WifiAcMappingTest");
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test for User priority to Access Category mapping
+ * @brief Test for User priority to Access Category mapping
  */
 class WifiAcMappingTest : public TestCase
 {
@@ -52,8 +41,8 @@ class WifiAcMappingTest : public TestCase
     /**
      * Constructor for WifiAcMappingTest
      *
-     * \param tos the type of service
-     * \param expectedQueue the expected queue disc index
+     * @param tos the type of service
+     * @param expectedQueue the expected queue disc index
      */
     WifiAcMappingTest(uint8_t tos, uint8_t expectedQueue);
     void DoRun() override;
@@ -63,9 +52,9 @@ class WifiAcMappingTest : public TestCase
      * Function called whenever a packet is enqueued in
      * a queue disc.
      *
-     * \param tos the type of service
-     * \param count the pointer to the packet counter
-     * \param item the enqueued item
+     * @param tos the type of service
+     * @param count the pointer to the packet counter
+     * @param item the enqueued item
      */
     static void PacketEnqueuedInQueueDisc(uint8_t tos,
                                           uint16_t* count,
@@ -74,9 +63,9 @@ class WifiAcMappingTest : public TestCase
      * Function called whenever a packet is enqueued in
      * a Wi-Fi MAC queue.
      *
-     * \param tos the type of service
-     * \param count the pointer to the packet counter
-     * \param item the enqueued item
+     * @param tos the type of service
+     * @param count the pointer to the packet counter
+     * @param item the enqueued item
      */
     static void PacketEnqueuedInWifiMacQueue(uint8_t tos,
                                              uint16_t* count,
@@ -202,22 +191,22 @@ WifiAcMappingTest::DoRun()
                                 InetSocketAddress(Ipv4Address::GetAny(), udpPort));
     ApplicationContainer sinkApp = packetSink.Install(sta.Get(0));
     sinkApp.Start(Seconds(0));
-    sinkApp.Stop(Seconds(4.0));
+    sinkApp.Stop(Seconds(4));
 
     // The packet source is an on-off application on the AP device
     InetSocketAddress dest(staNodeInterface.GetAddress(0), udpPort);
-    dest.SetTos(m_tos);
     OnOffHelper onoff("ns3::UdpSocketFactory", dest);
     onoff.SetConstantRate(DataRate("5kbps"), 500);
+    onoff.SetAttribute("Tos", UintegerValue(m_tos));
     ApplicationContainer sourceApp = onoff.Install(ap.Get(0));
-    sourceApp.Start(Seconds(1.0));
-    sourceApp.Stop(Seconds(4.0));
+    sourceApp.Start(Seconds(1));
+    sourceApp.Stop(Seconds(4));
 
     // The first packet will be transmitted at time 1+(500*8)/5000 = 1.8s.
     // The second packet will be transmitted at time 1.8+(500*8)/5000 = 2.6s.
     // The third packet will be transmitted at time 2.6+(500*8)/5000 = 3.4s.
 
-    Simulator::Stop(Seconds(5.0));
+    Simulator::Stop(Seconds(5));
 
     Ptr<QueueDisc> root =
         ap.Get(0)->GetObject<TrafficControlLayer>()->GetRootQueueDiscOnDevice(apDev.Get(0));
@@ -321,10 +310,10 @@ WifiAcMappingTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Access category mapping Test Suite
+ * @brief Access category mapping Test Suite
  */
 class WifiAcMappingTestSuite : public TestSuite
 {
@@ -333,12 +322,12 @@ class WifiAcMappingTestSuite : public TestSuite
 };
 
 WifiAcMappingTestSuite::WifiAcMappingTestSuite()
-    : TestSuite("wifi-ac-mapping", SYSTEM)
+    : TestSuite("wifi-ac-mapping", Type::SYSTEM)
 {
-    AddTestCase(new WifiAcMappingTest(0xb8, 2), TestCase::QUICK); // EF in AC_VI
-    AddTestCase(new WifiAcMappingTest(0x28, 1), TestCase::QUICK); // AF11 in AC_BK
-    AddTestCase(new WifiAcMappingTest(0x70, 0), TestCase::QUICK); // AF32 in AC_BE
-    AddTestCase(new WifiAcMappingTest(0xc0, 3), TestCase::QUICK); // CS7 in AC_VO
+    AddTestCase(new WifiAcMappingTest(0xb8, 2), TestCase::Duration::QUICK); // EF in AC_VI
+    AddTestCase(new WifiAcMappingTest(0x28, 1), TestCase::Duration::QUICK); // AF11 in AC_BK
+    AddTestCase(new WifiAcMappingTest(0x70, 0), TestCase::Duration::QUICK); // AF32 in AC_BE
+    AddTestCase(new WifiAcMappingTest(0xc0, 3), TestCase::Duration::QUICK); // CS7 in AC_VO
 }
 
 static WifiAcMappingTestSuite wifiAcMappingTestSuite;

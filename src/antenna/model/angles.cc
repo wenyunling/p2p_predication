@@ -1,25 +1,14 @@
 /*
  * Copyright (c) 2011, 2012 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
 
 #include "angles.h"
 
-#include <ns3/log.h>
+#include "ns3/log.h"
 
 #include <cmath>
 
@@ -210,8 +199,9 @@ Angles::Angles(Vector v)
     // azimuth and inclination angles for zero-length vectors are not defined
     if (v.x == 0.0 && v.y == 0.0 && v.z == 0.0)
     {
-        m_azimuth = NAN;
-        m_inclination = NAN;
+        // assume x and length equals to 1 mm to avoid nans
+        m_azimuth = std::atan2(v.y, 0.001);
+        m_inclination = std::acos(v.z / 0.001);
     }
 
     NormalizeAngles();

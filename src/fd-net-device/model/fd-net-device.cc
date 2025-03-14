@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012 INRIA, 2012 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Alina Quereilhac <alina.quereilhac@inria.fr>
  *         Claudio Freire <klaussfreire@sourceforge.net>
@@ -190,7 +179,7 @@ FdNetDevice::DoInitialize()
 {
     NS_LOG_FUNCTION(this);
     Start(m_tStart);
-    if (m_tStop != Seconds(0))
+    if (!m_tStop.IsZero())
     {
         Stop(m_tStop);
     }
@@ -337,12 +326,12 @@ FdNetDevice::ReceiveCallback(uint8_t* buf, ssize_t len)
 }
 
 /**
- * \ingroup fd-net-device
- * \brief Synthesize PI header for the kernel
- * \param buf the buffer to add the header to
- * \param len the buffer length
+ * @ingroup fd-net-device
+ * @brief Synthesize PI header for the kernel
+ * @param buf the buffer to add the header to
+ * @param len the buffer length
  *
- * \todo Consider having a instance member m_packetBuffer and using memmove
+ * @todo Consider having a instance member m_packetBuffer and using memmove
  * instead of memcpy to add the PI header. It might be faster in this case
  * to use memmove and avoid the extra mallocs.
  */
@@ -383,10 +372,10 @@ AddPIHeader(uint8_t*& buf, size_t& len)
 }
 
 /**
- * \ingroup fd-net-device
- * \brief Removes PI header
- * \param buf the buffer to add the header to
- * \param len the buffer length
+ * @ingroup fd-net-device
+ * @brief Removes PI header
+ * @param buf the buffer to add the header to
+ * @param len the buffer length
  */
 static void
 RemovePIHeader(uint8_t*& buf, ssize_t& len)
@@ -752,7 +741,7 @@ FdNetDevice::SetIsBroadcast(bool broadcast)
 Address
 FdNetDevice::GetBroadcast() const
 {
-    return Mac48Address("ff:ff:ff:ff:ff:ff");
+    return Mac48Address::GetBroadcast();
 }
 
 bool

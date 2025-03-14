@@ -1,18 +1,7 @@
 /*
  *  Copyright (c) 2007,2008, 2009 INRIA, UDcast
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mohamed Amine Ismail <amine.ismail@sophia.inria.fr>
  *                              <amine.ismail@udcast.com>
@@ -37,10 +26,10 @@ NS_LOG_COMPONENT_DEFINE("WimaxPhyTest");
  */
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Ns3 Wimax Simple OFDM Test Case
+ * @brief Ns3 Wimax Simple OFDM Test Case
  */
 class Ns3WimaxSimpleOFDMTestCase : public TestCase
 {
@@ -52,8 +41,8 @@ class Ns3WimaxSimpleOFDMTestCase : public TestCase
     void DoRun() override;
     /**
      * Run once function
-     * \param FrameDuration the frame duration
-     * \returns true if successful
+     * @param FrameDuration the frame duration
+     * @returns true if successful
      */
     bool DoRunOnce(double FrameDuration);
 };
@@ -121,10 +110,10 @@ Ns3WimaxSimpleOFDMTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Test the SNr tom block error rate module
+ * @brief Test the SNr tom block error rate module
  */
 class Ns3WimaxSNRtoBLERTestCase : public TestCase
 {
@@ -136,8 +125,8 @@ class Ns3WimaxSNRtoBLERTestCase : public TestCase
     void DoRun() override;
     /**
      * Run once function
-     * \param modulationType the modulation type
-     * \returns true if successful
+     * @param modulationType the modulation type
+     * @returns true if successful
      */
     bool DoRunOnce(uint8_t modulationType);
 };
@@ -176,10 +165,10 @@ Ns3WimaxSNRtoBLERTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief The test suite
+ * @brief The test suite
  */
 class Ns3WimaxPhyTestSuite : public TestSuite
 {
@@ -188,10 +177,10 @@ class Ns3WimaxPhyTestSuite : public TestSuite
 };
 
 Ns3WimaxPhyTestSuite::Ns3WimaxPhyTestSuite()
-    : TestSuite("wimax-phy-layer", UNIT)
+    : TestSuite("wimax-phy-layer", Type::UNIT)
 {
-    AddTestCase(new Ns3WimaxSNRtoBLERTestCase, TestCase::QUICK);
-    AddTestCase(new Ns3WimaxSimpleOFDMTestCase, TestCase::QUICK);
+    AddTestCase(new Ns3WimaxSNRtoBLERTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new Ns3WimaxSimpleOFDMTestCase, TestCase::Duration::QUICK);
 }
 
 static Ns3WimaxPhyTestSuite ns3WimaxPhyTestSuite; ///< the test suite

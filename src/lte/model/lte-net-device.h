@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 TELEMATICS LAB, DEE - Politecnico di Bari
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Giuseppe Piro <g.piro@poliba.it>
  *         Nicola Baldo  <nbaldo@cttc.es>
@@ -21,11 +10,11 @@
 #ifndef LTE_NET_DEVICE_H
 #define LTE_NET_DEVICE_H
 
-#include <ns3/event-id.h>
-#include <ns3/mac64-address.h>
-#include <ns3/net-device.h>
-#include <ns3/nstime.h>
-#include <ns3/traced-callback.h>
+#include "ns3/event-id.h"
+#include "ns3/mac64-address.h"
+#include "ns3/net-device.h"
+#include "ns3/nstime.h"
+#include "ns3/traced-callback.h"
 
 namespace ns3
 {
@@ -34,12 +23,12 @@ class Node;
 class Packet;
 
 /**
- * \defgroup lte LTE Models
+ * @defgroup lte LTE Models
  *
  */
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * LteNetDevice provides  basic implementation for all LTE network devices
  */
@@ -47,8 +36,8 @@ class LteNetDevice : public NetDevice
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -92,7 +81,7 @@ class LteNetDevice : public NetDevice
     /**
      * receive a packet from the lower layers in order to forward it to the upper layers
      *
-     * \param p the packet
+     * @param p the packet
      */
     void Receive(Ptr<Packet> p);
 

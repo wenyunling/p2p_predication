@@ -1,25 +1,16 @@
 /*
  * Copyright (c) 2016
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
 #include "wifi-utils.h"
 
+#include "ap-wifi-mac.h"
 #include "ctrl-headers.h"
+#include "gcr-manager.h"
 #include "wifi-mac-header.h"
 #include "wifi-mac-trailer.h"
 
@@ -30,25 +21,28 @@
 namespace ns3
 {
 
-double
-DbToRatio(double dB)
-{
-    return std::pow(10.0, 0.1 * dB);
-}
+const Time WIFI_TU = MicroSeconds(WIFI_TU_US);
 
 double
-DbmToW(double dBm)
+DbToRatio(dB_u val)
 {
-    return std::pow(10.0, 0.1 * (dBm - 30.0));
+    return std::pow(10.0, 0.1 * val);
 }
 
-double
-WToDbm(double w)
+Watt_u
+DbmToW(dBm_u val)
 {
-    return 10.0 * std::log10(w) + 30.0;
+    return std::pow(10.0, 0.1 * (val - 30.0));
 }
 
-double
+dBm_u
+WToDbm(Watt_u val)
+{
+    NS_ASSERT(val > 0.);
+    return 10.0 * std::log10(val) + 30.0;
+}
+
+dB_u
 RatioToDb(double ratio)
 {
     return 10.0 * std::log10(ratio);
@@ -57,9 +51,9 @@ RatioToDb(double ratio)
 uint32_t
 GetAckSize()
 {
-    WifiMacHeader ack;
-    ack.SetType(WIFI_MAC_CTL_ACK);
-    return ack.GetSize() + 4;
+    static const uint32_t size = WifiMacHeader(WIFI_MAC_CTL_ACK).GetSize() + 4;
+
+    return size;
 }
 
 uint32_t
@@ -102,17 +96,17 @@ GetMuBarSize(std::list<BlockAckReqType> types)
 uint32_t
 GetRtsSize()
 {
-    WifiMacHeader rts;
-    rts.SetType(WIFI_MAC_CTL_RTS);
-    return rts.GetSize() + 4;
+    static const uint32_t size = WifiMacHeader(WIFI_MAC_CTL_RTS).GetSize() + 4;
+
+    return size;
 }
 
 uint32_t
 GetCtsSize()
 {
-    WifiMacHeader cts;
-    cts.SetType(WIFI_MAC_CTL_CTS);
-    return cts.GetSize() + 4;
+    static const uint32_t size = WifiMacHeader(WIFI_MAC_CTL_CTS).GetSize() + 4;
+
+    return size;
 }
 
 bool
@@ -175,6 +169,32 @@ TidToLinkMappingValidForNegType1(const WifiTidLinkMapping& dlLinkMapping,
     }
 
     return true;
+}
+
+bool
+IsGroupcast(const Mac48Address& adr)
+{
+    return adr.IsGroup() && !adr.IsBroadcast();
+}
+
+bool
+IsGcr(Ptr<WifiMac> mac, const WifiMacHeader& hdr)
+{
+    auto apMac = DynamicCast<ApWifiMac>(mac);
+    return apMac && apMac->UseGcr(hdr);
+}
+
+Mac48Address
+GetIndividuallyAddressedRecipient(Ptr<WifiMac> mac, const WifiMacHeader& hdr)
+{
+    const auto isGcr = IsGcr(mac, hdr);
+    const auto addr1 = hdr.GetAddr1();
+    if (!isGcr)
+    {
+        return addr1;
+    }
+    auto apMac = DynamicCast<ApWifiMac>(mac);
+    return apMac->GetGcrManager()->GetIndividuallyAddressedRecipient(addr1);
 }
 
 } // namespace ns3

@@ -91,8 +91,8 @@ Please see below subsections for Python-related package requirements.
   +-----------------------------+------------------------------------------------------------+
   | GTK-based config store      | ``libgtk-3-dev``                                           |
   +-----------------------------+------------------------------------------------------------+
-  | Emulation with virtual      | ``lxc-utils lxc-templates``                                |
-  | machines and tap bridge     | ``vtun uml-utilities ebtables bridge-utils``               |
+  | Emulation with virtual      |                                                            |
+  | machines and tap bridge     | ``lxc-utils lxc-templates iproute2 iptables``              |
   +-----------------------------+------------------------------------------------------------+
   | Support for openflow        | ``libxml2 libxml2-dev libboost-all-dev``                   |
   +-----------------------------+------------------------------------------------------------+
@@ -103,9 +103,14 @@ Please see below subsections for Python-related package requirements.
 Python bindings
 ===============
 
-Python requires `Cppyy, <https://cppyy.readthedocs.io/en/latest/installation.html>` and specifically, version 2.4.2 is the latest version known to work with ns-3 at this time.
+Python requires `Cppyy, <https://cppyy.readthedocs.io/en/latest/installation.html>` and specifically,
+version 3.1.2 is the latest version known to work with ns-3 at this time.
 
-ns-3.37 and newer::
+ns-3.42 and newer::
+
+  python3 -m pip install --user cppyy==3.1.2
+
+ns-3.37-3.41::
 
   python3 -m pip install --user cppyy==2.4.2
 

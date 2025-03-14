@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 IITP RAS
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Denis Fakhriev <fakhriev@iitp.ru>
  */
@@ -101,6 +90,11 @@ SteadyStateRandomWaypointMobilityModel::SteadyStateRandomWaypointMobilityModel()
     m_position = CreateObject<RandomBoxPositionAllocator>();
 }
 
+SteadyStateRandomWaypointMobilityModel::~SteadyStateRandomWaypointMobilityModel()
+{
+    m_event.Cancel();
+}
+
 void
 SteadyStateRandomWaypointMobilityModel::DoInitialize()
 {
@@ -183,7 +177,7 @@ SteadyStateRandomWaypointMobilityModel::DoInitializePrivate()
         {
             pause = Seconds(u * expectedPauseTime);
         }
-        NS_ASSERT(!m_event.IsRunning());
+        NS_ASSERT(!m_event.IsPending());
         m_event =
             Simulator::Schedule(pause, &SteadyStateRandomWaypointMobilityModel::BeginWalk, this);
     }
@@ -209,7 +203,7 @@ SteadyStateRandomWaypointMobilityModel::DoInitializePrivate()
         double u2 = m_u_r->GetValue(0, 1);
         m_helper.SetPosition(
             Vector(m_minX + u2 * x1 + (1 - u2) * x2, m_minY + u2 * y1 + (1 - u2) * y2, m_z));
-        NS_ASSERT(!m_event.IsRunning());
+        NS_ASSERT(!m_event.IsPending());
         m_event =
             Simulator::ScheduleNow(&SteadyStateRandomWaypointMobilityModel::SteadyStateBeginWalk,
                                    this,

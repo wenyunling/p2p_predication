@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2020
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Stefano Avallone <stavallo@unina.it>
  *          Rémy Grünblatt <remy@grunblatt.org>
@@ -39,10 +28,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test for issue 211 (https://gitlab.com/nsnam/ns-3-dev/-/issues/211)
+ * @brief Test for issue 211 (https://gitlab.com/nsnam/ns-3-dev/-/issues/211)
  *
  * This test aims to check that the transmission of data frames (under a
  * Block Ack agreement) resumes after a period in which the connectivity
@@ -59,7 +48,7 @@ class Issue211Test : public TestCase
 {
   public:
     /**
-     * \brief Constructor
+     * @brief Constructor
      */
     Issue211Test();
     ~Issue211Test() override;
@@ -69,7 +58,7 @@ class Issue211Test : public TestCase
   private:
     /**
      * Compute the average throughput since the last check-point
-     * \param server the UDP server
+     * @param server the UDP server
      */
     void CalcThroughput(Ptr<UdpServer> server);
 
@@ -82,7 +71,7 @@ class Issue211Test : public TestCase
 Issue211Test::Issue211Test()
     : TestCase("Test case for resuming data transmission when the recipient moves back"),
       m_lastRxBytes(0),
-      m_lastCheckPointTime(Seconds(0)),
+      m_lastCheckPointTime(),
       m_payloadSize(2000)
 {
 }
@@ -105,9 +94,9 @@ Issue211Test::CalcThroughput(Ptr<UdpServer> server)
 void
 Issue211Test::DoRun()
 {
-    Time simulationTime(Seconds(6.0));
-    Time moveAwayTime(Seconds(2.0));
-    Time moveBackTime(Seconds(4.0));
+    Time simulationTime(Seconds(6));
+    Time moveAwayTime(Seconds(2));
+    Time moveBackTime(Seconds(4));
 
     RngSeedManager::SetSeed(1);
     RngSeedManager::SetRun(40);
@@ -153,7 +142,7 @@ Issue211Test::DoRun()
     NetDeviceContainer apDevices = wifi.Install(phy, mac, wifiApNode);
 
     // Assign fixed streams to random variables in use
-    wifi.AssignStreams(apDevices, streamNumber);
+    WifiHelper::AssignStreams(apDevices, streamNumber);
 
     MobilityHelper mobility;
     Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator>();
@@ -180,12 +169,12 @@ Issue211Test::DoRun()
     apNodeInterface = address.Assign(apDevices.Get(0));
 
     ApplicationContainer serverApp;
-    Time warmup(Seconds(1.0)); // to account for association
+    Time warmup(Seconds(1)); // to account for association
 
     uint16_t port = 9;
     UdpServerHelper server(port);
     serverApp = server.Install(wifiStaNode.Get(0));
-    serverApp.Start(Seconds(0.0));
+    serverApp.Start(Seconds(0));
     serverApp.Stop(warmup + simulationTime);
 
     UdpClientHelper client(staNodeInterface.GetAddress(0), port);
@@ -246,10 +235,10 @@ Issue211Test::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Block Ack Test Suite
+ * @brief Block Ack Test Suite
  */
 class Issue211TestSuite : public TestSuite
 {
@@ -258,9 +247,9 @@ class Issue211TestSuite : public TestSuite
 };
 
 Issue211TestSuite::Issue211TestSuite()
-    : TestSuite("wifi-issue-211", UNIT)
+    : TestSuite("wifi-issue-211", Type::UNIT)
 {
-    AddTestCase(new Issue211Test, TestCase::QUICK);
+    AddTestCase(new Issue211Test, TestCase::Duration::QUICK);
 }
 
 static Issue211TestSuite g_issue211TestSuite; ///< the test suite

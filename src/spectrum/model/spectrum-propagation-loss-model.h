@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -22,8 +11,8 @@
 
 #include "spectrum-value.h"
 
-#include <ns3/mobility-model.h>
-#include <ns3/object.h>
+#include "ns3/mobility-model.h"
+#include "ns3/object.h"
 
 namespace ns3
 {
@@ -31,9 +20,9 @@ namespace ns3
 struct SpectrumSignalParameters;
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  *
- * \brief spectrum-aware propagation loss model
+ * @brief spectrum-aware propagation loss model
  *
  * Interface for propagation loss models to be adopted when
  * transmissions are modeled with a power spectral density by means of
@@ -47,8 +36,8 @@ class SpectrumPropagationLossModel : public Object
     ~SpectrumPropagationLossModel() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -88,8 +77,8 @@ class SpectrumPropagationLossModel : public Object
      * together, this method will also assign streams to the
      * downstream models.
      *
-     * \param stream the stream index offset start
-     * \return the number of stream indices assigned by this model
+     * @param stream the stream index offset start
+     * @return the number of stream indices assigned by this model
      */
     int64_t AssignStreams(int64_t stream);
 
@@ -100,8 +89,8 @@ class SpectrumPropagationLossModel : public Object
      *
      * Subclasses must implement this; those not using random variables can return zero.
      *
-     * \param stream first stream index to use
-     * \return the number of stream indices assigned by this model
+     * @param stream first stream index to use
+     * @return the number of stream indices assigned by this model
      */
     virtual int64_t DoAssignStreams(int64_t stream) = 0;
 

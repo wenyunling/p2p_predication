@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 The Boeing Company
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  */
 
@@ -50,14 +39,14 @@
 // The configurable parameters are:
 //   - Prss (primary rss) (-80 dBm default)
 //   - Irss (interfering rss) (-95 dBm default)
-//   - delta (microseconds, (t1-t0), may be negative, default 0)
+//   - delta (t1-t0, may be negative, default 0ns)
 //   - PpacketSize (primary packet size) (bytes, default 1000)
 //   - IpacketSize (interferer packet size) (bytes, default 1000)
 //
 // For instance, for this configuration, the interfering frame arrives
 // at -90 dBm with a time offset of 3.2 microseconds:
 //
-// ./ns3 run "wifi-simple-interference --Irss=-90 --delta=3.2"
+// ./ns3 run "wifi-simple-interference --Irss=-90 --delta=3.2ns"
 //
 // Note that all ns-3 attributes (not just the ones exposed in the below
 // script) can be changed at command line; see the documentation.
@@ -77,7 +66,7 @@
 //
 // Next, try this command and look at the tcpdump-- you should see two packets
 // that are no longer interfering:
-// ./ns3 run "wifi-simple-interference --delta=30000"
+// ./ns3 run "wifi-simple-interference --delta=30000ns"
 
 #include "ns3/command-line.h"
 #include "ns3/config.h"
@@ -98,8 +87,8 @@ NS_LOG_COMPONENT_DEFINE("WifiSimpleInterference");
 /**
  * Print a packer that has been received.
  *
- * \param socket The receiving socket.
- * \return a string with the packet details.
+ * @param socket The receiving socket.
+ * @return a string with the packet details.
  */
 static inline std::string
 PrintReceivedPacket(Ptr<Socket> socket)
@@ -122,7 +111,7 @@ PrintReceivedPacket(Ptr<Socket> socket)
 /**
  * Function called when a packet is received.
  *
- * \param socket The receiving socket.
+ * @param socket The receiving socket.
  */
 static void
 ReceivePacket(Ptr<Socket> socket)
@@ -133,10 +122,10 @@ ReceivePacket(Ptr<Socket> socket)
 /**
  * Generate traffic
  *
- * \param socket The seding socket.
- * \param pktSize The packet size.
- * \param pktCount The packet counter.
- * \param pktInterval The interval between two packets.
+ * @param socket The sending socket.
+ * @param pktSize The packet size.
+ * @param pktCount The packet counter.
+ * @param pktInterval The interval between two packets.
  */
 static void
 GenerateTraffic(Ptr<Socket> socket, uint32_t pktSize, uint32_t pktCount, Time pktInterval)
@@ -160,33 +149,31 @@ GenerateTraffic(Ptr<Socket> socket, uint32_t pktSize, uint32_t pktCount, Time pk
 int
 main(int argc, char* argv[])
 {
-    std::string phyMode("DsssRate1Mbps");
-    double Prss = -80;           // -dBm
-    double Irss = -95;           // -dBm
-    double delta = 0;            // microseconds
-    uint32_t PpacketSize = 1000; // bytes
-    uint32_t IpacketSize = 1000; // bytes
-    bool verbose = false;
+    std::string phyMode{"DsssRate1Mbps"};
+    dBm_u Prss{-80};
+    dBm_u Irss{-95};
+    Time delta{"0ns"};
+    uint32_t PpacketSize{1000}; // bytes
+    uint32_t IpacketSize{1000}; // bytes
+    bool verbose{false};
 
     // these are not command line arguments for this version
-    uint32_t numPackets = 1;
-    double interval = 1.0;       // seconds
-    double startTime = 10.0;     // seconds
-    double distanceToRx = 100.0; // meters
+    uint32_t numPackets{1};
+    Time interPacketInterval{"1s"};
+    Time startTime{"10s"};
+    meter_u distanceToRx{100.0};
 
-    double offset = 91; // This is a magic number used to set the
-                        // transmit power, based on other configuration
+    double offset{91}; // This is a magic number used to set the
+                       // transmit power, based on other configuration
     CommandLine cmd(__FILE__);
     cmd.AddValue("phyMode", "Wifi Phy mode", phyMode);
     cmd.AddValue("Prss", "Intended primary received signal strength (dBm)", Prss);
     cmd.AddValue("Irss", "Intended interfering received signal strength (dBm)", Irss);
-    cmd.AddValue("delta", "time offset (microseconds) for interfering signal", delta);
+    cmd.AddValue("delta", "time offset for interfering signal", delta);
     cmd.AddValue("PpacketSize", "size of application packet sent", PpacketSize);
     cmd.AddValue("IpacketSize", "size of interfering packet sent", IpacketSize);
     cmd.AddValue("verbose", "turn on all WifiNetDevice log components", verbose);
     cmd.Parse(argc, argv);
-    // Convert to time object
-    Time interPacketInterval = Seconds(interval);
 
     // Fix non-unicast data rate to be the same as that of unicast
     Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue(phyMode));
@@ -266,10 +253,10 @@ main(int argc, char* argv[])
 
     // Output what we are doing
     NS_LOG_UNCOND("Primary packet RSS=" << Prss << " dBm and interferer RSS=" << Irss
-                                        << " dBm at time offset=" << delta << " ms");
+                                        << " dBm at time offset=" << delta.As(Time::US));
 
     Simulator::ScheduleWithContext(source->GetNode()->GetId(),
-                                   Seconds(startTime),
+                                   startTime,
                                    &GenerateTraffic,
                                    source,
                                    PpacketSize,
@@ -277,7 +264,7 @@ main(int argc, char* argv[])
                                    interPacketInterval);
 
     Simulator::ScheduleWithContext(interferer->GetNode()->GetId(),
-                                   Seconds(startTime + delta / 1000000.0),
+                                   startTime + delta,
                                    &GenerateTraffic,
                                    interferer,
                                    IpacketSize,

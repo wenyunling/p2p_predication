@@ -3,18 +3,7 @@
  * Copyright (c) 2007-2009 Strasbourg University (original Ping6 code)
  * Copyright (c) 2008 INRIA (original Ping code)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Chandrakant Jena <chandrakant.barcelona@gmail.com>
  *         Tommaso Pecorella <tommaso.pecorella@unifi.it>
@@ -462,7 +451,6 @@ Ping::Send()
         }
         p->AddHeader(header);
         auto dest = InetSocketAddress(Ipv4Address::ConvertFrom(m_destination), 0);
-        dest.SetTos(m_tos);
         returnValue = m_socket->SendTo(p, 0, dest);
     }
     else
@@ -563,6 +551,7 @@ Ping::StartApplication()
         NS_ASSERT_MSG(m_socket, "Ping::StartApplication: can not create socket.");
         m_socket->SetAttribute("Protocol", UintegerValue(1)); // icmp
         m_socket->SetRecvCallback(MakeCallback(&Ping::Receive, this));
+        m_socket->SetIpTos(m_tos);
         m_useIpv6 = false;
 
         Ipv4Address dst = Ipv4Address::ConvertFrom(m_destination);
@@ -626,11 +615,11 @@ void
 Ping::StopApplication()
 {
     NS_LOG_FUNCTION(this);
-    if (m_stopEvent.IsRunning())
+    if (m_stopEvent.IsPending())
     {
         m_stopEvent.Cancel();
     }
-    if (m_next.IsRunning())
+    if (m_next.IsPending())
     {
         m_next.Cancel();
     }

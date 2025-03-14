@@ -1,25 +1,15 @@
 /*
  * Copyright (c) 2009 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Leonard Tracy <lentracy@gmail.com>
  */
 
 /**
- * \file uan-rc-example.cc
- * \ingroup UAN
+ * @file uan-rc-example.cc
+ * @ingroup uan
+ *
  * This example uses UanMacRc and UanMacRcGw which combined form a system
  * using what is referred to as RC-MAC.  Details of RC-MAC will be published
  * soon.  In brief terms, RC-MAC is a dual channel protocol wherein the

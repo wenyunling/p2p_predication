@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2008 Drexel University
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Joe Kopena (tjkopena@cs.drexel.edu)
  */
@@ -77,7 +66,8 @@ isNumeric(const std::string& s)
 
     for (auto it = s.begin(); it != s.end(); it++)
     {
-        if ((*it == '.') && (decimalPtSeen))
+        if ((*it == '.' && decimalPtSeen) || (*it == 'e' && exponentSeen) ||
+            (*it == '-' && it != s.begin() && last != 'e'))
         {
             return false;
         }
@@ -85,18 +75,10 @@ isNumeric(const std::string& s)
         {
             decimalPtSeen = true;
         }
-        else if ((*it == 'e') && exponentSeen)
-        {
-            return false;
-        }
         else if (*it == 'e')
         {
             exponentSeen = true;
             decimalPtSeen = false;
-        }
-        else if (*it == '-' && it != s.begin() && last != 'e')
-        {
-            return false;
         }
 
         last = *it;
@@ -113,7 +95,7 @@ OmnetDataOutput::Output(DataCollector& dc)
     std::string fn = m_filePrefix + "-" + dc.GetRunLabel() + ".sca";
     scalarFile.open(fn, std::ios_base::out);
 
-    /// \todo add timestamp to the runlevel
+    /// @todo add timestamp to the runlevel
     scalarFile << "run " << dc.GetRunLabel() << std::endl;
     scalarFile << "attr experiment \"" << dc.GetExperimentLabel() << "\"" << std::endl;
     scalarFile << "attr strategy \"" << dc.GetStrategyLabel() << "\"" << std::endl;
@@ -122,7 +104,7 @@ OmnetDataOutput::Output(DataCollector& dc)
 
     for (auto i = dc.MetadataBegin(); i != dc.MetadataEnd(); i++)
     {
-        std::pair<std::string, std::string> blob = (*i);
+        const auto& blob = (*i);
         scalarFile << "attr \"" << blob.first << "\" \"" << blob.second << "\"" << std::endl;
     }
 
@@ -133,7 +115,7 @@ OmnetDataOutput::Output(DataCollector& dc)
     }
     for (auto i = dc.MetadataBegin(); i != dc.MetadataEnd(); i++)
     {
-        std::pair<std::string, std::string> blob = (*i);
+        const auto& blob = (*i);
         if (isNumeric(blob.second))
         {
             scalarFile << "scalar . \"" << blob.first << "\" \"" << blob.second << "\""
@@ -175,31 +157,31 @@ OmnetDataOutput::OmnetOutputCallback::OutputStatistic(std::string context,
         name = "\"\"";
     }
     (*m_scalar) << "statistic " << context << " " << name << std::endl;
-    if (!isNaN(statSum->getCount()))
+    if (!std::isnan(statSum->getCount()))
     {
         (*m_scalar) << "field count " << statSum->getCount() << std::endl;
     }
-    if (!isNaN(statSum->getSum()))
+    if (!std::isnan(statSum->getSum()))
     {
         (*m_scalar) << "field sum " << statSum->getSum() << std::endl;
     }
-    if (!isNaN(statSum->getMean()))
+    if (!std::isnan(statSum->getMean()))
     {
         (*m_scalar) << "field mean " << statSum->getMean() << std::endl;
     }
-    if (!isNaN(statSum->getMin()))
+    if (!std::isnan(statSum->getMin()))
     {
         (*m_scalar) << "field min " << statSum->getMin() << std::endl;
     }
-    if (!isNaN(statSum->getMax()))
+    if (!std::isnan(statSum->getMax()))
     {
         (*m_scalar) << "field max " << statSum->getMax() << std::endl;
     }
-    if (!isNaN(statSum->getSqrSum()))
+    if (!std::isnan(statSum->getSqrSum()))
     {
         (*m_scalar) << "field sqrsum " << statSum->getSqrSum() << std::endl;
     }
-    if (!isNaN(statSum->getStddev()))
+    if (!std::isnan(statSum->getStddev()))
     {
         (*m_scalar) << "field stddev " << statSum->getStddev() << std::endl;
     }

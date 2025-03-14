@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007 INESC Porto
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Gustavo J. A. M. Carneiro  <gjc@inescporto.pt>
  */
@@ -40,10 +29,10 @@ namespace olsr
 #define OLSR_C 0.0625
 
 ///
-/// \brief Converts a decimal number of seconds to the mantissa/exponent format.
+/// @brief Converts a decimal number of seconds to the mantissa/exponent format.
 ///
-/// \param seconds decimal number of seconds we want to convert.
-/// \return the number of seconds in mantissa/exponent format.
+/// @param seconds decimal number of seconds we want to convert.
+/// @return the number of seconds in mantissa/exponent format.
 ///
 uint8_t
 SecondsToEmf(double seconds)
@@ -83,10 +72,10 @@ SecondsToEmf(double seconds)
 }
 
 ///
-/// \brief Converts a number of seconds in the mantissa/exponent format to a decimal number.
+/// @brief Converts a number of seconds in the mantissa/exponent format to a decimal number.
 ///
-/// \param olsrFormat number of seconds in mantissa/exponent format.
-/// \return the decimal number of seconds.
+/// @param olsrFormat number of seconds in mantissa/exponent format.
+/// @return the decimal number of seconds.
 ///
 double
 EmfToSeconds(uint8_t olsrFormat)
@@ -604,7 +593,7 @@ MessageHeader::Hna::Deserialize(Buffer::Iterator start, uint32_t messageSize)
     {
         Ipv4Address address(i.ReadNtohU32());
         Ipv4Mask mask(i.ReadNtohU32());
-        this->associations.push_back((Association){address, mask});
+        this->associations.push_back(Association{address, mask});
     }
     return messageSize;
 }

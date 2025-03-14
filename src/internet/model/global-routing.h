@@ -1,29 +1,18 @@
 /*
  * Copyright 2008 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  */
 
 /**
- * \ingroup ipv4Routing
- * \defgroup globalrouting Global Routing.
+ * @ingroup ipv4Routing
+ * @defgroup globalrouting Global Routing.
  *
  * Performs pre-simulation static route computation
  * on a layer-3 IPv4 topology.
  *
- * \section model Model
+ * @section model Model
  *
  * ns-3 global routing performs pre-simulation static route computation
  * on a layer-3 IPv4 topology.  The user API from the script level is
@@ -47,7 +36,7 @@
  *   There is a helper method that encapsulates this
  *   (Ipv4GlobalRoutingHelper::RecomputeRoutingTables())
  *
- * \section api API and Usage
+ * @section api API and Usage
  *
  * Users must include ns3/global-route-manager.h header file.  After the
  * IPv4 topology has been built and addresses assigned, users call
@@ -58,7 +47,7 @@
  * - Ipv4GlobalRouting::RandomEcmpRouting
  * - Ipv4GlobalRouting::RespondToInterfaceEvents
  *
- * \section impl Implementation
+ * @section impl Implementation
  *
  * A singleton object, ns3::GlobalRouteManager, builds a global routing
  * database of information about the topology, and executes a Dijkstra

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2022 Universita' degli Studi di Napoli Federico II
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Stefano Avallone <stavallo@unina.it>
  */
@@ -30,7 +19,7 @@ namespace ns3
 class WifiMpdu;
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * Definition of priority for container queues.
  */
@@ -41,20 +30,20 @@ struct FcfsPrio
 };
 
 /**
- * \param lhs the left hand side priority
- * \param rhs the right hand side priority
- * \return whether the left hand side priority is equal to the right hand side priority
+ * @param lhs the left hand side priority
+ * @param rhs the right hand side priority
+ * @return whether the left hand side priority is equal to the right hand side priority
  */
 bool operator==(const FcfsPrio& lhs, const FcfsPrio& rhs);
 /**
- * \param lhs the left hand side priority
- * \param rhs the right hand side priority
- * \return whether the left hand side priority is less than the right hand side priority
+ * @param lhs the left hand side priority
+ * @param rhs the right hand side priority
+ * @return whether the left hand side priority is less than the right hand side priority
  */
 bool operator<(const FcfsPrio& lhs, const FcfsPrio& rhs);
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * FcfsWifiQueueScheduler is a wifi queue scheduler that serves data frames in a
  * first come first serve fashion. Control frames have the highest priority.
@@ -65,8 +54,8 @@ class FcfsWifiQueueScheduler : public WifiMacQueueSchedulerImpl<FcfsPrio>
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 

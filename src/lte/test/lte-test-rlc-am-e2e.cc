@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  *         Nicola Baldo <nbaldo@cttc.es>
@@ -41,7 +30,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("LteRlcAmE2eTest");
 
 LteRlcAmE2eTestSuite::LteRlcAmE2eTestSuite()
-    : TestSuite("lte-rlc-am-e2e", SYSTEM)
+    : TestSuite("lte-rlc-am-e2e", Type::SYSTEM)
 {
     // NS_LOG_INFO ("Creating LteRlcAmE2eTestSuite");
 
@@ -77,18 +66,18 @@ LteRlcAmE2eTestSuite::LteRlcAmE2eTestSuite()
                     break;
                 }
 
-                TestCase::TestDuration testDuration;
+                TestCase::Duration testDuration;
                 if (l == 1 && s == 0)
                 {
-                    testDuration = TestCase::QUICK;
+                    testDuration = TestCase::Duration::QUICK;
                 }
                 else if (s <= 4)
                 {
-                    testDuration = TestCase::EXTENSIVE;
+                    testDuration = TestCase::Duration::EXTENSIVE;
                 }
                 else
                 {
-                    testDuration = TestCase::TAKES_FOREVER;
+                    testDuration = TestCase::Duration::TAKES_FOREVER;
                 }
                 AddTestCase(new LteRlcAmE2eTestCase(name.str(), runs[s], losses[l], bulkSduArrival),
                             testDuration);
@@ -98,7 +87,7 @@ LteRlcAmE2eTestSuite::LteRlcAmE2eTestSuite()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteRlcAmE2eTestSuite lteRlcAmE2eTestSuite;

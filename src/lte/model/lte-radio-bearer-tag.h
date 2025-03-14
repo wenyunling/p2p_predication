@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Author: Marco Miozzo  <marco.miozzo@cttc.es>
  */
@@ -34,8 +23,8 @@ class LteRadioBearerTag : public Tag
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -47,16 +36,16 @@ class LteRadioBearerTag : public Tag
 
     /**
      * Create a LteRadioBearerTag with the given RNTI and LC id
-     * \param rnti the RNTI
-     * \param lcId the LCID
+     * @param rnti the RNTI
+     * @param lcId the LCID
      */
     LteRadioBearerTag(uint16_t rnti, uint8_t lcId);
 
     /**
      * Create a LteRadioBearerTag with the given RNTI, LC id and layer
-     * \param rnti the RNTI
-     * \param lcId the LCID
-     * \param layer the layer
+     * @param rnti the RNTI
+     * @param lcId the LCID
+     * @param layer the layer
      */
     LteRadioBearerTag(uint16_t rnti, uint8_t lcId, uint8_t layer);
 
@@ -89,19 +78,19 @@ class LteRadioBearerTag : public Tag
     /**
      * Get RNTI function
      *
-     * \returns RNTI
+     * @returns RNTI
      */
     uint16_t GetRnti() const;
     /**
      * Get LCID function
      *
-     * \returns LCID
+     * @returns LCID
      */
     uint8_t GetLcid() const;
     /**
      * Get layer function
      *
-     * \returns layer
+     * @returns layer
      */
     uint8_t GetLayer() const;
 

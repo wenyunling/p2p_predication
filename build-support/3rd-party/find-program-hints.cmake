@@ -1,4 +1,11 @@
+# Copyright (c) 2022 Universidade de Brasília
+#
+# SPDX-License-Identifier: GPL-2.0-only
+#
+# Author: Gabriel Ferreira <gabrielcarvfer@gmail.com>
+
 disable_cmake_warnings()
+string(REPLACE ";" "/bin;" syspaths "${CMAKE_SYSTEM_PREFIX_PATH};")
 set(3RD_PARTY_FIND_PROGRAM_HINTS
     # find_program HINTS for Doxygen
     # https://gitlab.kitware.com/cmake/cmake/-/blob/master/Modules/FindDoxygen.cmake
@@ -18,5 +25,6 @@ set(3RD_PARTY_FIND_PROGRAM_HINTS
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\ATT\\Graphviz;InstallPath]/bin"
     /Applications/Graphviz.app/Contents/MacOS
     /Applications/Utilities/Graphviz.app/Contents/MacOS
+    ${syspaths}
 )
 enable_cmake_warnings()

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Leonard Tracy <lentracy@gmail.com>
  *         Andrea Sacco <andrea.sacco85@gmail.com>
@@ -35,7 +24,7 @@ namespace ns3
 {
 
 /**
- * \ingroup uan
+ * @ingroup uan
  *
  * Default Packet Error Rate calculator for UanPhyGen
  *
@@ -52,7 +41,7 @@ class UanPhyPerGenDefault : public UanPhyPer
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
@@ -64,7 +53,7 @@ class UanPhyPerGenDefault : public UanPhyPer
 }; // class UanPhyPerGenDefault
 
 /**
- * \ingroup uan
+ * @ingroup uan
  *
  * Packet error rate calculation assuming WHOI Micromodem-like PHY (FH-FSK)
  *
@@ -82,7 +71,7 @@ class UanPhyPerUmodem : public UanPhyPer
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
@@ -96,10 +85,10 @@ class UanPhyPerUmodem : public UanPhyPer
      * of correcting one bit error.  These equations can be found in
      * the book, Digital Communications, by Proakis (any version I think).
      *
-     * \param pkt Packet which is under consideration.
-     * \param sinrDb SINR at receiver.
-     * \param mode TX mode used to transmit packet.
-     * \return Probability of packet error.
+     * @param pkt Packet which is under consideration.
+     * @param sinrDb SINR at receiver.
+     * @param mode TX mode used to transmit packet.
+     * @return Probability of packet error.
      */
     double CalcPer(Ptr<Packet> pkt, double sinrDb, UanTxMode mode) override;
 
@@ -107,16 +96,16 @@ class UanPhyPerUmodem : public UanPhyPer
     /**
      * Binomial coefficient
      *
-     * \param n Pool size.
-     * \param k Number of draws.
-     * \return Binomial coefficient n choose k.
+     * @param n Pool size.
+     * @param k Number of draws.
+     * @return Binomial coefficient n choose k.
      */
     double NChooseK(uint32_t n, uint32_t k);
 
 }; // class UanPhyPerUmodem
 
 /**
- * \ingroup uan
+ * @ingroup uan
  *
  * Packet error rate calculation for common tx modes based on UanPhyPerUmodem
  *
@@ -133,7 +122,7 @@ class UanPhyPerCommonModes : public UanPhyPer
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
@@ -144,17 +133,17 @@ class UanPhyPerCommonModes : public UanPhyPer
      * This implementation calculates PER for common UanTxMode modulations,
      * by deriving PER from the BER taken from literature's formulas.
      *
-     * \param pkt Packet which is under consideration.
-     * \param sinrDb SINR at receiver.
-     * \param mode TX mode used to transmit packet.
-     * \return Probability of packet error.
+     * @param pkt Packet which is under consideration.
+     * @param sinrDb SINR at receiver.
+     * @param mode TX mode used to transmit packet.
+     * @return Probability of packet error.
      */
     double CalcPer(Ptr<Packet> pkt, double sinrDb, UanTxMode mode) override;
 
 }; // class UanPhyPerCommonModes
 
 /**
- * \ingroup uan
+ * @ingroup uan
  *
  * Default SINR calculator for UanPhyGen.
  *
@@ -172,7 +161,7 @@ class UanPhyCalcSinrDefault : public UanPhyCalcSinr
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
@@ -182,14 +171,14 @@ class UanPhyCalcSinrDefault : public UanPhyCalcSinr
      * This implementation simply adds all arriving signal power
      * and assumes it acts identically to additional noise.
      *
-     * \param pkt Packet to calculate SINR for.
-     * \param arrTime Arrival time of pkt.
-     * \param rxPowerDb The received signal strength of the packet in dB re 1 uPa.
-     * \param ambNoiseDb Ambient channel noise in dB re 1 uPa.
-     * \param mode TX Mode of pkt.
-     * \param pdp  Power delay profile of pkt.
-     * \param arrivalList  List of interfering arrivals given from Transducer.
-     * \return The SINR in dB re 1 uPa.
+     * @param pkt Packet to calculate SINR for.
+     * @param arrTime Arrival time of pkt.
+     * @param rxPowerDb The received signal strength of the packet in dB re 1 uPa.
+     * @param ambNoiseDb Ambient channel noise in dB re 1 uPa.
+     * @param mode TX Mode of pkt.
+     * @param pdp  Power delay profile of pkt.
+     * @param arrivalList  List of interfering arrivals given from Transducer.
+     * @return The SINR in dB re 1 uPa.
      */
     double CalcSinrDb(Ptr<Packet> pkt,
                       Time arrTime,
@@ -202,7 +191,7 @@ class UanPhyCalcSinrDefault : public UanPhyCalcSinr
 }; // class UanPhyCalcSinrDefault
 
 /**
- * \ingroup uan
+ * @ingroup uan
  *
  * WHOI Micromodem like FH-FSK model.
  *
@@ -230,7 +219,7 @@ class UanPhyCalcSinrFhFsk : public UanPhyCalcSinr
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
@@ -248,7 +237,7 @@ class UanPhyCalcSinrFhFsk : public UanPhyCalcSinr
 }; // class UanPhyCalcSinrFhFsk
 
 /**
- * \ingroup uan
+ * @ingroup uan
  *
  * Generic PHY model.
  *
@@ -267,18 +256,18 @@ class UanPhyGen : public UanPhy
     /**
      * Get the default transmission modes.
      *
-     * \return The default mode list.
+     * @return The default mode list.
      */
     static UanModesList GetDefaultModes();
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
     // Inherited methods
-    void SetEnergyModelCallback(DeviceEnergyModel::ChangeStateCallback cb) override;
+    void SetEnergyModelCallback(energy::DeviceEnergyModel::ChangeStateCallback cb) override;
     void EnergyDepletionHandler() override;
     void EnergyRechargeHandler() override;
     void SendPacket(Ptr<Packet> pkt, uint32_t modeNum) override;
@@ -352,7 +341,7 @@ class UanPhyGen : public UanPhy
     Ptr<UniformRandomVariable> m_pg;
 
     /** Energy model callback. */
-    DeviceEnergyModel::ChangeStateCallback m_energyCallback;
+    energy::DeviceEnergyModel::ChangeStateCallback m_energyCallback;
     /** A packet destined for this Phy was received without error. */
     ns3::TracedCallback<Ptr<const Packet>, double, UanTxMode> m_rxOkLogger;
     /** A packet destined for this Phy was received with error. */
@@ -363,12 +352,12 @@ class UanPhyGen : public UanPhy
     /**
      * Calculate the SINR value for a packet.
      *
-     * \param pkt Packet to calculate SINR for.
-     * \param arrTime Arrival time of pkt.
-     * \param rxPowerDb The received signal strength of the packet in dB re 1 uPa.
-     * \param mode TX Mode of pkt.
-     * \param pdp  Power delay profile of pkt.
-     * \return The SINR in dB re 1 uPa.
+     * @param pkt Packet to calculate SINR for.
+     * @param arrTime Arrival time of pkt.
+     * @param rxPowerDb The received signal strength of the packet in dB re 1 uPa.
+     * @param mode TX Mode of pkt.
+     * @param pdp  Power delay profile of pkt.
+     * @return The SINR in dB re 1 uPa.
      */
     double CalculateSinrDb(Ptr<Packet> pkt,
                            Time arrTime,
@@ -383,8 +372,8 @@ class UanPhyGen : public UanPhy
      * GetInterferenceDb ( (Ptr<Packet>) 0) to treat all signals as
      * interference, for instance in calculating the CCA busy.
      *
-     * \param pkt The arriving (signal) packet.
-     * \return The total interference power, in dB.
+     * @param pkt The arriving (signal) packet.
+     * @return The total interference power, in dB.
      */
     double GetInterferenceDb(Ptr<Packet> pkt);
     /**
@@ -392,8 +381,8 @@ class UanPhyGen : public UanPhy
      *
      *   \f[{\rm{kPa}} = {10^{\frac{{{\rm{dB}}}}{{10}}}}\f]
      *
-     * \param db Signal level in dB.
-     * \return Sound pressure in kPa.
+     * @param db Signal level in dB.
+     * @return Sound pressure in kPa.
      */
     double DbToKp(double db);
     /**
@@ -401,16 +390,16 @@ class UanPhyGen : public UanPhy
      *
      *   \f[{\rm{dB}} = 10{\log _{10}}{\rm{kPa}}\f]
      *
-     * \param kp Sound pressure in kPa.
-     * \return Signal level in dB.
+     * @param kp Sound pressure in kPa.
+     * @return Signal level in dB.
      */
     double KpToDb(double kp);
     /**
      * Event to process end of packet reception.
      *
-     * \param pkt The packet.
-     * \param rxPowerDb Received signal power.
-     * \param txMode Transmission mode.
+     * @param pkt The packet.
+     * @param rxPowerDb Received signal power.
+     * @param txMode Transmission mode.
      */
     void RxEndEvent(Ptr<Packet> pkt, double rxPowerDb, UanTxMode txMode);
     /** Event to process end of packet transmission. */
@@ -418,7 +407,7 @@ class UanPhyGen : public UanPhy
     /**
      * Update energy source with new state.
      *
-     * \param state The new Phy state.
+     * @param state The new Phy state.
      */
     void UpdatePowerConsumption(const State state);
 
@@ -435,7 +424,7 @@ class UanPhyGen : public UanPhy
     /**
      * Call UanListener::NotifyTxStart on all listeners.
      *
-     * \param duration Duration of transmission.
+     * @param duration Duration of transmission.
      */
     void NotifyListenersTxStart(Time duration);
     /**

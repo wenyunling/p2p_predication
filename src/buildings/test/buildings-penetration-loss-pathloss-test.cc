@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2023 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #include "ns3/abort.h"
@@ -36,7 +25,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("BuildingsPenetrationLossesTest");
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
  * Test case for the 3GPP channel O2I building penetration losses.
  * It considers pre-determined scenarios and based on the outdoor/indoor
@@ -79,7 +68,6 @@ class BuildingsPenetrationLossesTestCase : public TestCase
         Vector m_positionA; //!< the position of the first node
         Vector m_positionB; //!< the position of the second node
         double m_frequency; //!< carrier frequency in Hz
-        bool m_isLos;       //!< LOS probability
         TypeId m_condModel; //!< the type ID of the channel condition model to be used
         TypeId m_propModel; //!< the type ID of the propagation loss model to be used
         double m_pt;        //!< transmitted power in dBm
@@ -260,7 +248,7 @@ BuildingsPenetrationLossesTestCase::DoRun()
 }
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
  * Test suite for the buildings penetration losses
  */
@@ -271,9 +259,9 @@ class BuildingsPenetrationLossesTestSuite : public TestSuite
 };
 
 BuildingsPenetrationLossesTestSuite::BuildingsPenetrationLossesTestSuite()
-    : TestSuite("buildings-penetration-losses", UNIT)
+    : TestSuite("buildings-penetration-losses", Type::UNIT)
 {
-    AddTestCase(new BuildingsPenetrationLossesTestCase, TestCase::QUICK);
+    AddTestCase(new BuildingsPenetrationLossesTestCase, TestCase::Duration::QUICK);
 }
 
 /// Static variable for test initialization

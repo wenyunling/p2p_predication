@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 Andrea Sacco
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Andrea Sacco <andrea.sacco85@gmail.com>
  */
@@ -29,13 +18,12 @@
 
 namespace ns3
 {
+namespace energy
+{
 
 /**
- * \ingroup energy
- * \brief Model a generic Lithium Ion Battery basing on [1][2].
- *
- * \deprecated The LiIonEnergySource was deprecated in ns-3.40 in favor of GenericBatteryModel, and
- * will be removed in a future release.
+ * @ingroup energy
+ * @brief Model a generic Lithium Ion Battery basing on [1][2].
  *
  * The model can be fitted to any type of Li-Ion Battery, simply changing the
  * model parameters.
@@ -74,28 +62,34 @@ namespace ns3
  * Generic Battery Model for the Dynamic Simulation of Hybrid Electric Vehicles," Ecole de
  * Technologie Superieure, Universite du Quebec, 2007 [3]
  * http://www.panasonic.com/industrial/includes/pdf/Panasonic_LiIon_CGR18650DA.pdf
- *
+
  */
-class LiIonEnergySource : public EnergySource
+// clang-format off
+class
+NS_DEPRECATED_3_40("The LiIonEnergySource was deprecated in ns-3.40 "
+                   "in favor of GenericBatteryModel, and will be removed "
+                   "in a future release.")
+LiIonEnergySource : public EnergySource
+// clang-format on
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
     LiIonEnergySource();
     ~LiIonEnergySource() override;
 
     /**
-     * \return Initial energy stored in energy source, in Joules.
+     * @return Initial energy stored in energy source, in Joules.
      *
      * Implements GetInitialEnergy.
      */
     double GetInitialEnergy() const override;
 
     /**
-     * \param initialEnergyJ Initial energy, in Joules
+     * @param initialEnergyJ Initial energy, in Joules
      *
      * Implements SetInitialEnergy. Note that initial energy is assumed to be set
      * before simulation starts and is set only once per simulation.
@@ -103,14 +97,14 @@ class LiIonEnergySource : public EnergySource
     void SetInitialEnergy(double initialEnergyJ);
 
     /**
-     * \returns Supply voltage at the energy source.
+     * @returns Supply voltage at the energy source.
      *
      * Implements GetSupplyVoltage.
      */
     double GetSupplyVoltage() const override;
 
     /**
-     * \param supplyVoltageV Initial Supply voltage at the energy source, in Volts.
+     * @param supplyVoltageV Initial Supply voltage at the energy source, in Volts.
      *
      * Sets the initial supply voltage of the energy source.
      * To be called only once.
@@ -118,21 +112,21 @@ class LiIonEnergySource : public EnergySource
     void SetInitialSupplyVoltage(double supplyVoltageV);
 
     /**
-     * \return Remaining energy in energy source, in Joules
+     * @return Remaining energy in energy source, in Joules
      *
      * Implements GetRemainingEnergy.
      */
     double GetRemainingEnergy() override;
 
     /**
-     * \returns Energy fraction.
+     * @returns Energy fraction.
      *
      * Implements GetEnergyFraction.
      */
     double GetEnergyFraction() override;
 
     /**
-     * \param energyJ Amount of energy (in Joules) to decrease from energy source.
+     * @param energyJ Amount of energy (in Joules) to decrease from energy source.
      *
      * Implements DecreaseRemainingEnergy.
      */
@@ -140,7 +134,7 @@ class LiIonEnergySource : public EnergySource
     virtual void DecreaseRemainingEnergy(double energyJ);
 
     /**
-     * \param energyJ Amount of energy (in Joules) to increase from energy source.
+     * @param energyJ Amount of energy (in Joules) to increase from energy source.
      *
      * Implements IncreaseRemainingEnergy.
      */
@@ -153,14 +147,14 @@ class LiIonEnergySource : public EnergySource
     void UpdateEnergySource() override;
 
     /**
-     * \param interval Energy update interval.
+     * @param interval Energy update interval.
      *
      * This function sets the interval between each energy update.
      */
     void SetEnergyUpdateInterval(Time interval);
 
     /**
-     * \returns The interval between each energy update.
+     * @returns The interval between each energy update.
      */
     Time GetEnergyUpdateInterval() const;
 
@@ -190,8 +184,8 @@ class LiIonEnergySource : public EnergySource
      * It consider different discharge curves for different discharge currents
      * and the remaining energy of the cell.
      *
-     * \param current the actual discharge current value.
-     * \return the cell voltage
+     * @param current the actual discharge current value.
+     * @return the cell voltage
      */
     double GetVoltage(double current) const;
 
@@ -215,6 +209,7 @@ class LiIonEnergySource : public EnergySource
     double m_minVoltTh;          //!< minimum threshold voltage to consider the battery depleted
 };
 
+} // namespace energy
 } // namespace ns3
 
 #endif /* LI_ION_ENERGY_SOURCE_H */

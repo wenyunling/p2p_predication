@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2016 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Biljana Bojovic <bbojovic@cttc.es>
  *
@@ -20,31 +9,31 @@
 
 #include "lte-test-carrier-aggregation.h"
 
+#include "ns3/boolean.h"
+#include "ns3/constant-position-mobility-model.h"
 #include "ns3/double.h"
+#include "ns3/enum.h"
+#include "ns3/eps-bearer.h"
 #include "ns3/ff-mac-scheduler.h"
+#include "ns3/log.h"
+#include "ns3/lte-enb-net-device.h"
+#include "ns3/lte-enb-phy.h"
+#include "ns3/lte-helper.h"
+#include "ns3/lte-ue-net-device.h"
+#include "ns3/lte-ue-phy.h"
+#include "ns3/lte-ue-rrc.h"
+#include "ns3/mobility-helper.h"
+#include "ns3/net-device-container.h"
+#include "ns3/node-container.h"
+#include "ns3/object.h"
+#include "ns3/packet.h"
+#include "ns3/ptr.h"
 #include "ns3/radio-bearer-stats-calculator.h"
+#include "ns3/simulator.h"
+#include "ns3/spectrum-error-model.h"
+#include "ns3/spectrum-interference.h"
 #include "ns3/string.h"
-#include <ns3/boolean.h>
-#include <ns3/constant-position-mobility-model.h>
-#include <ns3/enum.h>
-#include <ns3/eps-bearer.h>
-#include <ns3/log.h>
-#include <ns3/lte-enb-net-device.h>
-#include <ns3/lte-enb-phy.h>
-#include <ns3/lte-helper.h>
-#include <ns3/lte-ue-net-device.h>
-#include <ns3/lte-ue-phy.h>
-#include <ns3/lte-ue-rrc.h>
-#include <ns3/mobility-helper.h>
-#include <ns3/net-device-container.h>
-#include <ns3/node-container.h>
-#include <ns3/object.h>
-#include <ns3/packet.h>
-#include <ns3/ptr.h>
-#include <ns3/simulator.h>
-#include <ns3/spectrum-error-model.h>
-#include <ns3/spectrum-interference.h>
-#include <ns3/test.h>
+#include "ns3/test.h"
 
 #include <errno.h>
 #include <iostream>
@@ -80,7 +69,7 @@ LteTestUlSchedulingCallback(CarrierAggregationTestCase* testcase,
 }
 
 TestCarrierAggregationSuite::TestCarrierAggregationSuite()
-    : TestSuite("lte-carrier-aggregation", SYSTEM)
+    : TestSuite("lte-carrier-aggregation", Type::SYSTEM)
 {
     NS_LOG_INFO("creating CarrierAggregationTestCase");
 
@@ -116,147 +105,219 @@ TestCarrierAggregationSuite::TestCarrierAggregationSuite()
             return;
         }
 
-        AddTestCase(new CarrierAggregationTestCase(1, 0, 100, 100, 1), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(3, 0, 100, 100, 1), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(6, 0, 100, 100, 1), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(9, 0, 100, 100, 1), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(12, 0, 100, 100, 1), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(15, 0, 100, 100, 1), TestCase::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(1, 0, 100, 100, 1), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(3, 0, 100, 100, 1), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(6, 0, 100, 100, 1), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(9, 0, 100, 100, 1), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(12, 0, 100, 100, 1), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(15, 0, 100, 100, 1), TestCase::Duration::QUICK);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 0, 100, 100, 2), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(3, 0, 100, 100, 2), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(6, 0, 100, 100, 2), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(9, 0, 100, 100, 2), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(12, 0, 100, 100, 2), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(15, 0, 100, 100, 2), TestCase::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(1, 0, 100, 100, 2), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(3, 0, 100, 100, 2), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(6, 0, 100, 100, 2), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(9, 0, 100, 100, 2), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(12, 0, 100, 100, 2), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(15, 0, 100, 100, 2), TestCase::Duration::QUICK);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 0, 100, 100, 3), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(3, 0, 100, 100, 3), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(6, 0, 100, 100, 3), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(9, 0, 100, 100, 3), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(12, 0, 100, 100, 3), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(15, 0, 100, 100, 3), TestCase::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(1, 0, 100, 100, 3), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(3, 0, 100, 100, 3), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(6, 0, 100, 100, 3), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(9, 0, 100, 100, 3), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(12, 0, 100, 100, 3), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(15, 0, 100, 100, 3), TestCase::Duration::QUICK);
     }
     else
     {
         // bandwidth is 25 and there are 2 carriers
-        AddTestCase(new CarrierAggregationTestCase(1, 0, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 0, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 0, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 0, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 0, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 0, 25, 25, 2), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 0, 25, 25, 2), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 0, 25, 25, 2), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 0, 25, 25, 2), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 0, 25, 25, 2), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 0, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 0, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 4800, 25, 25, 2), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(3, 4800, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 4800, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 4800, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 4800, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 4800, 25, 25, 2), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 4800, 25, 25, 2), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(3, 4800, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 4800, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 4800, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 4800, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 4800, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 6000, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 6000, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 6000, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 6000, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 6000, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 6000, 25, 25, 2), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 6000, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 6000, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 6000, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 6000, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 6000, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 6000, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 20000, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 20000, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 20000, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 20000, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 20000, 25, 25, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 20000, 25, 25, 2), TestCase::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(1, 20000, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 20000, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 20000, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 20000, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 20000, 25, 25, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 20000, 25, 25, 2),
+                    TestCase::Duration::QUICK);
 
         // bandwidth is 25 and there are 3 carriers
-        AddTestCase(new CarrierAggregationTestCase(1, 0, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 0, 25, 25, 3), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(6, 0, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 0, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 0, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 0, 25, 25, 3), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 0, 25, 25, 3), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 0, 25, 25, 3), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(6, 0, 25, 25, 3), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 0, 25, 25, 3), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 0, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 0, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 4800, 25, 25, 3), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(3, 4800, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 4800, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 4800, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 4800, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 4800, 25, 25, 3), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 4800, 25, 25, 3), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(3, 4800, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 4800, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 4800, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 4800, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 4800, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 6000, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 6000, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 6000, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 6000, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 6000, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 6000, 25, 25, 3), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 6000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 6000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 6000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 6000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 6000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 6000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 20000, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 20000, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 20000, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 20000, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 20000, 25, 25, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 20000, 25, 25, 3), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 20000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 20000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 20000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 20000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 20000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 20000, 25, 25, 3),
+                    TestCase::Duration::EXTENSIVE);
 
         // bandwidth = 6 RB and there are 3 carriers
-        AddTestCase(new CarrierAggregationTestCase(1, 0, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 0, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 0, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 0, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 0, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 0, 6, 6, 3), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 0, 6, 6, 3), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 0, 6, 6, 3), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 0, 6, 6, 3), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 0, 6, 6, 3), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 0, 6, 6, 3), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 0, 6, 6, 3), TestCase::Duration::EXTENSIVE);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 4800, 6, 6, 3), TestCase::QUICK);
-        AddTestCase(new CarrierAggregationTestCase(3, 4800, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 4800, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 4800, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 4800, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 4800, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(1, 6000, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 6000, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 6000, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 6000, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 6000, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 6000, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(1, 20000, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 20000, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 20000, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 20000, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 20000, 6, 6, 3), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 20000, 6, 6, 3), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 4800, 6, 6, 3), TestCase::Duration::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(3, 4800, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 4800, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 4800, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 4800, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 4800, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 6000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 6000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 6000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 6000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 6000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 6000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 20000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 20000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 20000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 20000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 20000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 20000, 6, 6, 3),
+                    TestCase::Duration::EXTENSIVE);
 
         // bandwidth = 6 RB and there are 2 carriers
-        AddTestCase(new CarrierAggregationTestCase(1, 0, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 0, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 0, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 0, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 0, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 0, 6, 6, 2), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 0, 6, 6, 2), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 0, 6, 6, 2), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 0, 6, 6, 2), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 0, 6, 6, 2), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 0, 6, 6, 2), TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 0, 6, 6, 2), TestCase::Duration::EXTENSIVE);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 4800, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 4800, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 4800, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 4800, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 4800, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 4800, 6, 6, 2), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 4800, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 4800, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 4800, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 4800, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 4800, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 4800, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 6000, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 6000, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 6000, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 6000, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 6000, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 6000, 6, 6, 2), TestCase::QUICK);
+        AddTestCase(new CarrierAggregationTestCase(1, 6000, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 6000, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 6000, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 6000, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 6000, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 6000, 6, 6, 2), TestCase::Duration::QUICK);
 
-        AddTestCase(new CarrierAggregationTestCase(1, 20000, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(3, 20000, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(6, 20000, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(9, 20000, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(12, 20000, 6, 6, 2), TestCase::EXTENSIVE);
-        AddTestCase(new CarrierAggregationTestCase(15, 20000, 6, 6, 2), TestCase::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(1, 20000, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(3, 20000, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(6, 20000, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(9, 20000, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(12, 20000, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
+        AddTestCase(new CarrierAggregationTestCase(15, 20000, 6, 6, 2),
+                    TestCase::Duration::EXTENSIVE);
     }
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static TestCarrierAggregationSuite lenaTestRrFfMacSchedulerSuite;

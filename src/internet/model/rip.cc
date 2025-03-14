@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2016 Universita' di Firenze, Italy
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Tommaso Pecorella <tommaso.pecorella@unifi.it>
  */
@@ -741,7 +730,7 @@ Rip::InvalidateRoute(RipRoutingTableEntry* route)
             route->SetRouteStatus(RipRoutingTableEntry::RIP_INVALID);
             route->SetRouteMetric(m_linkDown);
             route->SetRouteChanged(true);
-            if (it->second.IsRunning())
+            if (it->second.IsPending())
             {
                 it->second.Cancel();
             }
@@ -1241,11 +1230,8 @@ Rip::DoSendRouteUpdate(bool periodic)
                         rte.SetRouteMetric(rtIter->first->GetRouteMetric());
                     }
                     rte.SetRouteTag(rtIter->first->GetRouteTag());
-                    if (m_splitHorizonStrategy == SPLIT_HORIZON && !splitHorizoning)
-                    {
-                        hdr.AddRte(rte);
-                    }
-                    else if (m_splitHorizonStrategy != SPLIT_HORIZON)
+                    if ((m_splitHorizonStrategy == SPLIT_HORIZON && !splitHorizoning) ||
+                        (m_splitHorizonStrategy != SPLIT_HORIZON))
                     {
                         hdr.AddRte(rte);
                     }
@@ -1278,7 +1264,7 @@ Rip::SendTriggeredRouteUpdate()
 {
     NS_LOG_FUNCTION(this);
 
-    if (m_nextTriggeredUpdate.IsRunning())
+    if (m_nextTriggeredUpdate.IsPending())
     {
         NS_LOG_LOGIC("Skipping Triggered Update due to cooldown");
         return;
@@ -1310,7 +1296,7 @@ Rip::SendUnsolicitedRouteUpdate()
 {
     NS_LOG_FUNCTION(this);
 
-    if (m_nextTriggeredUpdate.IsRunning())
+    if (m_nextTriggeredUpdate.IsPending())
     {
         m_nextTriggeredUpdate.Cancel();
     }

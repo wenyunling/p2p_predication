@@ -1,18 +1,7 @@
 //
 // Copyright (c) 2006 Georgia Tech Research Corporation
 //
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// SPDX-License-Identifier: GPL-2.0-only
 //
 // Author: George F. Riley<riley@ece.gatech.edu>
 //
@@ -23,7 +12,6 @@
 
 #include "onoff-application.h"
 
-#include "ns3/address.h"
 #include "ns3/boolean.h"
 #include "ns3/data-rate.h"
 #include "ns3/inet-socket-address.h"
@@ -55,7 +43,7 @@ OnOffApplication::GetTypeId()
 {
     static TypeId tid =
         TypeId("ns3::OnOffApplication")
-            .SetParent<Application>()
+            .SetParent<SourceApplication>()
             .SetGroupName("Applications")
             .AddConstructor<OnOffApplication>()
             .AddAttribute("DataRate",
@@ -68,17 +56,6 @@ OnOffApplication::GetTypeId()
                           UintegerValue(512),
                           MakeUintegerAccessor(&OnOffApplication::m_pktSize),
                           MakeUintegerChecker<uint32_t>(1))
-            .AddAttribute("Remote",
-                          "The address of the destination",
-                          AddressValue(),
-                          MakeAddressAccessor(&OnOffApplication::m_peer),
-                          MakeAddressChecker())
-            .AddAttribute("Local",
-                          "The Address on which to bind the socket. If not set, it is generated "
-                          "automatically.",
-                          AddressValue(),
-                          MakeAddressAccessor(&OnOffApplication::m_local),
-                          MakeAddressChecker())
             .AddAttribute("OnTime",
                           "A RandomVariableStream used to pick the duration of the 'On' state.",
                           StringValue("ns3::ConstantRandomVariable[Constant=1.0]"),
@@ -119,7 +96,11 @@ OnOffApplication::GetTypeId()
             .AddTraceSource("TxWithSeqTsSize",
                             "A new packet is created with SeqTsSizeHeader",
                             MakeTraceSourceAccessor(&OnOffApplication::m_txTraceWithSeqTsSize),
-                            "ns3::PacketSink::SeqTsSizeCallback");
+                            "ns3::PacketSink::SeqTsSizeCallback")
+            .AddTraceSource("OnOffState",
+                            "Application state (0-OFF, 1-ON)",
+                            MakeTraceSourceAccessor(&OnOffApplication::m_state),
+                            "ns3::TracedValueCallback::Bool");
     return tid;
 }
 
@@ -127,7 +108,7 @@ OnOffApplication::OnOffApplication()
     : m_socket(nullptr),
       m_connected(false),
       m_residualBits(0),
-      m_lastStartTime(Seconds(0)),
+      m_lastStartTime(),
       m_totBytes(0),
       m_unsentPacket(nullptr)
 {
@@ -157,9 +138,11 @@ int64_t
 OnOffApplication::AssignStreams(int64_t stream)
 {
     NS_LOG_FUNCTION(this << stream);
-    m_onTime->SetStream(stream);
-    m_offTime->SetStream(stream + 1);
-    return 2;
+    auto currentStream = stream;
+    m_onTime->SetStream(currentStream++);
+    m_offTime->SetStream(currentStream++);
+    currentStream += Application::AssignStreams(currentStream);
+    return (currentStream - stream);
 }
 
 void
@@ -185,6 +168,8 @@ OnOffApplication::StartApplication() // Called at time specified by Start
     {
         m_socket = Socket::CreateSocket(GetNode(), m_tid);
         int ret = -1;
+
+        NS_ABORT_MSG_IF(m_peer.IsInvalid(), "'Remote' attribute not properly set");
 
         if (!m_local.IsInvalid())
         {
@@ -216,6 +201,10 @@ OnOffApplication::StartApplication() // Called at time specified by Start
         m_socket->SetConnectCallback(MakeCallback(&OnOffApplication::ConnectionSucceeded, this),
                                      MakeCallback(&OnOffApplication::ConnectionFailed, this));
 
+        if (InetSocketAddress::IsMatchingType(m_peer))
+        {
+            m_socket->SetIpTos(m_tos); // Affects only IPv4 sockets.
+        }
         m_socket->Connect(m_peer);
         m_socket->SetAllowBroadcast(true);
         m_socket->ShutdownRecv();
@@ -256,7 +245,7 @@ OnOffApplication::CancelEvents()
 {
     NS_LOG_FUNCTION(this);
 
-    if (m_sendEvent.IsRunning() && m_cbrRateFailSafe == m_cbrRate)
+    if (m_sendEvent.IsPending() && m_cbrRateFailSafe == m_cbrRate)
     { // Cancel the pending send packet event
         // Calculate residual bits since last packet sent
         Time delta(Simulator::Now() - m_lastStartTime);
@@ -283,6 +272,7 @@ OnOffApplication::StartSending()
     m_lastStartTime = Simulator::Now();
     ScheduleNextTx(); // Schedule the send packet event
     ScheduleStopEvent();
+    m_state = true;
 }
 
 void
@@ -290,8 +280,8 @@ OnOffApplication::StopSending()
 {
     NS_LOG_FUNCTION(this);
     CancelEvents();
-
     ScheduleStartEvent();
+    m_state = false;
 }
 
 // Private helpers

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 IITP RAS
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Based on
  *      NS-2 AODV model developed by the CMU/MONARCH group and optimized and
@@ -62,15 +51,15 @@ NS_OBJECT_ENSURE_REGISTERED(RoutingProtocol);
 const uint32_t RoutingProtocol::AODV_PORT = 654;
 
 /**
- * \ingroup aodv
- * \brief Tag used by AODV implementation
+ * @ingroup aodv
+ * @brief Tag used by AODV implementation
  */
 class DeferredRouteOutputTag : public Tag
 {
   public:
     /**
-     * \brief Constructor
-     * \param o the output interface
+     * @brief Constructor
+     * @param o the output interface
      */
     DeferredRouteOutputTag(int32_t o = -1)
         : Tag(),
@@ -79,8 +68,8 @@ class DeferredRouteOutputTag : public Tag
     }
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId()
     {
@@ -97,8 +86,8 @@ class DeferredRouteOutputTag : public Tag
     }
 
     /**
-     * \brief Get the output interface
-     * \return the output interface
+     * @brief Get the output interface
+     * @return the output interface
      */
     int32_t GetInterface() const
     {
@@ -106,8 +95,8 @@ class DeferredRouteOutputTag : public Tag
     }
 
     /**
-     * \brief Set the output interface
-     * \param oif the output interface
+     * @brief Set the output interface
+     * @param oif the output interface
      */
     void SetInterface(int32_t oif)
     {
@@ -178,7 +167,7 @@ RoutingProtocol::RoutingProtocol()
       m_htimer(Timer::CANCEL_ON_DESTROY),
       m_rreqRateLimitTimer(Timer::CANCEL_ON_DESTROY),
       m_rerrRateLimitTimer(Timer::CANCEL_ON_DESTROY),
-      m_lastBcastTime(Seconds(0))
+      m_lastBcastTime()
 {
     m_nb.SetCallback(MakeCallback(&RoutingProtocol::SendRerrWhenBreaksLinkToNextHop, this));
 }
@@ -1156,7 +1145,7 @@ RoutingProtocol::SendRequest(Ipv4Address dst)
         }
         NS_LOG_DEBUG("Send RREQ with id " << rreqHeader.GetId() << " to socket");
         m_lastBcastTime = Simulator::Now();
-        Simulator::Schedule(Time(MilliSeconds(m_uniformRandomVariable->GetInteger(0, 10))),
+        Simulator::Schedule(MilliSeconds(m_uniformRandomVariable->GetInteger(0, 10)),
                             &RoutingProtocol::SendTo,
                             this,
                             socket,
@@ -1518,7 +1507,7 @@ RoutingProtocol::RecvRequest(Ptr<Packet> p, Ipv4Address receiver, Ipv4Address sr
             destination = iface.GetBroadcast();
         }
         m_lastBcastTime = Simulator::Now();
-        Simulator::Schedule(Time(MilliSeconds(m_uniformRandomVariable->GetInteger(0, 10))),
+        Simulator::Schedule(MilliSeconds(m_uniformRandomVariable->GetInteger(0, 10)),
                             &RoutingProtocol::SendTo,
                             this,
                             socket,
@@ -1685,33 +1674,24 @@ RoutingProtocol::RecvReply(Ptr<Packet> p, Ipv4Address receiver, Ipv4Address send
     RoutingTableEntry toDst;
     if (m_routingTable.LookupRoute(dst, toDst))
     {
-        /*
-         * The existing entry is updated only in the following circumstances:
-         * (i) the sequence number in the routing table is marked as invalid in route table entry.
-         */
-        if (!toDst.GetValidSeqNo())
-        {
-            m_routingTable.Update(newEntry);
-        }
-        // (ii)the Destination Sequence Number in the RREP is greater than the node's copy of the
-        // destination sequence number and the known value is valid,
-        else if ((int32_t(rrepHeader.GetDstSeqno()) - int32_t(toDst.GetSeqNo())) > 0)
-        {
-            m_routingTable.Update(newEntry);
-        }
-        else
-        {
+        // The existing entry is updated only in the following circumstances:
+        if (
+            // (i) the sequence number in the routing table is marked as invalid in route table
+            // entry.
+            (!toDst.GetValidSeqNo()) ||
+
+            // (ii) the Destination Sequence Number in the RREP is greater than the node's copy of
+            // the destination sequence number and the known value is valid,
+            ((int32_t(rrepHeader.GetDstSeqno()) - int32_t(toDst.GetSeqNo())) > 0) ||
+
             // (iii) the sequence numbers are the same, but the route is marked as inactive.
-            if ((rrepHeader.GetDstSeqno() == toDst.GetSeqNo()) && (toDst.GetFlag() != VALID))
-            {
-                m_routingTable.Update(newEntry);
-            }
-            // (iv)  the sequence numbers are the same, and the New Hop Count is smaller than the
+            (rrepHeader.GetDstSeqno() == toDst.GetSeqNo() && toDst.GetFlag() != VALID) ||
+
+            // (iv) the sequence numbers are the same, and the New Hop Count is smaller than the
             // hop count in route table entry.
-            else if ((rrepHeader.GetDstSeqno() == toDst.GetSeqNo()) && (hop < toDst.GetHop()))
-            {
-                m_routingTable.Update(newEntry);
-            }
+            (rrepHeader.GetDstSeqno() == toDst.GetSeqNo() && hop < toDst.GetHop()))
+        {
+            m_routingTable.Update(newEntry);
         }
     }
     else
@@ -1950,8 +1930,8 @@ void
 RoutingProtocol::HelloTimerExpire()
 {
     NS_LOG_FUNCTION(this);
-    Time offset = Time(Seconds(0));
-    if (m_lastBcastTime > Time(Seconds(0)))
+    Time offset;
+    if (m_lastBcastTime.IsStrictlyPositive())
     {
         offset = Simulator::Now() - m_lastBcastTime;
         NS_LOG_DEBUG("Hello deferred due to last bcast at:" << m_lastBcastTime);
@@ -1962,8 +1942,8 @@ RoutingProtocol::HelloTimerExpire()
     }
     m_htimer.Cancel();
     Time diff = m_helloInterval - offset;
-    m_htimer.Schedule(std::max(Time(Seconds(0)), diff));
-    m_lastBcastTime = Time(Seconds(0));
+    m_htimer.Schedule(std::max(Seconds(0), diff));
+    m_lastBcastTime = Seconds(0);
 }
 
 void
@@ -2026,7 +2006,7 @@ RoutingProtocol::SendHello()
         {
             destination = iface.GetBroadcast();
         }
-        Time jitter = Time(MilliSeconds(m_uniformRandomVariable->GetInteger(0, 10)));
+        Time jitter = MilliSeconds(m_uniformRandomVariable->GetInteger(0, 10));
         Simulator::Schedule(jitter, &RoutingProtocol::SendTo, this, socket, packet, destination);
     }
 }
@@ -2197,7 +2177,7 @@ RoutingProtocol::SendRerrMessage(Ptr<Packet> packet, std::vector<Ipv4Address> pr
             NS_LOG_LOGIC("one precursor => unicast RERR to "
                          << toPrecursor.GetDestination() << " from "
                          << toPrecursor.GetInterface().GetLocal());
-            Simulator::Schedule(Time(MilliSeconds(m_uniformRandomVariable->GetInteger(0, 10))),
+            Simulator::Schedule(MilliSeconds(m_uniformRandomVariable->GetInteger(0, 10)),
                                 &RoutingProtocol::SendTo,
                                 this,
                                 socket,
@@ -2238,7 +2218,7 @@ RoutingProtocol::SendRerrMessage(Ptr<Packet> packet, std::vector<Ipv4Address> pr
         {
             destination = i->GetBroadcast();
         }
-        Simulator::Schedule(Time(MilliSeconds(m_uniformRandomVariable->GetInteger(0, 10))),
+        Simulator::Schedule(MilliSeconds(m_uniformRandomVariable->GetInteger(0, 10)),
                             &RoutingProtocol::SendTo,
                             this,
                             socket,
@@ -2287,11 +2267,16 @@ void
 RoutingProtocol::DoInitialize()
 {
     NS_LOG_FUNCTION(this);
-    uint32_t startTime;
+
+    NS_ABORT_MSG_IF(m_ttlStart > m_netDiameter,
+                    "AODV: configuration error, TtlStart ("
+                        << m_ttlStart << ") must be less than or equal to NetDiameter ("
+                        << m_netDiameter << ").");
+
     if (m_enableHello)
     {
         m_htimer.SetFunction(&RoutingProtocol::HelloTimerExpire, this);
-        startTime = m_uniformRandomVariable->GetInteger(0, 100);
+        uint32_t startTime = m_uniformRandomVariable->GetInteger(0, 100);
         NS_LOG_DEBUG("Starting at time " << startTime << "ms");
         m_htimer.Schedule(MilliSeconds(startTime));
     }

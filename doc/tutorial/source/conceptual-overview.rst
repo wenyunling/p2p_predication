@@ -179,18 +179,7 @@ text and an author listed below.
 ::
 
   /*
-   * This program is free software; you can redistribute it and/or modify
-   * it under the terms of the GNU General Public License version 2 as
-   * published by the Free Software Foundation;
-   *
-   * This program is distributed in the hope that it will be useful,
-   * but WITHOUT ANY WARRANTY; without even the implied warranty of
-   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   * GNU General Public License for more details.
-   *
-   * You should have received a copy of the GNU General Public License
-   * along with this program; if not, write to the Free Software
-   * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+   * SPDX-License-Identifier: GPL-2.0-only
    */
 
 Module Includes
@@ -565,8 +554,8 @@ created.
     UdpEchoServerHelper echoServer(9);
 
     ApplicationContainer serverApps = echoServer.Install(nodes.Get(1));
-    serverApps.Start(Seconds(1.0));
-    serverApps.Stop(Seconds(10.0));
+    serverApps.Start(Seconds(1));
+    serverApps.Stop(Seconds(10));
 
 The first line of code in the above snippet declares the
 ``UdpEchoServerHelper``.  As usual, this isn't the application itself, it
@@ -611,8 +600,8 @@ converted for you.  The two lines,
 
 ::
 
-    serverApps.Start(Seconds(1.0));
-    serverApps.Stop(Seconds(10.0));
+    serverApps.Start(Seconds(1));
+    serverApps.Stop(Seconds(10));
 
 will cause the echo server application to ``Start`` (enable itself) at one
 second into the simulation and to ``Stop`` (disable itself) at ten seconds
@@ -631,12 +620,12 @@ that is managed by an ``UdpEchoClientHelper``.
 
     UdpEchoClientHelper echoClient(interfaces.GetAddress(1), 9);
     echoClient.SetAttribute("MaxPackets", UintegerValue(1));
-    echoClient.SetAttribute("Interval", TimeValue(Seconds(1.0)));
+    echoClient.SetAttribute("Interval", TimeValue(Seconds(1)));
     echoClient.SetAttribute("PacketSize", UintegerValue(1024));
 
     ApplicationContainer clientApps = echoClient.Install(nodes.Get(0));
-    clientApps.Start(Seconds(2.0));
-    clientApps.Stop(Seconds(10.0));
+    clientApps.Start(Seconds(2));
+    clientApps.Stop(Seconds(10));
 
 For the echo client, however, we need to set five different ``Attributes``.
 The first two ``Attributes`` are set during construction of the
@@ -679,11 +668,11 @@ When we previously called the methods,
 
 ::
 
-    serverApps.Start(Seconds(1.0));
-    serverApps.Stop(Seconds(10.0));
+    serverApps.Start(Seconds(1));
+    serverApps.Stop(Seconds(10));
     ...
-    clientApps.Start(Seconds(2.0));
-    clientApps.Stop(Seconds(10.0));
+    clientApps.Start(Seconds(2));
+    clientApps.Stop(Seconds(10));
 
 we actually scheduled events in the simulator at 1.0 seconds, 2.0 seconds and
 two events at 10.0 seconds.  When ``Simulator::Run`` is called, the system
@@ -769,7 +758,7 @@ in the first example program will schedule an explicit stop at 11 seconds:
 
 ::
 
-  +  Simulator::Stop(Seconds(11.0));
+  +  Simulator::Stop(Seconds(11));
      Simulator::Run();
      Simulator::Destroy();
      return 0;

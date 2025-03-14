@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 IITP RAS
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Pavel Boyko <boyko@iitp.ru>
  */
@@ -44,32 +33,33 @@
 using namespace ns3;
 
 /**
- * \ingroup aodv-test
+ * @ingroup aodv-test
  *
- * \brief AODV regression test suite
+ * @brief AODV regression test suite
  */
 class AodvRegressionTestSuite : public TestSuite
 {
   public:
     AodvRegressionTestSuite()
-        : TestSuite("routing-aodv-regression", SYSTEM)
+        : TestSuite("routing-aodv-regression", Type::SYSTEM)
     {
         SetDataDir(NS_TEST_SOURCEDIR);
         // General RREQ-RREP-RRER test case
-        AddTestCase(new ChainRegressionTest("aodv-chain-regression-test"), TestCase::QUICK);
+        AddTestCase(new ChainRegressionTest("aodv-chain-regression-test"),
+                    TestCase::Duration::QUICK);
         // \bugid{606} test case, should crash if bug is not fixed
         AddTestCase(new ChainRegressionTest("bug-606-test", Seconds(10), 3, Seconds(1)),
-                    TestCase::QUICK);
+                    TestCase::Duration::QUICK);
         // \bugid{772} UDP test case
         AddTestCase(new Bug772ChainTest("udp-chain-test", "ns3::UdpSocketFactory", Seconds(3), 10),
-                    TestCase::QUICK);
+                    TestCase::Duration::QUICK);
     }
 } g_aodvRegressionTestSuite; ///< the test suite
 
 /**
- * \ingroup aodv-test
+ * @ingroup aodv-test
  *
- * \brief Chain Regression Test
+ * @brief Chain Regression Test
  */
 ChainRegressionTest::ChainRegressionTest(const char* const prefix,
                                          Time t,
@@ -192,7 +182,7 @@ ChainRegressionTest::CreateDevices()
     NetDeviceContainer devices = wifi.Install(wifiPhy, wifiMac, *m_nodes);
 
     // Assign fixed stream numbers to wifi and channel random variables
-    streamsUsed += wifi.AssignStreams(devices, streamsUsed);
+    streamsUsed += WifiHelper::AssignStreams(devices, streamsUsed);
     // Assign 6 streams per device
     NS_TEST_ASSERT_MSG_EQ(streamsUsed, (devices.GetN() * 2), "Stream assignment mismatch");
     streamsUsed += wifiChannel.AssignStreams(chan, streamsUsed);

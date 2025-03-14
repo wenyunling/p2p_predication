@@ -1,17 +1,6 @@
 # Copyright (c) 2023 Universidade de Brasília
 #
-# This program is free software; you can redistribute it and/or modify it under
-# the terms of the GNU General Public License version 2 as published by the Free
-# Software Foundation;
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-# details.
-#
-# You should have received a copy of the GNU General Public License along with
-# this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-# Place, Suite 330, Boston, MA  02111-1307 USA
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Author: Gabriel Ferreira <gabrielcarvfer@gmail.com>
 
@@ -28,9 +17,26 @@ if(EXISTS "/proc/version")
   endif()
 endif()
 
+# cmake-format: off
+# Windows injects **BY DEFAULT** its %PATH% into WSL $PATH
+# Detect and warn users how to disable path injection
+# cmake-format: on
+if("$ENV{PATH}" MATCHES "/mnt/c/")
+  message(
+    WARNING
+      "To prevent Windows path injection on WSL, append the following to /etc/wsl.conf, then use `wsl --shutdown` to restart the WSL VM:
+[interop]
+appendWindowsPath = false"
+  )
+endif()
+
 # Set Linux flag if on Linux
 if(UNIX AND NOT APPLE)
-  set(LINUX TRUE)
+  if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+    set(LINUX TRUE)
+  else()
+    set(BSD TRUE)
+  endif()
   add_definitions(-D__LINUX__)
 endif()
 
@@ -44,6 +50,7 @@ if(APPLE)
   set(CMAKE_FIND_APPBUNDLE "LAST")
 endif()
 
+set(cat_command cat)
 if(WIN32)
   set(NS3_PRECOMPILE_HEADERS OFF
       CACHE BOOL "Precompile module headers to speed up compilation" FORCE
@@ -53,9 +60,8 @@ if(WIN32)
   # requires this definition
   # https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants?view=vs-2019
   add_definitions(/D_USE_MATH_DEFINES)
+  set(cat_command type) # required until we move to CMake >= 3.18
 endif()
-
-set(cat_command cat)
 
 if(CMAKE_XCODE_BUILD_SYSTEM)
   set(XCODE True)
@@ -63,9 +69,21 @@ else()
   set(XCODE False)
 endif()
 
-if(${XCODE})
-  # Is that so hard not to break people's CI, AAPL? Why would you output the
-  # targets to a Debug/Release subfolder? Why?
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "MSVC" OR "${CMAKE_CXX_SIMULATE_ID}"
+                                                MATCHES "MSVC"
+)
+  set(MSVC True)
+  set(NS3_INT64X64 "CAIRO" CACHE STRING "Int64x64 implementation" FORCE)
+else()
+  set(MSVC False)
+endif()
+
+if(${MSVC} OR ${XCODE})
+  # Prevent multi-config generators from placing output files into per
+  # configuration directory
+  if(NOT (DEFINED CMAKE_CONFIGURATION_TYPES))
+    set(CMAKE_CONFIGURATION_TYPES DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
+  endif()
   foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG}
@@ -77,5 +95,23 @@ if(${XCODE})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG}
         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}
     )
-  endforeach()
+  endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
+endif()
+
+if(${MSVC})
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+  # Enable exceptions
+  add_definitions(/EHs)
+
+  # Account for lack of valgrind and binary compatibility restrictions on
+  # Windows https://github.com/microsoft/STL/wiki/Changelog#vs-2022-1710
+  add_compile_definitions(
+    __WIN32__ NVALGRIND _DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR
+    _CRT_SECURE_NO_WARNINGS NS_MSVC NOMINMAX
+  )
+
+  # Allow unresolved symbols as in most cases they are simply in other ns-3
+  # libraries
+  add_link_options("/FORCE:UNRESOLVED")
 endif()

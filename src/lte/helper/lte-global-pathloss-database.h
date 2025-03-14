@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011,2012 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -20,8 +9,8 @@
 #ifndef LTE_GLOBAL_PATHLOSS_DATABASE_H
 #define LTE_GLOBAL_PATHLOSS_DATABASE_H
 
-#include <ns3/log.h>
-#include <ns3/ptr.h>
+#include "ns3/log.h"
+#include "ns3/ptr.h"
 
 #include <map>
 #include <string>
@@ -32,7 +21,7 @@ namespace ns3
 class SpectrumPhy;
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * Store the last pathloss value for each TX-RX pair. This is an
  * example of how the PathlossTrace (provided by some SpectrumChannel
@@ -47,10 +36,10 @@ class LteGlobalPathlossDatabase
     /**
      * update the pathloss value
      *
-     * \param context
-     * \param txPhy the transmitting PHY
-     * \param rxPhy the receiving PHY
-     * \param lossDb the loss in dB
+     * @param context
+     * @param txPhy the transmitting PHY
+     * @param rxPhy the receiving PHY
+     * @param lossDb the loss in dB
      */
     virtual void UpdatePathloss(std::string context,
                                 Ptr<const SpectrumPhy> txPhy,
@@ -60,10 +49,10 @@ class LteGlobalPathlossDatabase
     /**
      *
      *
-     * \param cellId the id of the eNB
-     * \param imsi the id of the UE
+     * @param cellId the id of the eNB
+     * @param imsi the id of the UE
      *
-     * \return the pathloss value between the UE and the eNB
+     * @return the pathloss value between the UE and the eNB
      */
     double GetPathloss(uint16_t cellId, uint64_t imsi);
 
@@ -82,7 +71,7 @@ class LteGlobalPathlossDatabase
 };
 
 /**
- * \ingroup lte
+ * @ingroup lte
  * Store the last pathloss value for each TX-RX pair for downlink
  */
 class DownlinkLteGlobalPathlossDatabase : public LteGlobalPathlossDatabase
@@ -96,7 +85,7 @@ class DownlinkLteGlobalPathlossDatabase : public LteGlobalPathlossDatabase
 };
 
 /**
- * \ingroup lte
+ * @ingroup lte
  * Store the last pathloss value for each TX-RX pair for uplink
  */
 class UplinkLteGlobalPathlossDatabase : public LteGlobalPathlossDatabase

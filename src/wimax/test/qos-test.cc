@@ -1,18 +1,7 @@
 /*
  *  Copyright (c) 2007,2008, 2009 INRIA, UDcast
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mohamed Amine Ismail <amine.ismail@sophia.inria.fr>
  *                              <amine.ismail@udcast.com>
@@ -33,10 +22,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Ns3 Wimax Scheduling Test Case
+ * @brief Ns3 Wimax Scheduling Test Case
  */
 class Ns3WimaxSchedulingTestCase : public TestCase
 {
@@ -48,8 +37,8 @@ class Ns3WimaxSchedulingTestCase : public TestCase
     void DoRun() override;
     /**
      * Run once function
-     * \param scheduler the wimax scheduler type
-     * \returns true if successful
+     * @param scheduler the wimax scheduler type
+     * @returns true if successful
      */
     bool DoRunOnce(WimaxHelper::SchedulerType scheduler);
 };
@@ -165,10 +154,10 @@ Ns3WimaxSchedulingTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Ns3 Wimax SF Type Test Case
+ * @brief Ns3 Wimax SF Type Test Case
  */
 class Ns3WimaxSFTypeTestCase : public TestCase
 {
@@ -180,8 +169,8 @@ class Ns3WimaxSFTypeTestCase : public TestCase
     void DoRun() override;
     /**
      * Run once function
-     * \param schedulingType the scheduling type
-     * \returns true if successful
+     * @param schedulingType the scheduling type
+     * @returns true if successful
      */
     bool DoRunOnce(ServiceFlow::SchedulingType schedulingType);
 };
@@ -299,10 +288,10 @@ Ns3WimaxSFTypeTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Ns3 Wimax QoS Test Suite
+ * @brief Ns3 Wimax QoS Test Suite
  */
 class Ns3WimaxQoSTestSuite : public TestSuite
 {
@@ -311,10 +300,10 @@ class Ns3WimaxQoSTestSuite : public TestSuite
 };
 
 Ns3WimaxQoSTestSuite::Ns3WimaxQoSTestSuite()
-    : TestSuite("wimax-qos", SYSTEM)
+    : TestSuite("wimax-qos", Type::SYSTEM)
 {
-    AddTestCase(new Ns3WimaxSFTypeTestCase, TestCase::QUICK);
-    AddTestCase(new Ns3WimaxSchedulingTestCase, TestCase::QUICK);
+    AddTestCase(new Ns3WimaxSFTypeTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new Ns3WimaxSchedulingTestCase, TestCase::Duration::QUICK);
 }
 
 static Ns3WimaxQoSTestSuite ns3WimaxQoSTestSuite; ///< the test suite

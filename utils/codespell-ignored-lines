@@ -81,9 +81,13 @@ Network Animator nam.  It is not possible to run a simulation
  * Copyright (c) 2022 Universita' degli Studi di Napoli Federico II
  * Copyright (c) 2022 Universita' degli Studi di Napoli "Federico II"
  * Copyright (c) 2023 Universita' degli Studi di Napoli Federico II
+ * Copyright (c) 2024 Universita' degli Studi di Napoli Federico II
 
 ./src/core/examples/hash-example.cc
 6ed21de2  brand-newness       peripherial
+
+./src/core/model/trickle-timer.cc:120
+    return std::countr_zero(m_ticks);
 
 ./src/dsr/model/dsr-routing.cc:243, 246, 3360, 3363
             .AddAttribute("GratReplyHoldoff",
@@ -125,15 +129,6 @@ static ns3::GlobalValue g_rate("VRCrate",
 ./src/traffic-control/model/codel-queue-disc.h:17:
  * Codel, the COntrolled DELay Queueing discipline
 
-./src/internet/model/global-route-manager-impl.h:555:
-     * \param vs a list of SPFVertexes
-
-./src/internet/model/candidate-queue.h:166:
-     * SPFVertexes are added into the queue according to the ordering
-
-./src/internet/model/global-route-manager-impl.h:555
-    typedef std::list<SPFVertex*> ListOfSPFVertex_t; //!< container of SPFVertexes
-
 ./CHANGES.md:
   * (dsr) Class `DsrOptionRerrUnsupportHeader` from `dsr-option-header.h` was renamed `DsrOptionRerrUnsupportedHeader`.
   * (internet) Enumerated value `IPV6_EXT_AUTHENTIFICATION` from `ipv6-header.h` was renamed `IPV6_EXT_AUTHENTICATION`.
@@ -161,3 +156,20 @@ static ns3::GlobalValue g_rate("VRCrate",
   * (lte) Struct member `pfsFlowPerf_t::lastTtiBytesTrasmitted` in file `pf-ff-mac-scheduler.h` was renamed `fdbetsFlowPerf_t::lastTtiBytesTransmitted`.
 * The spelling of the attribute `IntialCellVoltage` from `LiIonEnergySource` was corrected to `InitialCellVoltage`; this will affect existing users who were using the attribute with the misspelling.
 * The attribute `Recievers` in class `YansWifiPhy` was misspelled, so this has been corrected to `Receivers`.
+
+./doc/manual/source/working-with-docker.rst
+    067a8b748816715d93ede9099132d943c04b13fcc23b3b8a7e21d23c1096cc2a
+
+./src/lte/model/cqa-ff-mac-scheduler.cc
+    std::map<LteFlowId_t, int> UEtoHOL;
+        UEtoHOL.insert(std::pair<LteFlowId_t, int>(itLogicalChannels->first, delay));
+                int hol = UEtoHOL.find(flowId)->second;
+
+./src/mesh/doc/source/mesh-design.rst
+contribution in [Hep15]_.
+when forwarding a frame (e.g., [Hep16]_), but current wifi module maintainers
+value was chosen based on the measurement results reported in [Hep16]_ which
+
+./src/mesh/doc/source/mesh-references.rst
+.. [Hep15] \C. Hepner and \A. Witt and \R. Muenzner, `Validation of the ns-3 802.11s model and proposed changes compliant to IEEE 802.11-2012 <https://www.nsnam.org/wp-content/uploads/2015/05/WNS3_2015_submission_33.pdf>`_, Poster at 2015 Workshop on ns-3, May 2015.
+.. [Hep16] \C. Hepner and \S. Moll and \R. Muenzner, `Influence of Processing Delays on the VoIP Performance for IEEE 802.11s Multihop Wireless Mesh Networks:  Comparison of ns-3 Network Simulations with Hardware Measurements <http://dl.acm.org/citation.cfm?id=3021439>`_, Proceedings of SIMUTOOLS 16, August, 2016.

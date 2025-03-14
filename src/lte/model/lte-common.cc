@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  * Author: Marco Miozzo <marco.miozzo@cttc.es>
@@ -20,8 +9,8 @@
 
 #include "lte-common.h"
 
-#include <ns3/abort.h>
-#include <ns3/log.h>
+#include "ns3/abort.h"
+#include "ns3/log.h"
 
 namespace ns3
 {
@@ -41,9 +30,9 @@ LteFlowId_t::LteFlowId_t(const uint16_t a, const uint8_t b)
 /**
  * Equality operator
  *
- * \param a lhs
- * \param b rhs
- * \returns true if "equal"
+ * @param a lhs
+ * @param b rhs
+ * @returns true if "equal"
  */
 bool
 operator==(const LteFlowId_t& a, const LteFlowId_t& b)
@@ -54,9 +43,9 @@ operator==(const LteFlowId_t& a, const LteFlowId_t& b)
 /**
  * Less than operator
  *
- * \param a lhs
- * \param b rhs
- * \returns true if "less than"
+ * @param a lhs
+ * @param b rhs
+ * @returns true if "less than"
  */
 bool
 operator<(const LteFlowId_t& a, const LteFlowId_t& b)
@@ -77,9 +66,9 @@ ImsiLcidPair_t::ImsiLcidPair_t(const uint64_t a, const uint8_t b)
 /**
  * Equality operator
  *
- * \param a lhs
- * \param b rhs
- * \returns true if "equal"
+ * @param a lhs
+ * @param b rhs
+ * @returns true if "equal"
  */
 bool
 operator==(const ImsiLcidPair_t& a, const ImsiLcidPair_t& b)
@@ -90,9 +79,9 @@ operator==(const ImsiLcidPair_t& a, const ImsiLcidPair_t& b)
 /**
  * Less than operator
  *
- * \param a lhs
- * \param b rhs
- * \returns true if "less than"
+ * @param a lhs
+ * @param b rhs
+ * @returns true if "less than"
  */
 bool
 operator<(const ImsiLcidPair_t& a, const ImsiLcidPair_t& b)
@@ -107,9 +96,9 @@ LteUeConfig_t::LteUeConfig_t()
 /**
  * Equality operator
  *
- * \param a lhs
- * \param b rhs
- * \returns true if "equal"
+ * @param a lhs
+ * @param b rhs
+ * @returns true if "equal"
  */
 bool
 operator==(const LteUeConfig_t& a, const LteUeConfig_t& b)
@@ -120,9 +109,9 @@ operator==(const LteUeConfig_t& a, const LteUeConfig_t& b)
 /**
  * Less than operator
  *
- * \param a lhs
- * \param b rhs
- * \returns true if "less than"
+ * @param a lhs
+ * @param b rhs
+ * @returns true if "less than"
  */
 bool
 operator<(const LteUeConfig_t& a, const LteUeConfig_t& b)
@@ -206,23 +195,15 @@ TransmissionModesLayers::TxMode2LayerNum(uint8_t txMode)
     switch (txMode)
     {
     case 0: // Tx MODE 1: SISO
-        nLayer = 1;
-        break;
     case 1: // Tx MODE 2: MIMO Tx Diversity
         nLayer = 1;
         break;
     case 2: // Tx MODE 3: MIMO Spatial Multiplexity Open Loop
-        nLayer = 2;
-        break;
     case 3: // Tx MODE 4: MIMO Spatial Multiplexity Closed Loop
-        nLayer = 2;
-        break;
     case 4: // Tx MODE 5: MIMO Multi-User
         nLayer = 2;
         break;
     case 5: // Tx MODE 6: Closer loop single layer percoding
-        nLayer = 1;
-        break;
     case 6: // Tx MODE 7: Single antenna port 5
         nLayer = 1;
         break;

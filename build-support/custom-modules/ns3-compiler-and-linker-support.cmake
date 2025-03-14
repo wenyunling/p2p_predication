@@ -1,17 +1,6 @@
 # Copyright (c) 2023 Universidade de Brasília
 #
-# This program is free software; you can redistribute it and/or modify it under
-# the terms of the GNU General Public License version 2 as published by the Free
-# Software Foundation;
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-# details.
-#
-# You should have received a copy of the GNU General Public License along with
-# this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-# Place, Suite 330, Boston, MA  02111-1307 USA
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Author: Gabriel Ferreira <gabrielcarvfer@gmail.com>
 
@@ -44,9 +33,14 @@ if(CLANG)
   if(${NS3_COLORED_OUTPUT} OR "$ENV{CLICOLOR}")
     add_definitions(-fcolor-diagnostics) # colorize clang++ output
   endif()
+  if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "aarch64")
+    # see https://gitlab.com/nsnam/ns-3-dev/-/issues/932
+    add_compile_definitions(NVALGRIND)
+  endif()
 endif()
 
 set(GCC FALSE)
+set(GCC_WORKING_PEDANTIC_SEMICOLON 1)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${GNU_MinVersion})
     message(
@@ -54,6 +48,26 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
         "GNU ${CMAKE_CXX_COMPILER_VERSION} ${below_minimum_msg} ${GNU_MinVersion}"
     )
   endif()
+
+  # Check if pedantic throws warning in trailing semicolon after {} scope
+  # (frequently used to make macros look like functions)
+  unset(GCC_WORKING_PEDANTIC_SEMICOLON)
+  include(CheckCXXSourceCompiles)
+  set(CMAKE_REQUIRED_FLAGS "-Wall -Wpedantic -Werror")
+  check_cxx_source_compiles(
+    "
+      int test(){ return 0; };
+      int main(){
+        return test();
+      }
+  "
+    GCC_WORKING_PEDANTIC_SEMICOLON
+  )
+  unset(CMAKE_REQUIRED_FLAGS)
+  if("${GCC_WORKING_PEDANTIC_SEMICOLON}" STREQUAL "")
+    set(GCC_WORKING_PEDANTIC_SEMICOLON 0)
+  endif()
+
   if((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.2.0"))
     # PCH causes weird errors on certain versions of GCC when C++20 is enabled
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106799
@@ -95,7 +109,7 @@ if(${CLANG} AND APPLE)
   set(STATIC_LINK_FLAGS "")
 endif()
 
-if(${NS3_FAST_LINKERS})
+if(${NS3_FAST_LINKERS} AND (NOT ${MSVC}))
   # Search for faster linkers mold and lld, and use them if available
   mark_as_advanced(MOLD LLD)
   find_program(MOLD mold)

@@ -1,22 +1,13 @@
 /*
  * Copyright (c) 2015
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
+#include "ns3/attribute-container.h"
+#include "ns3/config.h"
 #include "ns3/eht-configuration.h"
 #include "ns3/fcfs-wifi-queue-scheduler.h"
 #include "ns3/he-configuration.h"
@@ -46,7 +37,6 @@
 #include "ns3/wifi-psdu.h"
 #include "ns3/yans-wifi-helper.h"
 #include "ns3/yans-wifi-phy.h"
-#include <ns3/attribute-container.h>
 
 #include <algorithm>
 #include <iterator>
@@ -55,10 +45,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Ampdu Aggregation Test
+ * @brief Ampdu Aggregation Test
  */
 class AmpduAggregationTest : public TestCase
 {
@@ -80,8 +70,8 @@ class AmpduAggregationTest : public TestCase
     /**
      * Construct object with non-default test parameters
      *
-     * \param name the name of the test case
-     * \param params the test parameters
+     * @param name the name of the test case
+     * @param params the test parameters
      */
     AmpduAggregationTest(const std::string& name, const Params& params);
 
@@ -89,28 +79,28 @@ class AmpduAggregationTest : public TestCase
     /**
      * Establish a BlockAck agreement.
      *
-     * \param recipient the recipient MAC address
+     * @param recipient the recipient MAC address
      */
     void EstablishAgreement(const Mac48Address& recipient);
 
     /**
      * Enqueue the given number of packets addressed to the given station and of the given size.
      *
-     * \param count the number of packets
-     * \param size the size (bytes) of each packet
-     * \param dest the destination address
+     * @param count the number of packets
+     * @param size the size (bytes) of each packet
+     * @param dest the destination address
      */
     void EnqueuePkts(std::size_t count, uint32_t size, const Mac48Address& dest);
 
     /**
-     * \return the Best Effort QosTxop
+     * @return the Best Effort QosTxop
      */
     Ptr<QosTxop> GetBeQueue() const;
 
     /**
      * Dequeue a PSDU.
      *
-     * \param mpduList the MPDUs contained in the PSDU
+     * @param mpduList the MPDUs contained in the PSDU
      */
     void DequeueMpdus(const std::vector<Ptr<WifiMpdu>>& mpduList);
 
@@ -122,8 +112,8 @@ class AmpduAggregationTest : public TestCase
     /**
      * Fired when the MAC discards an MPDU.
      *
-     * \param reason the reason why the MPDU was discarded
-     * \param mpdu the discarded MPDU
+     * @param reason the reason why the MPDU was discarded
+     * @param mpdu the discarded MPDU
      */
     void MpduDiscarded(WifiMacDropReason reason, Ptr<const WifiMpdu> mpdu);
 
@@ -214,7 +204,17 @@ AmpduAggregationTest::DoSetup()
     /*
      * Create and configure mac layer.
      */
-    m_mac = CreateObjectWithAttributes<StaWifiMac>("QosSupported", BooleanValue(true));
+    m_mac = CreateObjectWithAttributes<StaWifiMac>(
+        "QosSupported",
+        BooleanValue(true),
+        "BE_Txop",
+        PointerValue(CreateObjectWithAttributes<QosTxop>("AcIndex", StringValue("AC_BE"))),
+        "BK_Txop",
+        PointerValue(CreateObjectWithAttributes<QosTxop>("AcIndex", StringValue("AC_BK"))),
+        "VI_Txop",
+        PointerValue(CreateObjectWithAttributes<QosTxop>("AcIndex", StringValue("AC_VI"))),
+        "VO_Txop",
+        PointerValue(CreateObjectWithAttributes<QosTxop>("AcIndex", StringValue("AC_VO"))));
     m_mac->SetDevice(m_device);
     m_mac->SetWifiRemoteStationManagers(m_managers);
     for (uint8_t i = 0; i < m_params.nLinks; i++)
@@ -224,19 +224,31 @@ AmpduAggregationTest::DoSetup()
     m_mac->SetAddress(Mac48Address("00:00:00:00:00:01"));
     m_device->SetMac(m_mac);
     m_mac->SetWifiPhys(m_phys);
-    m_mac->ConfigureStandard(m_params.standard);
+    std::vector<Ptr<ChannelAccessManager>> caManagers;
+    caManagers.reserve(m_params.nLinks);
     for (uint8_t i = 0; i < m_params.nLinks; i++)
     {
-        auto fem = m_mac->GetFrameExchangeManager(i);
+        caManagers.emplace_back(CreateObject<ChannelAccessManager>());
+    }
+    m_mac->SetChannelAccessManagers(caManagers);
+    ObjectFactory femFactory;
+    femFactory.SetTypeId(GetFrameExchangeManagerTypeIdName(m_params.standard, true));
+    std::vector<Ptr<FrameExchangeManager>> feManagers;
+    for (uint8_t i = 0; i < m_params.nLinks; i++)
+    {
+        auto fem = femFactory.Create<FrameExchangeManager>();
+        feManagers.emplace_back(fem);
         auto protectionManager = CreateObject<WifiDefaultProtectionManager>();
         protectionManager->SetWifiMac(m_mac);
         fem->SetProtectionManager(protectionManager);
         auto ackManager = CreateObject<WifiDefaultAckManager>();
         ackManager->SetWifiMac(m_mac);
         fem->SetAckManager(ackManager);
-        // here we should assign link addresses in case of MLDs, but we don't actually use link
-        // addresses in this test
+        // here we should assign distinct link addresses in case of MLDs, but we don't actually use
+        // link addresses in this test
+        fem->SetAddress(m_mac->GetAddress());
     }
+    m_mac->SetFrameExchangeManagers(feManagers);
     m_mac->SetState(StaWifiMac::ASSOCIATED);
     if (m_params.nLinks > 1)
     {
@@ -468,9 +480,7 @@ AmpduAggregationTest::DoRun()
                           true,
                           "no MPDU aggregation should be performed if there is no agreement");
 
-    m_managers.at(SINGLE_LINK_OP_ID)
-        ->SetMaxSsrc(
-            0); // set to 0 in order to fake that the maximum number of retries has been reached
+    m_mac->SetFrameRetryLimit(1); // fake that the maximum number of retries has been reached
     m_mac->TraceConnectWithoutContext("DroppedMpdu",
                                       MakeCallback(&AmpduAggregationTest::MpduDiscarded, this));
     htFem->m_dcf = GetBeQueue();
@@ -496,10 +506,10 @@ AmpduAggregationTest::DoTeardown()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Two Level Aggregation Test
+ * @brief Two Level Aggregation Test
  */
 class TwoLevelAggregationTest : public AmpduAggregationTest
 {
@@ -716,10 +726,10 @@ TwoLevelAggregationTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief 802.11ax aggregation test which permits 64 or 256 MPDUs in A-MPDU according to the
+ * @brief 802.11ax aggregation test which permits 64 or 256 MPDUs in A-MPDU according to the
  * negotiated buffer size.
  */
 class HeAggregationTest : public AmpduAggregationTest
@@ -728,7 +738,7 @@ class HeAggregationTest : public AmpduAggregationTest
     /**
      * Constructor.
      *
-     * \param bufferSize the size (in number of MPDUs) of the BlockAck buffer
+     * @param bufferSize the size (in number of MPDUs) of the BlockAck buffer
      */
     HeAggregationTest(uint16_t bufferSize);
 
@@ -782,10 +792,10 @@ HeAggregationTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief 802.11be aggregation test which permits up to 1024 MPDUs in A-MPDU according to the
+ * @brief 802.11be aggregation test which permits up to 1024 MPDUs in A-MPDU according to the
  * negotiated buffer size.
  */
 class EhtAggregationTest : public AmpduAggregationTest
@@ -794,7 +804,7 @@ class EhtAggregationTest : public AmpduAggregationTest
     /**
      * Constructor.
      *
-     * \param bufferSize the size (in number of MPDUs) of the BlockAck buffer
+     * @param bufferSize the size (in number of MPDUs) of the BlockAck buffer
      */
     EhtAggregationTest(uint16_t bufferSize);
 
@@ -912,10 +922,10 @@ EhtAggregationTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test for A-MSDU and A-MPDU aggregation
+ * @brief Test for A-MSDU and A-MPDU aggregation
  *
  * This test aims to check that the packets passed to the MAC layer (on the sender
  * side) are forwarded up to the upper layer (on the receiver side) when A-MSDU and
@@ -929,11 +939,19 @@ EhtAggregationTest::DoRun()
  * maximum A-MPDU size is set to 7500 bytes, hence the remaining packets are sent
  * in an A-MPDU containing two MPDUs, the first one including 4 MSDUs and the second
  * one including 3 MPDUs.
+ *
+ * It is also checked that the MAC header of every MPDU is notified to the FrameExchangeManager
+ * while the PSDU is being transmitted.
  */
 class PreservePacketsInAmpdus : public TestCase
 {
   public:
-    PreservePacketsInAmpdus();
+    /**
+     * Constructor.
+     *
+     * @param notifyMacHdrRxEnd whether notification of MAC header reception end is enabled
+     */
+    PreservePacketsInAmpdus(bool notifyMacHdrRxEnd);
     ~PreservePacketsInAmpdus() override;
 
     void DoRun() override;
@@ -942,29 +960,46 @@ class PreservePacketsInAmpdus : public TestCase
     std::list<Ptr<const Packet>> m_packetList; ///< List of packets passed to the MAC
     std::vector<std::size_t> m_nMpdus;         ///< Number of MPDUs in PSDUs passed to the PHY
     std::vector<std::size_t> m_nMsdus;         ///< Number of MSDUs in MPDUs passed to the PHY
+    Ptr<const WifiPsdu> m_txPsdu;              ///< PSDU being transmitted
+    std::vector<Ptr<WifiMpdu>>::const_iterator
+        m_expectedMpdu;        ///< next MPDU expected to be received
+    std::size_t m_nMacHdrs{0}; ///< Number of notified MAC headers in QoS data frames
+    bool m_notifyMacHdrRxEnd;  ///< whether notification of MAC header reception end is enabled
 
     /**
      * Callback invoked when an MSDU is passed to the MAC
-     * \param packet the MSDU to transmit
+     * @param packet the MSDU to transmit
      */
     void NotifyMacTransmit(Ptr<const Packet> packet);
     /**
      * Callback invoked when the sender MAC passes a PSDU(s) to the PHY
-     * \param psduMap the PSDU map
-     * \param txVector the TX vector
-     * \param txPowerW the transmit power in Watts
+     * @param psduMap the PSDU map
+     * @param txVector the TX vector
+     * @param txPowerW the transmit power in Watts
      */
     void NotifyPsduForwardedDown(WifiConstPsduMap psduMap, WifiTxVector txVector, double txPowerW);
     /**
+     * Callback invoked when the reception of the MAC header of an MPDU is completed.
+     * @param mac the MAC to which the reception of the MAC header is notified
+     * @param macHdr the MAC header of the MPDU being received
+     * @param txVector the TXVECTOR used to transmit the PSDU
+     * @param psduDuration the remaining duration of the PSDU
+     */
+    void NotifyMacHeaderEndRx(Ptr<WifiMac> mac,
+                              const WifiMacHeader& macHdr,
+                              const WifiTxVector& txVector,
+                              Time psduDuration);
+    /**
      * Callback invoked when the receiver MAC forwards a packet up to the upper layer
-     * \param p the packet
+     * @param p the packet
      */
     void NotifyMacForwardUp(Ptr<const Packet> p);
 };
 
-PreservePacketsInAmpdus::PreservePacketsInAmpdus()
+PreservePacketsInAmpdus::PreservePacketsInAmpdus(bool notifyMacHdrRxEnd)
     : TestCase("Test case to check that the Wifi Mac forwards up the same packets received at "
-               "sender side.")
+               "sender side."),
+      m_notifyMacHdrRxEnd(notifyMacHdrRxEnd)
 {
 }
 
@@ -987,6 +1022,19 @@ PreservePacketsInAmpdus::NotifyPsduForwardedDown(WifiConstPsduMap psduMap,
                           true,
                           "No DL MU PPDU expected");
 
+    // m_txPsdu is reset when the MAC header of the last MPDU in the PSDU is notified. By
+    // checking that m_txPsdu is nullptr when starting the transmission of a PSDU, we ensure
+    // that MAC headers are notified to the FEM while receiving MPDUs.
+    if (m_notifyMacHdrRxEnd)
+    {
+        NS_TEST_EXPECT_MSG_EQ(m_txPsdu,
+                              nullptr,
+                              "Missing MAC header notification: m_txPsdu was not reset");
+    }
+
+    m_txPsdu = psduMap.at(SU_STA_ID);
+    m_expectedMpdu = m_txPsdu->begin();
+
     if (!psduMap[SU_STA_ID]->GetHeader(0).IsQosData())
     {
         return;
@@ -1003,6 +1051,46 @@ PreservePacketsInAmpdus::NotifyPsduForwardedDown(WifiConstPsduMap psduMap,
 }
 
 void
+PreservePacketsInAmpdus::NotifyMacHeaderEndRx(Ptr<WifiMac> mac,
+                                              const WifiMacHeader& macHdr,
+                                              const WifiTxVector& txVector,
+                                              Time psduDuration)
+{
+    NS_TEST_EXPECT_MSG_NE(m_txPsdu,
+                          nullptr,
+                          "Notified of MAC header RX end while no PSDU is being transmitted");
+    // check that the FEM stores the expected MAC header (in a nanosecond, to avoid issues
+    // with the ordering of the callbacks connected to the trace source)
+    auto expectedHdr = (*m_expectedMpdu)->GetHeader();
+    Simulator::Schedule(NanoSeconds(1), [=, this]() {
+        auto macHdr = mac->GetFrameExchangeManager()->GetReceivedMacHdr();
+        NS_TEST_ASSERT_MSG_EQ(macHdr.has_value(),
+                              true,
+                              "Expected the FEM to store the MAC header being received");
+        NS_TEST_EXPECT_MSG_EQ(macHdr->get().GetSequenceNumber(),
+                              expectedHdr.GetSequenceNumber(),
+                              "Wrong sequence number in the MAC header stored by the FEM");
+    });
+
+    if (expectedHdr.IsQosData())
+    {
+        m_nMacHdrs++;
+    }
+
+    if (++m_expectedMpdu == m_txPsdu->end())
+    {
+        m_txPsdu = nullptr;
+        // check that the FEM stores no MAC header right after PSDU end
+        Simulator::Schedule(psduDuration + NanoSeconds(1), [=, this]() {
+            auto macHeader = mac->GetFrameExchangeManager()->GetReceivedMacHdr();
+            NS_TEST_EXPECT_MSG_EQ(macHeader.has_value(),
+                                  false,
+                                  "Expected the FEM to store no MAC header");
+        });
+    }
+}
+
+void
 PreservePacketsInAmpdus::NotifyMacForwardUp(Ptr<const Packet> p)
 {
     auto it = std::find(m_packetList.begin(), m_packetList.end(), p);
@@ -1013,6 +1101,8 @@ PreservePacketsInAmpdus::NotifyMacForwardUp(Ptr<const Packet> p)
 void
 PreservePacketsInAmpdus::DoRun()
 {
+    Config::SetDefault("ns3::WifiPhy::NotifyMacHdrRxEnd", BooleanValue(m_notifyMacHdrRxEnd));
+
     NodeContainer wifiStaNode;
     wifiStaNode.Create(1);
 
@@ -1081,7 +1171,7 @@ PreservePacketsInAmpdus::DoRun()
     client->SetRemote(socket);
     wifiStaNode.Get(0)->AddApplication(client);
     client->SetStartTime(Seconds(1));
-    client->SetStopTime(Seconds(3.0));
+    client->SetStopTime(Seconds(3));
     Simulator::Schedule(Seconds(1.5),
                         &PacketSocketClient::SetAttribute,
                         client,
@@ -1091,8 +1181,8 @@ PreservePacketsInAmpdus::DoRun()
     Ptr<PacketSocketServer> server = CreateObject<PacketSocketServer>();
     server->SetLocal(socket);
     wifiApNode.Get(0)->AddApplication(server);
-    server->SetStartTime(Seconds(0.0));
-    server->SetStopTime(Seconds(4.0));
+    server->SetStartTime(Seconds(0));
+    server->SetStopTime(Seconds(4));
 
     sta_device->GetMac()->TraceConnectWithoutContext(
         "MacTx",
@@ -1100,6 +1190,10 @@ PreservePacketsInAmpdus::DoRun()
     sta_device->GetPhy()->TraceConnectWithoutContext(
         "PhyTxPsduBegin",
         MakeCallback(&PreservePacketsInAmpdus::NotifyPsduForwardedDown, this));
+    ap_device->GetPhy()->TraceConnectWithoutContext(
+        "PhyRxMacHeaderEnd",
+        MakeCallback(&PreservePacketsInAmpdus::NotifyMacHeaderEndRx, this)
+            .Bind(ap_device->GetMac()));
     ap_device->GetMac()->TraceConnectWithoutContext(
         "MacRx",
         MakeCallback(&PreservePacketsInAmpdus::NotifyMacForwardUp, this));
@@ -1119,15 +1213,20 @@ PreservePacketsInAmpdus::DoRun()
     NS_TEST_EXPECT_MSG_EQ(m_nMpdus[1], 2, "Unexpected number of MPDUs in the second A-MPDU");
     NS_TEST_EXPECT_MSG_EQ(m_nMsdus[1], 4, "Unexpected number of MSDUs in the second MPDU");
     NS_TEST_EXPECT_MSG_EQ(m_nMsdus[2], 3, "Unexpected number of MSDUs in the third MPDU");
+    // Three MPDUs (of type QoS data) have been transmitted, so we expect that 3 MAC headers
+    // have been notified to the FEM
+    NS_TEST_EXPECT_MSG_EQ(m_nMacHdrs,
+                          (m_notifyMacHdrRxEnd ? 3 : 0),
+                          "Unexpected number of MAC headers notified to the FEM");
     // All the packets must have been forwarded up at the receiver
     NS_TEST_EXPECT_MSG_EQ(m_packetList.empty(), true, "Some packets have not been forwarded up");
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Wifi Aggregation Test Suite
+ * @brief Wifi Aggregation Test Suite
  */
 class WifiAggregationTestSuite : public TestSuite
 {
@@ -1136,15 +1235,16 @@ class WifiAggregationTestSuite : public TestSuite
 };
 
 WifiAggregationTestSuite::WifiAggregationTestSuite()
-    : TestSuite("wifi-aggregation", UNIT)
+    : TestSuite("wifi-aggregation", Type::UNIT)
 {
-    AddTestCase(new AmpduAggregationTest, TestCase::QUICK);
-    AddTestCase(new TwoLevelAggregationTest, TestCase::QUICK);
-    AddTestCase(new HeAggregationTest(64), TestCase::QUICK);
-    AddTestCase(new HeAggregationTest(256), TestCase::QUICK);
-    AddTestCase(new EhtAggregationTest(512), TestCase::QUICK);
-    AddTestCase(new EhtAggregationTest(1024), TestCase::QUICK);
-    AddTestCase(new PreservePacketsInAmpdus, TestCase::QUICK);
+    AddTestCase(new AmpduAggregationTest, TestCase::Duration::QUICK);
+    AddTestCase(new TwoLevelAggregationTest, TestCase::Duration::QUICK);
+    AddTestCase(new HeAggregationTest(64), TestCase::Duration::QUICK);
+    AddTestCase(new HeAggregationTest(256), TestCase::Duration::QUICK);
+    AddTestCase(new EhtAggregationTest(512), TestCase::Duration::QUICK);
+    AddTestCase(new EhtAggregationTest(1024), TestCase::Duration::QUICK);
+    AddTestCase(new PreservePacketsInAmpdus(true), TestCase::Duration::QUICK);
+    AddTestCase(new PreservePacketsInAmpdus(false), TestCase::Duration::QUICK);
 }
 
 static WifiAggregationTestSuite g_wifiAggregationTestSuite; ///< the test suite

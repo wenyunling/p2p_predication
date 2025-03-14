@@ -2,18 +2,7 @@
  * Copyright (c) 2005, 2009 INRIA
  * Copyright (c) 2009 MIRKO BANCHI
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  *          Mirko Banchi <mk.banchi@gmail.com>
@@ -51,7 +40,7 @@ MacTxMiddle::GetNextSequenceNumberFor(const WifiMacHeader* hdr)
 {
     NS_LOG_FUNCTION(this);
     uint16_t retval;
-    if (hdr->IsQosData() && !hdr->GetAddr1().IsGroup())
+    if (hdr->IsQosData() && !hdr->GetAddr1().IsBroadcast())
     {
         uint8_t tid = hdr->GetQosTid();
         NS_ASSERT(tid < 16);
@@ -89,7 +78,7 @@ MacTxMiddle::PeekNextSequenceNumberFor(const WifiMacHeader* hdr)
 {
     NS_LOG_FUNCTION(this);
     uint16_t retval;
-    if (hdr->IsQosData() && !hdr->GetAddr1().IsGroup())
+    if (hdr->IsQosData() && !hdr->GetAddr1().IsBroadcast())
     {
         uint8_t tid = hdr->GetQosTid();
         NS_ASSERT(tid < 16);
@@ -129,7 +118,7 @@ MacTxMiddle::SetSequenceNumberFor(const WifiMacHeader* hdr)
 {
     NS_LOG_FUNCTION(this << *hdr);
 
-    if (hdr->IsQosData() && !hdr->GetAddr1().IsGroup())
+    if (hdr->IsQosData() && !hdr->GetAddr1().IsBroadcast())
     {
         uint8_t tid = hdr->GetQosTid();
         NS_ASSERT(tid < 16);

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007-2009 Strasbourg University
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Sebastien Vincent <vincent@clarinet.u-strasbg.fr>
  */
@@ -248,7 +237,7 @@ NdiscCache::Entry::Entry(NdiscCache* nd)
       m_waiting(),
       m_router(false),
       m_nudTimer(Timer::CANCEL_ON_DESTROY),
-      m_lastReachabilityConfirmation(Seconds(0.0)),
+      m_lastReachabilityConfirmation(),
       m_nsRetransmit(0)
 {
     NS_LOG_FUNCTION(this);
@@ -276,7 +265,7 @@ NdiscCache::Entry::AddWaitingPacket(Ipv6PayloadHeaderPair p)
     if (m_waiting.size() >= m_ndCache->GetUnresQlen())
     {
         /* we store only m_unresQlen packet => first packet in first packet remove */
-        /** \todo report packet as 'dropped' */
+        /** @todo report packet as 'dropped' */
         m_waiting.pop_front();
     }
     m_waiting.push_back(p);
@@ -286,7 +275,7 @@ void
 NdiscCache::Entry::ClearWaitingPacket()
 {
     NS_LOG_FUNCTION(this);
-    /** \todo report packets as 'dropped' */
+    /** @todo report packets as 'dropped' */
     m_waiting.clear();
 }
 

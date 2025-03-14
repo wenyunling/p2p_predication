@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 IITP RAS
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Kirill Andreev  <andreev@iitp.ru>
  */
@@ -93,7 +82,7 @@ HwmpSimplestRegressionTest::CreateNodes()
                                   StringValue("RowFirst"));
     mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
     mobility.Install(*m_nodes);
-    Simulator::Schedule(Seconds(10.0), &HwmpSimplestRegressionTest::ResetPosition, this);
+    Simulator::Schedule(Seconds(10), &HwmpSimplestRegressionTest::ResetPosition, this);
 }
 
 void
@@ -119,7 +108,7 @@ HwmpSimplestRegressionTest::InstallApplications()
     m_clientSocket->SetRecvCallback(
         MakeCallback(&HwmpSimplestRegressionTest::HandleReadClient, this));
     Simulator::ScheduleWithContext(m_clientSocket->GetNode()->GetId(),
-                                   Seconds(2.0),
+                                   Seconds(2),
                                    &HwmpSimplestRegressionTest::SendData,
                                    this,
                                    m_clientSocket);

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2019 Lawrence Livermore National Laboratory
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathew Bielejeski <bielejeski1@llnl.gov>
  */
@@ -23,22 +12,22 @@
 #include <iostream>
 
 /**
- * \defgroup length-examples Demonstrates usage of the ns3::Length class
- * \ingroup core-examples
- * \ingroup length
+ * @defgroup length-examples Demonstrates usage of the ns3::Length class
+ * @ingroup core-examples
+ * @ingroup length
  */
 
 /**
- * \file
- * \ingroup length-examples
+ * @file
+ * @ingroup length-examples
  * Demonstrates usage of the ns3::Length class
  */
 
 using namespace ns3;
 
 /**
- * \ingroup length-examples
- * \brief Demonstrates the use of ns3::Length constructors.
+ * @ingroup length-examples
+ * @brief Demonstrates the use of ns3::Length constructors.
  */
 void
 Constructors()
@@ -59,8 +48,8 @@ Constructors()
 }
 
 /**
- * \ingroup length-examples
- * \brief Demonstrates the use of ns3::Length conversions.
+ * @ingroup length-examples
+ * @brief Demonstrates the use of ns3::Length conversions.
  */
 void
 Conversions()
@@ -78,8 +67,8 @@ Conversions()
 }
 
 /**
- * \ingroup length-examples
- * \brief Demonstrates the use of ns3::Length arithmetic operators.
+ * @ingroup length-examples
+ * @brief Demonstrates the use of ns3::Length arithmetic operators.
  */
 void
 ArithmeticOperators()
@@ -105,8 +94,8 @@ ArithmeticOperators()
 }
 
 /**
- * \ingroup length-examples
- * \brief Demonstrates the use of ns3::Length equality operators.
+ * @ingroup length-examples
+ * @brief Demonstrates the use of ns3::Length equality operators.
  */
 void
 EqualityOperators()
@@ -142,8 +131,8 @@ EqualityOperators()
 }
 
 /**
- * \ingroup length-examples
- * \brief Demonstrates the use of ns3::Length multiplications and divisions.
+ * @ingroup length-examples
+ * @brief Demonstrates the use of ns3::Length multiplications and divisions.
  */
 void
 DivAndMod()

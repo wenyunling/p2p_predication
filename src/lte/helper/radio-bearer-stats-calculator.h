@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Jaume Nin <jnin@cttc.es>
  *         Nicola Baldo <nbaldo@cttc.es>
@@ -48,7 +37,7 @@ typedef std::map<ImsiLcidPair_t, double> DoubleMap;
 typedef std::map<ImsiLcidPair_t, LteFlowId_t> FlowIdMap;
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * This class is an ns-3 trace sink that performs the calculation of
  * PDU statistics for uplink and downlink. Statistics are generated
@@ -77,7 +66,7 @@ class RadioBearerStatsCalculator : public LteStatsCalculator
 
     /**
      * Class constructor
-     * \param protocolType the name of the protocol type
+     * @param protocolType the name of the protocol type
      */
     RadioBearerStatsCalculator(std::string protocolType);
 
@@ -90,7 +79,7 @@ class RadioBearerStatsCalculator : public LteStatsCalculator
     // Inherited from ns3::Object
     /**
      * Register this type.
-     * \return The object TypeId.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
     void DoDispose() override;
@@ -135,25 +124,25 @@ class RadioBearerStatsCalculator : public LteStatsCalculator
 
     /**
      *
-     * \param t the value of the StartTime attribute
+     * @param t the value of the StartTime attribute
      */
     void SetStartTime(Time t);
 
     /**
      *
-     * \return the value of the StartTime attribute
+     * @return the value of the StartTime attribute
      */
     Time GetStartTime() const;
 
     /**
      *
-     * \param e the epoch duration
+     * @param e the epoch duration
      */
     void SetEpoch(Time e);
 
     /**
      *
-     * \return the epoch duration
+     * @return the epoch duration
      */
     Time GetEpoch() const;
 

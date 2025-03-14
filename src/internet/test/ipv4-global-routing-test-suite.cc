@@ -1,16 +1,5 @@
 /*
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #include "ns3/boolean.h"
@@ -117,9 +106,9 @@ NS_LOG_COMPONENT_DEFINE("Ipv4GlobalRoutingTestSuite");
 //              route to 10.1.1.0 gw 10.1.2.1
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 GlobalRouting Link test
+ * @brief IPv4 GlobalRouting Link test
  */
 class LinkTest : public TestCase
 {
@@ -201,9 +190,9 @@ LinkTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 GlobalRouting LAN test
+ * @brief IPv4 GlobalRouting LAN test
  */
 class LanTest : public TestCase
 {
@@ -282,9 +271,9 @@ LanTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 GlobalRouting Two Link test
+ * @brief IPv4 GlobalRouting Two Link test
  */
 class TwoLinkTest : public TestCase
 {
@@ -401,9 +390,9 @@ TwoLinkTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 GlobalRouting Two LAN test
+ * @brief IPv4 GlobalRouting Two LAN test
  */
 class TwoLanTest : public TestCase
 {
@@ -501,9 +490,9 @@ TwoLanTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 GlobalRouting Bridge test
+ * @brief IPv4 GlobalRouting Bridge test
  */
 class BridgeTest : public TestCase
 {
@@ -684,9 +673,9 @@ BridgeTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 GlobalRouting Two bridges test
+ * @brief IPv4 GlobalRouting Two bridges test
  */
 class TwoBridgeTest : public TestCase
 {
@@ -841,9 +830,9 @@ TwoBridgeTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 Dynamic GlobalRouting test
+ * @brief IPv4 Dynamic GlobalRouting test
  */
 class Ipv4DynamicGlobalRoutingTestCase : public TestCase
 {
@@ -853,20 +842,20 @@ class Ipv4DynamicGlobalRoutingTestCase : public TestCase
 
   private:
     /**
-     * \brief Send some data
-     * \param index Index of the socket to use.
+     * @brief Send some data
+     * @param index Index of the socket to use.
      */
     void SendData(uint8_t index);
 
     /**
-     * \brief Shutdown a socket
-     * \param index Index of the socket to close.
+     * @brief Shutdown a socket
+     * @param index Index of the socket to close.
      */
     void ShutDownSock(uint8_t index);
 
     /**
      * Handle an incoming packet
-     * \param socket The input socket.
+     * @param socket The input socket.
      */
     void HandleRead(Ptr<Socket> socket);
     void DoRun() override;
@@ -1038,8 +1027,8 @@ Ipv4DynamicGlobalRoutingTestCase::DoRun()
     sendSockA.first->Connect(InetSocketAddress(i5i6.GetAddress(1), port));
     sendSockA.second = true;
     m_sendSocks.push_back(sendSockA);
-    Simulator::Schedule(Seconds(1.0), &Ipv4DynamicGlobalRoutingTestCase::SendData, this, 0);
-    Simulator::Schedule(Seconds(10.0), &Ipv4DynamicGlobalRoutingTestCase::ShutDownSock, this, 0);
+    Simulator::Schedule(Seconds(1), &Ipv4DynamicGlobalRoutingTestCase::SendData, this, 0);
+    Simulator::Schedule(Seconds(10), &Ipv4DynamicGlobalRoutingTestCase::ShutDownSock, this, 0);
 
     std::pair<Ptr<Socket>, bool> sendSockB;
     sendSockB.first = Socket::CreateSocket(c.Get(1), tid);
@@ -1047,8 +1036,8 @@ Ipv4DynamicGlobalRoutingTestCase::DoRun()
     sendSockB.first->Connect(InetSocketAddress(i1i6.GetAddress(1), port));
     sendSockB.second = true;
     m_sendSocks.push_back(sendSockB);
-    Simulator::Schedule(Seconds(11.0), &Ipv4DynamicGlobalRoutingTestCase::SendData, this, 1);
-    Simulator::Schedule(Seconds(16.0), &Ipv4DynamicGlobalRoutingTestCase::ShutDownSock, this, 1);
+    Simulator::Schedule(Seconds(11), &Ipv4DynamicGlobalRoutingTestCase::SendData, this, 1);
+    Simulator::Schedule(Seconds(16), &Ipv4DynamicGlobalRoutingTestCase::ShutDownSock, this, 1);
 
     // Create an optional packet sink to receive these packets
     Ptr<Socket> sink2 = Socket::CreateSocket(c.Get(6), tid);
@@ -1149,9 +1138,9 @@ Ipv4DynamicGlobalRoutingTestCase::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 Dynamic GlobalRouting /32 test
+ * @brief IPv4 Dynamic GlobalRouting /32 test
  */
 class Ipv4GlobalRoutingSlash32TestCase : public TestCase
 {
@@ -1162,20 +1151,20 @@ class Ipv4GlobalRoutingSlash32TestCase : public TestCase
     Ptr<Packet> m_receivedPacket; //!< number of received packets
 
     /**
-     * \brief Receive a packet.
-     * \param socket The receiving socket.
+     * @brief Receive a packet.
+     * @param socket The receiving socket.
      */
     void ReceivePkt(Ptr<Socket> socket);
     /**
-     * \brief Send a packet.
-     * \param socket The sending socket.
-     * \param to The address of the receiver.
+     * @brief Send a packet.
+     * @param socket The sending socket.
+     * @param to The address of the receiver.
      */
     void DoSendData(Ptr<Socket> socket, std::string to);
     /**
-     * \brief Send a packet.
-     * \param socket The sending socket.
-     * \param to The address of the receiver.
+     * @brief Send a packet.
+     * @param socket The sending socket.
+     * @param to The address of the receiver.
      */
     void SendData(Ptr<Socket> socket, std::string to);
 
@@ -1312,9 +1301,9 @@ Ipv4GlobalRoutingSlash32TestCase::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 GlobalRouting TestSuite
+ * @brief IPv4 GlobalRouting TestSuite
  */
 class Ipv4GlobalRoutingTestSuite : public TestSuite
 {
@@ -1323,16 +1312,16 @@ class Ipv4GlobalRoutingTestSuite : public TestSuite
 };
 
 Ipv4GlobalRoutingTestSuite::Ipv4GlobalRoutingTestSuite()
-    : TestSuite("ipv4-global-routing", UNIT)
+    : TestSuite("ipv4-global-routing", Type::UNIT)
 {
-    AddTestCase(new LinkTest, TestCase::QUICK);
-    AddTestCase(new LanTest, TestCase::QUICK);
-    AddTestCase(new TwoLinkTest, TestCase::QUICK);
-    AddTestCase(new TwoLanTest, TestCase::QUICK);
-    AddTestCase(new BridgeTest, TestCase::QUICK);
-    AddTestCase(new TwoBridgeTest, TestCase::QUICK);
-    AddTestCase(new Ipv4DynamicGlobalRoutingTestCase, TestCase::QUICK);
-    AddTestCase(new Ipv4GlobalRoutingSlash32TestCase, TestCase::QUICK);
+    AddTestCase(new LinkTest, TestCase::Duration::QUICK);
+    AddTestCase(new LanTest, TestCase::Duration::QUICK);
+    AddTestCase(new TwoLinkTest, TestCase::Duration::QUICK);
+    AddTestCase(new TwoLanTest, TestCase::Duration::QUICK);
+    AddTestCase(new BridgeTest, TestCase::Duration::QUICK);
+    AddTestCase(new TwoBridgeTest, TestCase::Duration::QUICK);
+    AddTestCase(new Ipv4DynamicGlobalRoutingTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new Ipv4GlobalRoutingSlash32TestCase, TestCase::Duration::QUICK);
 }
 
 static Ipv4GlobalRoutingTestSuite

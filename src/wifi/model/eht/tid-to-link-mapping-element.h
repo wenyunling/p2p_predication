@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2022
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Sharan Naribole <sharan.naribole@gmail.com>
  */
@@ -42,8 +31,8 @@ constexpr uint16_t WIFI_TID_TO_LINK_MAPPING_CONTROL_BASIC_SIZE_B =
 constexpr uint16_t WIFI_LINK_MAPPING_PRESENCE_IND_SIZE_B = 1;
 
 /**
- * \brief TID-to-Link Mapping Information Element
- * \ingroup wifi
+ * @brief TID-to-Link Mapping Information Element
+ * @ingroup wifi
  *
  * This class serializes and deserializes
  * the TID-to-Link Mapping element
@@ -64,20 +53,20 @@ class TidToLinkMapping : public WifiInformationElement
         WifiDirection direction{DEFAULT_WIFI_TID_LINK_MAP_DIR}; ///< Direction
         bool defaultMapping{DEFAULT_WIFI_TID_LINK_MAPPING};     ///< Default link mapping
 
-        /// \return Serialized size of TID-to-Link Mapping Control in octets
+        /// @return Serialized size of TID-to-Link Mapping Control in octets
         uint16_t GetSubfieldSize() const;
 
         /**
          * Serialize the TID-to-Link Mapping Control subfield
          *
-         * \param start iterator pointing to where the subfield should be written to
+         * @param start iterator pointing to where the subfield should be written to
          */
         void Serialize(Buffer::Iterator& start) const;
         /**
          * Deserialize the TID-to-Link Mapping Control subfield
          *
-         * \param start iterator pointing to where the subfield should be read from
-         * \return the number of octets read
+         * @param start iterator pointing to where the subfield should be read from
+         * @return the number of octets read
          */
         uint16_t Deserialize(Buffer::Iterator start);
 
@@ -98,38 +87,38 @@ class TidToLinkMapping : public WifiInformationElement
     /**
      * Set the Mapping Switch Time field.
      *
-     * \param mappingSwitchTime the time when the new mapping is established (rounded to a
+     * @param mappingSwitchTime the time when the new mapping is established (rounded to a
      *                          multiple of a TU)
      */
     void SetMappingSwitchTime(Time mappingSwitchTime);
 
-    /// \return the value of the Mapping Switch Time field, if present.
+    /// @return the value of the Mapping Switch Time field, if present.
     std::optional<Time> GetMappingSwitchTime() const;
 
     /**
      * Set the Expected Duration field.
      *
-     * \param expectedDuration the value for the Expected Duration field (rounded to a
+     * @param expectedDuration the value for the Expected Duration field (rounded to a
      *                         multiple of a TU)
      */
     void SetExpectedDuration(Time expectedDuration);
 
-    /// \return the value of the Expected Duration field, if present.
+    /// @return the value of the Expected Duration field, if present.
     std::optional<Time> GetExpectedDuration() const;
 
     /**
      * Set the Link Mapping field of the given TID such that the given TID is mapped
      * to the links associated with the given link IDs.
      *
-     * \param tid the given TID
-     * \param linkIds the IDs of the links which the given TID is mapped to
+     * @param tid the given TID
+     * @param linkIds the IDs of the links which the given TID is mapped to
      */
     void SetLinkMappingOfTid(uint8_t tid, std::set<uint8_t> linkIds);
     /**
      * Get the Link Mapping field of the given TID.
      *
-     * \param tid the given TID
-     * \return the IDs of the links which the given TID is mapped to
+     * @param tid the given TID
+     * @return the IDs of the links which the given TID is mapped to
      */
     std::set<uint8_t> GetLinkMappingOfTid(uint8_t tid) const;
 

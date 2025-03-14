@@ -1,18 +1,7 @@
 //
 //  Copyright (C) 2001  Pierre L'Ecuyer (lecuyer@iro.umontreal.ca)
 //
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// SPDX-License-Identifier: GPL-2.0-only
 //
 // Modified for ns-3 by:
 //   - Rajib Bhattacharjea<raj.b@gatech.edu>
@@ -28,8 +17,8 @@
 #include <iostream>
 
 /**
- * \file
- * \ingroup rngimpl
+ * @file
+ * @ingroup rngimpl
  * ns3::RngStream and MRG32k3a implementations.
  */
 
@@ -44,7 +33,7 @@ NS_LOG_COMPONENT_DEFINE("RngStream");
 } // namespace ns3
 
 /**
- * \ingroup rngimpl
+ * @ingroup rngimpl
  * @{
  */
 /** Namespace for MRG32k3a implementation details. */

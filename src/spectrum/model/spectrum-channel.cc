@@ -1,28 +1,17 @@
 /*
  * Copyright (c) 2009 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
 
 #include "spectrum-channel.h"
 
-#include <ns3/abort.h>
-#include <ns3/double.h>
-#include <ns3/log.h>
-#include <ns3/pointer.h>
+#include "ns3/abort.h"
+#include "ns3/double.h"
+#include "ns3/log.h"
+#include "ns3/pointer.h"
 
 namespace ns3
 {
@@ -44,9 +33,18 @@ void
 SpectrumChannel::DoDispose()
 {
     NS_LOG_FUNCTION(this);
+
+    // Any propagation model that holds a pointer
+    // back to the spectrum channel should not call Dispose()
+    // of its channel pointer, or else a loop may occur.
     m_propagationLoss = nullptr;
     m_propagationDelay = nullptr;
     m_spectrumPropagationLoss = nullptr;
+    if (m_phasedArraySpectrumPropagationLoss)
+    {
+        m_phasedArraySpectrumPropagationLoss->Dispose();
+    }
+    m_phasedArraySpectrumPropagationLoss = nullptr;
 }
 
 TypeId

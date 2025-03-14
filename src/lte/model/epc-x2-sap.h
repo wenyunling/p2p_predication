@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  */
@@ -44,7 +33,7 @@ class Node;
  */
 
 /**
- * \brief Common structures for EpcX2SapProvider and EpcX2SapUser
+ * @brief Common structures for EpcX2SapProvider and EpcX2SapUser
  */
 class EpcX2Sap
 {
@@ -222,7 +211,7 @@ class EpcX2Sap
     };
 
     /**
-     * \brief Parameters of the HANDOVER REQUEST message.
+     * @brief Parameters of the HANDOVER REQUEST message.
      *
      * See section 9.1.1.1 for further info about the parameters
      */
@@ -240,7 +229,7 @@ class EpcX2Sap
     };
 
     /**
-     * \brief Parameters of the HANDOVER REQUEST ACKNOWLEDGE message.
+     * @brief Parameters of the HANDOVER REQUEST ACKNOWLEDGE message.
      *
      * See section 9.1.1.2 for further info about the parameters
      */
@@ -256,7 +245,7 @@ class EpcX2Sap
     };
 
     /**
-     * \brief Parameters of the HANDOVER PREPARATION FAILURE message.
+     * @brief Parameters of the HANDOVER PREPARATION FAILURE message.
      *
      * See section 9.1.1.3 for further info about the parameters
      */
@@ -270,7 +259,7 @@ class EpcX2Sap
     };
 
     /**
-     * \brief Parameters of the SN STATUS TRANSFER message.
+     * @brief Parameters of the SN STATUS TRANSFER message.
      *
      * See section 9.1.1.4 for further info about the parameters
      */
@@ -285,7 +274,7 @@ class EpcX2Sap
     };
 
     /**
-     * \brief Parameters of the UE CONTEXT RELEASE message.
+     * @brief Parameters of the UE CONTEXT RELEASE message.
      *
      * See section 9.1.1.5 for further info about the parameters
      */
@@ -298,7 +287,7 @@ class EpcX2Sap
     };
 
     /**
-     * \brief Parameters of the LOAD INFORMATION message.
+     * @brief Parameters of the LOAD INFORMATION message.
      *
      * See section 9.1.2.1 for further info about the parameters
      */
@@ -309,7 +298,7 @@ class EpcX2Sap
     };
 
     /**
-     * \brief Parameters of the RESOURCE STATUS UPDATE message.
+     * @brief Parameters of the RESOURCE STATUS UPDATE message.
      *
      * See section 9.1.2.14 for further info about the parameters
      */
@@ -323,7 +312,7 @@ class EpcX2Sap
     };
 
     /**
-     * \brief Parameters of the UE DATA primitive
+     * @brief Parameters of the UE DATA primitive
      *
      * Forward UE data during the handover procedure from source eNB (sourceCellId)
      * to target eNB (targetCellId) using a GTP-U tunnel (gtpTeid)
@@ -337,7 +326,7 @@ class EpcX2Sap
     };
 
     /**
-     * \brief Parameters of the HANDOVER CANCEL message.
+     * @brief Parameters of the HANDOVER CANCEL message.
      *
      * See section 9.1.1.6 for further info about the parameters
      */
@@ -366,55 +355,55 @@ class EpcX2SapProvider : public EpcX2Sap
 
     /**
      * Send handover request function
-     * \param params handover request parameters
+     * @param params handover request parameters
      */
     virtual void SendHandoverRequest(HandoverRequestParams params) = 0;
 
     /**
      * Send handover request ack function
-     * \param params the handover request ack parameters
+     * @param params the handover request ack parameters
      */
     virtual void SendHandoverRequestAck(HandoverRequestAckParams params) = 0;
 
     /**
      * Send handover preparation failure function
-     * \param params the handover preparation failure
+     * @param params the handover preparation failure
      */
     virtual void SendHandoverPreparationFailure(HandoverPreparationFailureParams params) = 0;
 
     /**
      * Send SN status transfer function
-     * \param params the SN status transfer parameters
+     * @param params the SN status transfer parameters
      */
     virtual void SendSnStatusTransfer(SnStatusTransferParams params) = 0;
 
     /**
      * Send UE context release function
-     * \param params the UE context release parameters
+     * @param params the UE context release parameters
      */
     virtual void SendUeContextRelease(UeContextReleaseParams params) = 0;
 
     /**
      * Send load information function
-     * \param params the load information parameters
+     * @param params the load information parameters
      */
     virtual void SendLoadInformation(LoadInformationParams params) = 0;
 
     /**
      * Send resource status update function
-     * \param params the resource statue update parameters
+     * @param params the resource statue update parameters
      */
     virtual void SendResourceStatusUpdate(ResourceStatusUpdateParams params) = 0;
 
     /**
      * Send UE data function
-     * \param params the UE data parameters
+     * @param params the UE data parameters
      */
     virtual void SendUeData(UeDataParams params) = 0;
 
     /**
-     * \brief Send handover Cancel to the target eNB
-     * \param params the handover cancel parameters
+     * @brief Send handover Cancel to the target eNB
+     * @param params the handover cancel parameters
      */
     virtual void SendHandoverCancel(HandoverCancelParams params) = 0;
 };
@@ -434,55 +423,55 @@ class EpcX2SapUser : public EpcX2Sap
 
     /**
      * Receive handover request function
-     * \param params the handover request parameters
+     * @param params the handover request parameters
      */
     virtual void RecvHandoverRequest(HandoverRequestParams params) = 0;
 
     /**
      * Receive handover request ack function
-     * \param params the handover request ack parameters
+     * @param params the handover request ack parameters
      */
     virtual void RecvHandoverRequestAck(HandoverRequestAckParams params) = 0;
 
     /**
      * Receive handover preparation failure function
-     * \param params the handover preparation failure parameters
+     * @param params the handover preparation failure parameters
      */
     virtual void RecvHandoverPreparationFailure(HandoverPreparationFailureParams params) = 0;
 
     /**
      * Receive SN status transfer function
-     * \param params the SN status transfer parameters
+     * @param params the SN status transfer parameters
      */
     virtual void RecvSnStatusTransfer(SnStatusTransferParams params) = 0;
 
     /**
      * Receive UE context release function
-     * \param params the receive UE context release parameters
+     * @param params the receive UE context release parameters
      */
     virtual void RecvUeContextRelease(UeContextReleaseParams params) = 0;
 
     /**
      * Receive load information function
-     * \param params the load information parameters
+     * @param params the load information parameters
      */
     virtual void RecvLoadInformation(LoadInformationParams params) = 0;
 
     /**
      * Receive resource status update function
-     * \param params the resource status update parameters
+     * @param params the resource status update parameters
      */
     virtual void RecvResourceStatusUpdate(ResourceStatusUpdateParams params) = 0;
 
     /**
      * Receive UE data function
-     * \param params UE data parameters
+     * @param params UE data parameters
      */
     virtual void RecvUeData(UeDataParams params) = 0;
 
     /**
      * Receive handover cancel function
-     * \param params the receive handover cancel parameters
+     * @param params the receive handover cancel parameters
      *
      */
     virtual void RecvHandoverCancel(HandoverCancelParams params) = 0;
@@ -500,7 +489,7 @@ class EpcX2SpecificEpcX2SapProvider : public EpcX2SapProvider
     /**
      * Constructor
      *
-     * \param x2 the owner class
+     * @param x2 the owner class
      */
     EpcX2SpecificEpcX2SapProvider(C* x2);
 
@@ -513,55 +502,55 @@ class EpcX2SpecificEpcX2SapProvider : public EpcX2SapProvider
 
     /**
      * Send handover request function
-     * \param params the handover request parameters
+     * @param params the handover request parameters
      */
     void SendHandoverRequest(HandoverRequestParams params) override;
 
     /**
      * Send handover request ack function
-     * \param params the handover request ack parameters
+     * @param params the handover request ack parameters
      */
     void SendHandoverRequestAck(HandoverRequestAckParams params) override;
 
     /**
      * Send handover preparation failure function
-     * \param params the handover preparation failure parameters
+     * @param params the handover preparation failure parameters
      */
     void SendHandoverPreparationFailure(HandoverPreparationFailureParams params) override;
 
     /**
      * Send SN status transfer function
-     * \param params the SN status transfer parameters
+     * @param params the SN status transfer parameters
      */
     void SendSnStatusTransfer(SnStatusTransferParams params) override;
 
     /**
      * Send UE context release function
-     * \param params the UE context release parameters
+     * @param params the UE context release parameters
      */
     void SendUeContextRelease(UeContextReleaseParams params) override;
 
     /**
      * Send load information function
-     * \param params the load information parameters
+     * @param params the load information parameters
      */
     void SendLoadInformation(LoadInformationParams params) override;
 
     /**
      * Send resource status update function
-     * \param params the resource status update parameters
+     * @param params the resource status update parameters
      */
     void SendResourceStatusUpdate(ResourceStatusUpdateParams params) override;
 
     /**
      * Send UE data function
-     * \param params the UE data parameters
+     * @param params the UE data parameters
      */
     void SendUeData(UeDataParams params) override;
 
     /**
-     * \brief Send handover Cancel to the target eNB
-     * \param params the handover cancel parameters
+     * @brief Send handover Cancel to the target eNB
+     * @param params the handover cancel parameters
      */
     void SendHandoverCancel(HandoverCancelParams params) override;
 
@@ -649,7 +638,7 @@ class EpcX2SpecificEpcX2SapUser : public EpcX2SapUser
     /**
      * Constructor
      *
-     * \param rrc RRC
+     * @param rrc RRC
      */
     EpcX2SpecificEpcX2SapUser(C* rrc);
 
@@ -662,55 +651,55 @@ class EpcX2SpecificEpcX2SapUser : public EpcX2SapUser
 
     /**
      * Receive handover request function
-     * \param params the receive handover request parameters
+     * @param params the receive handover request parameters
      */
     void RecvHandoverRequest(HandoverRequestParams params) override;
 
     /**
      * Receive handover request ack function
-     * \param params the receive handover request ack parameters
+     * @param params the receive handover request ack parameters
      */
     void RecvHandoverRequestAck(HandoverRequestAckParams params) override;
 
     /**
      * Receive handover preparation failure function
-     * \param params the receive handover preparation failure parameters
+     * @param params the receive handover preparation failure parameters
      */
     void RecvHandoverPreparationFailure(HandoverPreparationFailureParams params) override;
 
     /**
      * Receive SN status transfer function
-     * \param params the SN status transfer parameters
+     * @param params the SN status transfer parameters
      */
     void RecvSnStatusTransfer(SnStatusTransferParams params) override;
 
     /**
      * Receive UE context release function
-     * \param params the UE context release parameters
+     * @param params the UE context release parameters
      */
     void RecvUeContextRelease(UeContextReleaseParams params) override;
 
     /**
      * Receive load information function
-     * \param params the load information parameters
+     * @param params the load information parameters
      */
     void RecvLoadInformation(LoadInformationParams params) override;
 
     /**
      * Receive resource status update function
-     * \param params the receive resource status update
+     * @param params the receive resource status update
      */
     void RecvResourceStatusUpdate(ResourceStatusUpdateParams params) override;
 
     /**
      * Receive UE data function
-     * \param params the UE data parameters
+     * @param params the UE data parameters
      */
     void RecvUeData(UeDataParams params) override;
 
     /**
      * Receive handover cancel function
-     * \param params the receive handover cancel parameters
+     * @param params the receive handover cancel parameters
      *
      */
     void RecvHandoverCancel(HandoverCancelParams params) override;

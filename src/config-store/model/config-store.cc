@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@cutebugs.net>
  */
@@ -24,7 +13,6 @@
 #include "ns3/abort.h"
 #include "ns3/attribute-construction-list.h"
 #include "ns3/boolean.h"
-#include "ns3/config-store-config.h"
 #include "ns3/enum.h"
 #include "ns3/log.h"
 #include "ns3/simulator.h"
@@ -37,7 +25,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <unistd.h>
 
 namespace ns3
 {
@@ -74,11 +61,15 @@ ConfigStore::GetTypeId()
                 EnumValue(ConfigStore::RAW_TEXT),
                 MakeEnumAccessor<FileFormat>(&ConfigStore::SetFileFormat),
                 MakeEnumChecker(ConfigStore::RAW_TEXT, "RawText", ConfigStore::XML, "Xml"))
-            .AddAttribute("SaveDeprecated",
-                          "Save DEPRECATED attributes",
-                          BooleanValue(true),
-                          MakeBooleanAccessor(&ConfigStore::SetSaveDeprecated),
-                          MakeBooleanChecker());
+            .AddAttribute(
+                "SaveDeprecated",
+                "Save DEPRECATED attributes",
+                BooleanValue(true),
+                MakeBooleanAccessor(&ConfigStore::SetSaveDeprecated),
+                MakeBooleanChecker(),
+                TypeId::SupportLevel::OBSOLETE,
+                "OBSOLETE since ns-3.43 as it is no longer needed; deprecated attributes are saved "
+                "only if their value differs from their respective original initial value");
     return tid;
 }
 
@@ -140,8 +131,6 @@ ConfigStore::ConfigStore()
         }
     }
     m_file->SetFilename(m_filename);
-    m_file->SetSaveDeprecated(m_saveDeprecated);
-
     NS_LOG_FUNCTION(this << ": format: " << m_fileFormat << ", mode: " << m_mode
                          << ", file name: " << m_filename);
 }

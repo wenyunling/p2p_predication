@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -23,9 +12,9 @@
 #include "eps-bearer.h"
 #include "lte-rrc-sap.h"
 
-#include <ns3/ipv4-address.h>
-#include <ns3/object.h>
-#include <ns3/pointer.h>
+#include "ns3/ipv4-address.h"
+#include "ns3/object.h"
+#include "ns3/pointer.h"
 
 namespace ns3
 {
@@ -43,8 +32,8 @@ class LteRadioBearerInfo : public Object
     LteRadioBearerInfo();
     ~LteRadioBearerInfo() override;
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -60,8 +49,8 @@ class LteSignalingRadioBearerInfo : public LteRadioBearerInfo
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -77,8 +66,8 @@ class LteDataRadioBearerInfo : public LteRadioBearerInfo
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 

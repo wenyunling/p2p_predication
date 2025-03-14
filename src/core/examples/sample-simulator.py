@@ -1,18 +1,7 @@
 #
 # Copyright (c) 2010 INRIA
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License version 2 as
-# published by the Free Software Foundation;
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Authors: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
 #
@@ -38,7 +27,7 @@ except ModuleNotFoundError:
 ## Example function - triggered at a random time.
 ## \return None.
 def RandomFunction():
-    print("RandomFunction received event at", ns.core.Simulator.Now().GetSeconds(), "s")
+    print("RandomFunction received event at", ns.Simulator.Now().GetSeconds(), "s")
 
 
 ## Example function - triggered if an event is canceled (should not be called).
@@ -119,23 +108,23 @@ def main(argv):
     cmd.Parse(argv)
 
     model = ns.cppyy.gbl.MyModel()
-    v = ns.CreateObject("UniformRandomVariable")
-    v.SetAttribute("Min", ns.core.DoubleValue(10))
-    v.SetAttribute("Max", ns.core.DoubleValue(20))
+    v = ns.CreateObject[ns.UniformRandomVariable]()
+    v.SetAttribute("Min", ns.DoubleValue(10))
+    v.SetAttribute("Max", ns.DoubleValue(20))
 
     ev = ns.cppyy.gbl.ExampleFunctionEvent(model)
-    ns.core.Simulator.Schedule(ns.core.Seconds(10.0), ev)
+    ns.Simulator.Schedule(ns.Seconds(10), ev)
 
     ev2 = ns.cppyy.gbl.RandomFunctionEvent(model)
-    ns.core.Simulator.Schedule(ns.core.Seconds(v.GetValue()), ev2)
+    ns.Simulator.Schedule(ns.Seconds(v.GetValue()), ev2)
 
     ev3 = ns.cppyy.gbl.CancelledFunctionEvent()
-    id = ns.core.Simulator.Schedule(ns.core.Seconds(30.0), ev3)
-    ns.core.Simulator.Cancel(id)
+    id = ns.Simulator.Schedule(ns.Seconds(30), ev3)
+    ns.Simulator.Cancel(id)
 
-    ns.core.Simulator.Run()
+    ns.Simulator.Run()
 
-    ns.core.Simulator.Destroy()
+    ns.Simulator.Destroy()
 
 
 if __name__ == "__main__":

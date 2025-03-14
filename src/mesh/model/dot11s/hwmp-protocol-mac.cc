@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2008,2009 IITP RAS
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Kirill Andreev <andreev@iitp.ru>
  */
@@ -77,7 +66,7 @@ HwmpProtocolMac::ReceiveData(Ptr<Packet> packet, const WifiMacHeader& header)
     m_stats.rxData++;
     m_stats.rxDataBytes += packet->GetSize();
 
-    /// \todo address extension
+    /// @todo address extension
     Mac48Address destination;
     Mac48Address source;
     switch (meshHdr.GetAddressExt())
@@ -321,7 +310,7 @@ void
 HwmpProtocolMac::SendMyPreq()
 {
     NS_LOG_FUNCTION(this);
-    if (m_preqTimer.IsRunning())
+    if (m_preqTimer.IsPending())
     {
         return;
     }
@@ -330,7 +319,7 @@ HwmpProtocolMac::SendMyPreq()
         return;
     }
     // reschedule sending PREQ
-    NS_ASSERT(!m_preqTimer.IsRunning());
+    NS_ASSERT(!m_preqTimer.IsPending());
     m_preqTimer =
         Simulator::Schedule(m_protocol->GetPreqMinInterval(), &HwmpProtocolMac::SendMyPreq, this);
     SendPreqVector(m_myPreq);
@@ -466,7 +455,7 @@ void
 HwmpProtocolMac::SendMyPerr()
 {
     NS_LOG_FUNCTION(this);
-    if (m_perrTimer.IsRunning())
+    if (m_perrTimer.IsPending())
     {
         return;
     }

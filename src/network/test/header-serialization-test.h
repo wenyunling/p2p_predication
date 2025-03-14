@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2022 Universita' degli Studi di Napoli Federico II
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Davide Magrin <magrin.davide@gmail.com>
  *          Stefano Avallone <stavallo@unina.it>
@@ -35,9 +24,9 @@ class HeaderSerializationTestCase : public TestCase
 {
   protected:
     /**
-     * \brief Constructor.
+     * @brief Constructor.
      *
-     * \param [in] name The name of the new TestCase created
+     * @param [in] name The name of the new TestCase created
      */
     HeaderSerializationTestCase(std::string name)
         : TestCase(name)
@@ -50,10 +39,10 @@ class HeaderSerializationTestCase : public TestCase
      * deserializing from the buffer and serialize the new header into a new buffer.
      * Verify that the two buffers have the same size and the same content.
      *
-     * \tparam T \deduced Type of the given header
-     * \tparam Args \deduced Type of arguments to pass to the constructor of the header
-     * \param [in] hdr the header to test
-     * \param [in] args the arguments to construct the new header
+     * @tparam T \deduced Type of the given header
+     * @tparam Args \deduced Type of arguments to pass to the constructor of the header
+     * @param [in] hdr the header to test
+     * @param [in] args the arguments to construct the new header
      */
     template <typename T, typename... Args>
     void TestHeaderSerialization(const T& hdr, Args&&... args);

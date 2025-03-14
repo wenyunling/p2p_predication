@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2014 Piotr Gawlowicz
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Piotr Gawlowicz <gawlowicz.p@gmail.com>
  *
@@ -36,20 +25,20 @@ namespace ns3
 {
 
 /**
- * \brief Enhanced Fractional Frequency Reuse algorithm implementation
+ * @brief Enhanced Fractional Frequency Reuse algorithm implementation
  */
 class LteFfrEnhancedAlgorithm : public LteFfrAlgorithm
 {
   public:
     /**
-     * \brief Creates a trivial ffr algorithm instance.
+     * @brief Creates a trivial ffr algorithm instance.
      */
     LteFfrEnhancedAlgorithm();
     ~LteFfrEnhancedAlgorithm() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -93,15 +82,15 @@ class LteFfrEnhancedAlgorithm : public LteFfrAlgorithm
     /**
      * Set downlink configuration
      *
-     * \param cellId the cell ID
-     * \param bandwidth the bandwidth
+     * @param cellId the cell ID
+     * @param bandwidth the bandwidth
      */
     void SetDownlinkConfiguration(uint16_t cellId, uint8_t bandwidth);
     /**
      * Set uplink configuration
      *
-     * \param cellId the cell ID
-     * \param bandwidth the bandwidth
+     * @param cellId the cell ID
+     * @param bandwidth the bandwidth
      */
     void SetUplinkConfiguration(uint16_t cellId, uint8_t bandwidth);
     /**
@@ -116,10 +105,10 @@ class LteFfrEnhancedAlgorithm : public LteFfrAlgorithm
     /**
      * Initialize uplink RBG maps
      *
-     * \param rnti the RNTI
-     * \param rb RB
-     * \param ulCqiMap UL CQI map
-     * \returns UL SINR
+     * @param rnti the RNTI
+     * @param rb RB
+     * @param ulCqiMap UL CQI map
+     * @returns UL SINR
      */
     double EstimateUlSinr(uint16_t rnti,
                           uint16_t rb,
@@ -127,8 +116,8 @@ class LteFfrEnhancedAlgorithm : public LteFfrAlgorithm
     /**
      * Get CQI from spectral efficiency
      *
-     * \param s spectral efficiency
-     * \returns CQI
+     * @param s spectral efficiency
+     * @returns CQI
      */
     int GetCqiFromSpectralEfficiency(double s);
 

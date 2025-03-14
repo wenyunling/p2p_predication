@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -20,7 +9,7 @@
 #ifndef SPECTRUM_MODEL_H
 #define SPECTRUM_MODEL_H
 
-#include <ns3/simple-ref-count.h>
+#include "ns3/simple-ref-count.h"
 
 #include <cstddef>
 #include <vector>
@@ -29,17 +18,17 @@ namespace ns3
 {
 
 /**
- * \defgroup spectrum Spectrum Models
+ * @defgroup spectrum Spectrum Models
  */
 
 /**
- * \ingroup spectrum
- * \ingroup tests
- * \defgroup spectrum-tests Spectrum Models tests
+ * @ingroup spectrum
+ * @ingroup tests
+ * @defgroup spectrum-tests Spectrum Models tests
  */
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  *
  * The building block of a SpectrumModel. This struct models
  * a frequency band defined by the frequency interval [fl, fc] and
@@ -74,9 +63,9 @@ class SpectrumModel : public SimpleRefCount<SpectrumModel>
   public:
     /**
      * Comparison operator. Returns true if the two SpectrumModels are identical
-     * \param lhs left operand
-     * \param rhs right operand
-     * \returns true if the two operands are identical
+     * @param lhs left operand
+     * @param rhs right operand
+     * @returns true if the two operands are identical
      */
     friend bool operator==(const SpectrumModel& lhs, const SpectrumModel& rhs);
 
@@ -136,8 +125,8 @@ class SpectrumModel : public SimpleRefCount<SpectrumModel>
     /**
      * Check if another SpectrumModels has bands orthogonal to our bands.
      *
-     * \param other another SpectrumModel
-     * \returns true if bands are orthogonal
+     * @param other another SpectrumModel
+     * @returns true if bands are orthogonal
      */
     bool IsOrthogonal(const SpectrumModel& other) const;
 

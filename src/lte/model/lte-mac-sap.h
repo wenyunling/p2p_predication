@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -20,7 +9,7 @@
 #ifndef LTE_MAC_SAP_H
 #define LTE_MAC_SAP_H
 
-#include <ns3/packet.h>
+#include "ns3/packet.h"
 
 namespace ns3
 {
@@ -58,7 +47,7 @@ class LteMacSapProvider
      * send an RLC PDU to the MAC for transmission. This method is to be
      * called as a response to LteMacSapUser::NotifyTxOpportunity
      *
-     * \param params TransmitPduParameters
+     * @param params TransmitPduParameters
      */
     virtual void TransmitPdu(TransmitPduParameters params) = 0;
 
@@ -80,7 +69,7 @@ class LteMacSapProvider
     /**
      * Report the RLC buffer status to the MAC
      *
-     * \param params ReportBufferStatusParameters
+     * @param params ReportBufferStatusParameters
      */
     virtual void ReportBufferStatus(ReportBufferStatusParameters params) = 0;
 };
@@ -104,13 +93,13 @@ class LteMacSapUser
     struct TxOpportunityParameters
     {
         /**
-         * \brief TxOpportunityParameters constructor
-         * \param bytes Bytes
-         * \param layer Layer
-         * \param harqId HarqID
-         * \param ccId Component carrier ID
-         * \param rnti RNTI
-         * \param lcId Logical Channel ID
+         * @brief TxOpportunityParameters constructor
+         * @param bytes Bytes
+         * @param layer Layer
+         * @param harqId HarqID
+         * @param ccId Component carrier ID
+         * @param rnti RNTI
+         * @param lcId Logical Channel ID
          */
         TxOpportunityParameters(uint32_t bytes,
                                 uint8_t layer,
@@ -128,7 +117,7 @@ class LteMacSapUser
         }
 
         /**
-         * \brief TxOpportunityParameters default constructor (DEPRECATED)
+         * @brief TxOpportunityParameters default constructor (DEPRECATED)
          */
         TxOpportunityParameters()
         {
@@ -146,7 +135,7 @@ class LteMacSapUser
      * Called by the MAC to notify the RLC that the scheduler granted a
      * transmission opportunity to this RLC instance.
      *
-     * \param params the TxOpportunityParameters
+     * @param params the TxOpportunityParameters
      */
     virtual void NotifyTxOpportunity(TxOpportunityParameters params) = 0;
 
@@ -165,17 +154,17 @@ class LteMacSapUser
     struct ReceivePduParameters
     {
         /**
-         * \brief ReceivePduParameters default constructor (DEPRECATED)
+         * @brief ReceivePduParameters default constructor (DEPRECATED)
          */
         ReceivePduParameters()
         {
         }
 
         /**
-         * \brief ReceivePduParameters constructor
-         * \param p Packet
-         * \param rnti RNTI
-         * \param lcid Logical Channel ID
+         * @brief ReceivePduParameters constructor
+         * @param p Packet
+         * @param rnti RNTI
+         * @param lcid Logical Channel ID
          */
         ReceivePduParameters(const Ptr<Packet>& p, uint16_t rnti, uint8_t lcid)
         {
@@ -192,7 +181,7 @@ class LteMacSapUser
     /**
      * Called by the MAC to notify the RLC of the reception of a new PDU
      *
-     * \param params the ReceivePduParameters
+     * @param params the ReceivePduParameters
      */
     virtual void ReceivePdu(ReceivePduParameters params) = 0;
 };
@@ -205,7 +194,7 @@ class EnbMacMemberLteMacSapProvider : public LteMacSapProvider
     /**
      * Constructor
      *
-     * \param mac the MAC class
+     * @param mac the MAC class
      */
     EnbMacMemberLteMacSapProvider(C* mac);
 

@@ -2,18 +2,7 @@
  * Copyright (c) 2006,2007 INRIA
  * Copyright (c) 2019 University of Padova
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  * Author: Michele Polese <michele.polese@gmail.com>
@@ -36,8 +25,10 @@ namespace ns3
 {
 
 /**
- * \ingroup mobility
- * \brief 2D random walk mobility model which avoids buildings.
+ * @ingroup buildings
+ * @ingroup mobility
+ *
+ * @brief 2D random walk mobility model which avoids buildings.
  *
  * This class reuses most of the code of RandomWalk2dMobilityModel,
  * but adds the awareness of buildings objects which are avoided
@@ -59,7 +50,7 @@ class RandomWalk2dOutdoorMobilityModel : public MobilityModel
   public:
     /**
      * Register this type with the TypeId system.
-     * \return the object TypeId
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -72,20 +63,20 @@ class RandomWalk2dOutdoorMobilityModel : public MobilityModel
 
   private:
     /**
-     * \brief Performs the rebound of the node if it reaches a boundary
-     * \param timeLeft The remaining time of the walk
+     * @brief Performs the rebound of the node if it reaches a boundary
+     * @param timeLeft The remaining time of the walk
      */
     void Rebound(Time timeLeft);
     /**
-     * \brief Avoid a building
-     * \param delayLeft The remaining time of the walk
-     * \param intersectPosition The position at which the building is intersected
+     * @brief Avoid a building
+     * @param delayLeft The remaining time of the walk
+     * @param intersectPosition The position at which the building is intersected
      */
     void AvoidBuilding(Time delayLeft, Vector intersectPosition);
     /**
      * Walk according to position and velocity, until distance is reached,
      * time is reached, or intersection with the bounding box, or building
-     * \param delayLeft The remaining time of the walk
+     * @param delayLeft The remaining time of the walk
      */
     void DoWalk(Time delayLeft);
     /**
@@ -96,9 +87,9 @@ class RandomWalk2dOutdoorMobilityModel : public MobilityModel
      * Check if there is a building between two positions (or if the nextPosition is inside a
      * building). The code is taken from MmWave3gppBuildingsPropagationLossModel from the NYU/UNIPD
      * ns-3 mmWave module
-     * \param currentPosition The current position of the node
-     * \param nextPosition The position to check
-     * \return a pair with a boolean (true if the line between the two position does not intersect
+     * @param currentPosition The current position of the node
+     * @param nextPosition The position to check
+     * @return a pair with a boolean (true if the line between the two position does not intersect
      * building), and a pointer which is 0 if the boolean is true, or it points to the building
      * which is intersected
      */
@@ -107,10 +98,10 @@ class RandomWalk2dOutdoorMobilityModel : public MobilityModel
     /**
      * Compute the intersecting point of the box represented by boundaries and the line between
      * current and next. Notice that we only consider a 2d plane.
-     * \param current The current position
-     * \param next The next position
-     * \param boundaries The boundaries of the building we will intersect
-     * \return a vector with the position of the intersection
+     * @param current The current position
+     * @param next The next position
+     * @param boundaries The boundaries of the building we will intersect
+     * @return a vector with the position of the intersection
      */
     Vector CalculateIntersectionFromOutside(const Vector& current,
                                             const Vector& next,

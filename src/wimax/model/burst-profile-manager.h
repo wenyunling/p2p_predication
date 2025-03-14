@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007,2008 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Jahanzeb Farooq <jahanzeb.farooq@sophia.inria.fr>
  */
@@ -33,7 +22,7 @@ class SSRecord;
 class RngReq;
 
 /**
- * \ingroup wimax
+ * @ingroup wimax
  *
  * Profile manager for burst communications
  */
@@ -41,14 +30,14 @@ class BurstProfileManager : public Object
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     /**
      * Constructor
      *
-     * \param device WIMAX device
+     * @param device WIMAX device
      */
     BurstProfileManager(Ptr<WimaxNetDevice> device);
     ~BurstProfileManager() override;
@@ -59,49 +48,49 @@ class BurstProfileManager : public Object
 
     void DoDispose() override;
     /**
-     * \returns the number of available burst profile
+     * @returns the number of available burst profile
      */
     uint16_t GetNrBurstProfilesToDefine();
 
     /**
-     * \brief returns the modulation type of a given iuc
-     * \param direction should be uplink or downlink
-     * \param iuc the iuc
-     * \returns the modulation type of the selected iuc
+     * @brief returns the modulation type of a given iuc
+     * @param direction should be uplink or downlink
+     * @param iuc the iuc
+     * @returns the modulation type of the selected iuc
      */
     WimaxPhy::ModulationType GetModulationType(uint8_t iuc,
                                                WimaxNetDevice::Direction direction) const;
 
     /**
-     * \brief returns the burst profile
-     * \param modulationType
-     * \param direction should be uplink or downlink
-     * \returns the modulation type of the selected iuc
+     * @brief returns the burst profile
+     * @param modulationType
+     * @param direction should be uplink or downlink
+     * @returns the modulation type of the selected iuc
      */
     uint8_t GetBurstProfile(WimaxPhy::ModulationType modulationType,
                             WimaxNetDevice::Direction direction) const;
 
     /**
-     * \brief Get burst profile for SS
-     * \param modulationType
-     * \param ssRecord
-     * \param rngreq
-     * \returns the burst profile for SS
+     * @brief Get burst profile for SS
+     * @param modulationType
+     * @param ssRecord
+     * @param rngreq
+     * @returns the burst profile for SS
      */
     uint8_t GetBurstProfileForSS(const SSRecord* ssRecord,
                                  const RngReq* rngreq,
                                  WimaxPhy::ModulationType& modulationType) const;
     /**
-     * \brief Get module ation type for SS
-     * \param ssRecord
-     * \param rngreq
-     * \returns the burst profile for SS
+     * @brief Get module ation type for SS
+     * @param ssRecord
+     * @param rngreq
+     * @returns the burst profile for SS
      */
     WimaxPhy::ModulationType GetModulationTypeForSS(const SSRecord* ssRecord,
                                                     const RngReq* rngreq) const;
     /**
-     * \brief Get burst profile to request
-     * \returns the burst profile for SS
+     * @brief Get burst profile to request
+     * @returns the burst profile for SS
      */
     uint8_t GetBurstProfileToRequest();
 

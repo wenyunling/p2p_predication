@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -20,10 +9,10 @@
 #ifndef LTE_INTERFERENCE_H
 #define LTE_INTERFERENCE_H
 
-#include <ns3/nstime.h>
-#include <ns3/object.h>
-#include <ns3/packet.h>
-#include <ns3/spectrum-value.h>
+#include "ns3/nstime.h"
+#include "ns3/object.h"
+#include "ns3/packet.h"
+#include "ns3/spectrum-value.h"
 
 #include <list>
 
@@ -44,14 +33,14 @@ class LteInterference : public Object
     ~LteInterference() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     void DoDispose() override;
 
     /**
-     * \brief Add a LteChunkProcessor that will use the time-vs-frequency SINR
+     * @brief Add a LteChunkProcessor that will use the time-vs-frequency SINR
      * calculated by this LteInterference instance. Note that all the
      * added LteChunkProcessors will work in parallel.
      *
@@ -60,7 +49,7 @@ class LteInterference : public Object
     virtual void AddSinrChunkProcessor(Ptr<LteChunkProcessor> p);
 
     /**
-     * \brief Add a LteChunkProcessor that will use the time-vs-frequency
+     * @brief Add a LteChunkProcessor that will use the time-vs-frequency
      * interference calculated by this LteInterference instance. Note
      * that all the added LteChunkProcessors will work in parallel.
      *
@@ -78,7 +67,7 @@ class LteInterference : public Object
     virtual void AddRsPowerChunkProcessor(Ptr<LteChunkProcessor> p);
 
     /**
-     * \brief Notify that the PHY is starting a RX attempt
+     * @brief Notify that the PHY is starting a RX attempt
      *
      * @param rxPsd the power spectral density of the signal being RX
      */

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2018 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  */
@@ -497,6 +486,7 @@ GtpcCreateSessionRequestMessage::GtpcCreateSessionRequestMessage()
     SetSequenceNumber(0);
     m_imsi = 0;
     m_uliEcgi = 0;
+    m_senderCpFteid = {};
 }
 
 GtpcCreateSessionRequestMessage::~GtpcCreateSessionRequestMessage()
@@ -658,6 +648,7 @@ GtpcCreateSessionResponseMessage::GtpcCreateSessionResponseMessage()
     SetMessageType(GtpcHeader::CreateSessionResponse);
     SetSequenceNumber(0);
     m_cause = Cause_t::RESERVED;
+    m_senderCpFteid = {};
 }
 
 GtpcCreateSessionResponseMessage::~GtpcCreateSessionResponseMessage()
@@ -1206,6 +1197,7 @@ GtpcDeleteBearerResponseMessage::GtpcDeleteBearerResponseMessage()
 {
     SetMessageType(GtpcHeader::DeleteBearerResponse);
     SetSequenceNumber(0);
+    m_cause = Cause_t::RESERVED;
 }
 
 GtpcDeleteBearerResponseMessage::~GtpcDeleteBearerResponseMessage()

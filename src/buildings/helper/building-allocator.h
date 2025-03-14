@@ -2,18 +2,7 @@
  * Copyright (c) 2007 INRIA
  * Copyright (C) 2012 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  * Author: Nicola Baldo <nbaldo@cttc.es> (took position-allocator and turned it into
@@ -35,8 +24,8 @@ namespace ns3
 class Building;
 
 /**
- * \ingroup buildings
- * \brief Allocate buildings on a rectangular 2d grid.
+ * @ingroup buildings
+ * @brief Allocate buildings on a rectangular 2d grid.
  *
  * This class allows to create a set of buildings positioned on a
  * rectangular 2D grid. Under the hood, this class uses two instances
@@ -49,25 +38,25 @@ class GridBuildingAllocator : public Object
     ~GridBuildingAllocator() override;
 
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
     /**
      * Set an attribute to be used for each new building to be created
      *
-     * \param n attribute name
-     * \param v attribute value
+     * @param n attribute name
+     * @param v attribute value
      */
     void SetBuildingAttribute(std::string n, const AttributeValue& v);
 
     /**
      * Create a set of buildings allocated on a grid
      *
-     * \param n the number of buildings to create
+     * @param n the number of buildings to create
      *
-     * \return the BuildingContainer that contains the newly created buildings
+     * @return the BuildingContainer that contains the newly created buildings
      */
     BuildingContainer Create(uint32_t n) const;
 

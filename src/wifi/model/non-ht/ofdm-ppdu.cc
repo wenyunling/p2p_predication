@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2020 Orange Labs
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Rediet <getachew.redieteab@orange.com>
  *         Muhammad Iqbal Rochman <muhiqbalcr@uchicago.edu>
@@ -39,7 +28,7 @@ OfdmPpdu::OfdmPpdu(Ptr<const WifiPsdu> psdu,
                    uint64_t uid,
                    bool instantiateLSig /* = true */)
     : WifiPpdu(psdu, txVector, channel, uid),
-      m_channelWidth(txVector.IsNonHtDuplicate() ? 20 : txVector.GetChannelWidth())
+      m_channelWidth(txVector.IsNonHtDuplicate() ? MHz_u{20} : txVector.GetChannelWidth())
 {
     NS_LOG_FUNCTION(this << psdu << txVector << channel << uid);
     if (instantiateLSig)
@@ -74,7 +63,7 @@ OfdmPpdu::DoGetTxVector() const
 void
 OfdmPpdu::SetTxVectorFromLSigHeader(WifiTxVector& txVector, const LSigHeader& lSig) const
 {
-    NS_ASSERT(m_channelWidth <= 20);
+    NS_ASSERT(m_channelWidth <= MHz_u{20});
     // OFDM uses 20 MHz, unless PHY channel width is 5 MHz or 10 MHz
     txVector.SetMode(OfdmPhy::GetOfdmRate(lSig.GetRate(m_channelWidth), m_channelWidth));
     txVector.SetChannelWidth(m_channelWidth);
@@ -102,13 +91,13 @@ OfdmPpdu::LSigHeader::LSigHeader()
 }
 
 void
-OfdmPpdu::LSigHeader::SetRate(uint64_t rate, uint16_t channelWidth)
+OfdmPpdu::LSigHeader::SetRate(uint64_t rate, MHz_u channelWidth)
 {
-    if (channelWidth == 5)
+    if (channelWidth == MHz_u{5})
     {
         rate *= 4; // corresponding 20 MHz rate if 5 MHz is used
     }
-    else if (channelWidth == 10)
+    else if (channelWidth == MHz_u{10})
     {
         rate *= 2; // corresponding 20 MHz rate if 10 MHz is used
     }
@@ -155,7 +144,7 @@ OfdmPpdu::LSigHeader::SetRate(uint64_t rate, uint16_t channelWidth)
 }
 
 uint64_t
-OfdmPpdu::LSigHeader::GetRate(uint16_t channelWidth) const
+OfdmPpdu::LSigHeader::GetRate(MHz_u channelWidth) const
 {
     uint64_t rate = 0;
     switch (m_rate)
@@ -188,11 +177,11 @@ OfdmPpdu::LSigHeader::GetRate(uint16_t channelWidth) const
         NS_ASSERT_MSG(false, "Invalid rate");
         break;
     }
-    if (channelWidth == 5)
+    if (channelWidth == MHz_u{5})
     {
         rate /= 4; // compute corresponding 5 MHz rate
     }
-    else if (channelWidth == 10)
+    else if (channelWidth == MHz_u{10})
     {
         rate /= 2; // compute corresponding 10 MHz rate
     }

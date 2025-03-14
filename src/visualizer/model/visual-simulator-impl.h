@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 Gustavo Carneiro
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Gustavo Carneiro  <gjcarneiro@gmail.com>
  */
@@ -26,15 +15,15 @@ namespace ns3
 {
 
 /**
- * \defgroup  visualizer Visualizer
+ * @defgroup  visualizer Visualizer
  *
  */
 
 /**
- * \ingroup visualizer
- * \ingroup simulator
+ * @ingroup visualizer
+ * @ingroup simulator
  *
- * \brief A replacement simulator that starts the visualizer
+ * @brief A replacement simulator that starts the visualizer
  *
  * To use this class, run any ns-3 simulation with the command-line
  * argument --SimulatorImplementationType=ns3::VisualSimulatorImpl.
@@ -44,8 +33,8 @@ class VisualSimulatorImpl : public SimulatorImpl
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 

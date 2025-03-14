@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011-2013 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Marco Miozzo <marco.miozzo@cttc.es>
  *         Nicola Baldo <nbaldo@cttc.es>
@@ -20,35 +9,35 @@
 
 #include "lte-test-phy-error-model.h"
 
-#include <ns3/boolean.h>
-#include <ns3/buildings-helper.h>
-#include <ns3/config.h>
-#include <ns3/double.h>
-#include <ns3/enum.h>
-#include <ns3/eps-bearer.h>
-#include <ns3/ff-mac-scheduler.h>
-#include <ns3/hybrid-buildings-propagation-loss-model.h>
-#include <ns3/integer.h>
-#include <ns3/log.h>
-#include <ns3/lte-enb-net-device.h>
-#include <ns3/lte-enb-phy.h>
-#include <ns3/lte-helper.h>
-#include <ns3/lte-ue-net-device.h>
-#include <ns3/lte-ue-phy.h>
-#include <ns3/lte-ue-rrc.h>
-#include <ns3/mobility-building-info.h>
-#include <ns3/mobility-helper.h>
-#include <ns3/net-device-container.h>
-#include <ns3/node-container.h>
-#include <ns3/object.h>
-#include <ns3/packet.h>
-#include <ns3/ptr.h>
-#include <ns3/radio-bearer-stats-calculator.h>
-#include <ns3/simulator.h>
-#include <ns3/spectrum-error-model.h>
-#include <ns3/spectrum-interference.h>
-#include <ns3/string.h>
-#include <ns3/test.h>
+#include "ns3/boolean.h"
+#include "ns3/buildings-helper.h"
+#include "ns3/config.h"
+#include "ns3/double.h"
+#include "ns3/enum.h"
+#include "ns3/eps-bearer.h"
+#include "ns3/ff-mac-scheduler.h"
+#include "ns3/hybrid-buildings-propagation-loss-model.h"
+#include "ns3/integer.h"
+#include "ns3/log.h"
+#include "ns3/lte-enb-net-device.h"
+#include "ns3/lte-enb-phy.h"
+#include "ns3/lte-helper.h"
+#include "ns3/lte-ue-net-device.h"
+#include "ns3/lte-ue-phy.h"
+#include "ns3/lte-ue-rrc.h"
+#include "ns3/mobility-building-info.h"
+#include "ns3/mobility-helper.h"
+#include "ns3/net-device-container.h"
+#include "ns3/node-container.h"
+#include "ns3/object.h"
+#include "ns3/packet.h"
+#include "ns3/ptr.h"
+#include "ns3/radio-bearer-stats-calculator.h"
+#include "ns3/simulator.h"
+#include "ns3/spectrum-error-model.h"
+#include "ns3/spectrum-interference.h"
+#include "ns3/string.h"
+#include "ns3/test.h"
 
 #include <iostream>
 
@@ -57,7 +46,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("LteTestPhyErrorModel");
 
 LenaTestPhyErrorModelSuite::LenaTestPhyErrorModelSuite()
-    : TestSuite("lte-phy-error-model", SYSTEM)
+    : TestSuite("lte-phy-error-model", Type::SYSTEM)
 {
     NS_LOG_INFO("creating LenaTestPhyErrorModelTestCase");
 
@@ -73,16 +62,19 @@ LenaTestPhyErrorModelSuite::LenaTestPhyErrorModelSuite()
 
         // 1 interfering eNB SINR -2.0 BLER 0.007 TB size 217
         AddTestCase(new LenaDlCtrlPhyErrorModelTestCase(2, 1078, 0.007, 9, Seconds(0.04), rngRun),
-                    (rngRun == 1) ? TestCase::QUICK : TestCase::TAKES_FOREVER);
+                    (rngRun == 1) ? TestCase::Duration::QUICK : TestCase::Duration::TAKES_FOREVER);
         // 2 interfering eNBs SINR -4.0 BLER 0.037 TB size 217
         AddTestCase(new LenaDlCtrlPhyErrorModelTestCase(3, 1040, 0.045, 21, Seconds(0.04), rngRun),
-                    (rngRun == 1) ? TestCase::EXTENSIVE : TestCase::TAKES_FOREVER);
+                    (rngRun == 1) ? TestCase::Duration::EXTENSIVE
+                                  : TestCase::Duration::TAKES_FOREVER);
         // 3 interfering eNBs SINR -6.0 BLER 0.21 TB size 133
         AddTestCase(new LenaDlCtrlPhyErrorModelTestCase(4, 1250, 0.206, 40, Seconds(0.12), rngRun),
-                    (rngRun == 1) ? TestCase::EXTENSIVE : TestCase::TAKES_FOREVER);
+                    (rngRun == 1) ? TestCase::Duration::EXTENSIVE
+                                  : TestCase::Duration::TAKES_FOREVER);
         // 4 interfering eNBs SINR -7.0 BLER 0.34 TB size 133
         AddTestCase(new LenaDlCtrlPhyErrorModelTestCase(5, 1260, 0.343, 47, Seconds(0.12), rngRun),
-                    (rngRun == 1) ? TestCase::EXTENSIVE : TestCase::TAKES_FOREVER);
+                    (rngRun == 1) ? TestCase::Duration::EXTENSIVE
+                                  : TestCase::Duration::TAKES_FOREVER);
 
         // Tests on DL Data channels (PDSCH)
         // the tolerance is calculated with the following octave code:
@@ -94,28 +86,33 @@ LenaTestPhyErrorModelSuite::LenaTestPhyErrorModelSuite()
 
         // MCS 2 TB size of 256 bits BLER 0.33 SINR -5.51
         AddTestCase(new LenaDataPhyErrorModelTestCase(4, 1800, 0.33, 39, Seconds(0.04), rngRun),
-                    (rngRun == 1) ? TestCase::QUICK : TestCase::TAKES_FOREVER);
+                    (rngRun == 1) ? TestCase::Duration::QUICK : TestCase::Duration::TAKES_FOREVER);
         // MCS 2 TB size of 528 bits BLER 0.11 SINR -5.51
         AddTestCase(new LenaDataPhyErrorModelTestCase(2, 1800, 0.11, 26, Seconds(0.04), rngRun),
-                    (rngRun == 1) ? TestCase::EXTENSIVE : TestCase::TAKES_FOREVER);
+                    (rngRun == 1) ? TestCase::Duration::EXTENSIVE
+                                  : TestCase::Duration::TAKES_FOREVER);
         // MCS 2 TB size of 1088 bits BLER 0.02 SINR -5.51
         AddTestCase(new LenaDataPhyErrorModelTestCase(1, 1800, 0.02, 33, Seconds(0.04), rngRun),
-                    (rngRun == 1) ? TestCase::EXTENSIVE : TestCase::TAKES_FOREVER);
+                    (rngRun == 1) ? TestCase::Duration::EXTENSIVE
+                                  : TestCase::Duration::TAKES_FOREVER);
         // MCS 12 TB size of 4800 bits  BLER 0.3  SINR 4.43
         AddTestCase(new LenaDataPhyErrorModelTestCase(1, 600, 0.3, 38, Seconds(0.04), rngRun),
-                    (rngRun == 1) ? TestCase::EXTENSIVE : TestCase::TAKES_FOREVER);
+                    (rngRun == 1) ? TestCase::Duration::EXTENSIVE
+                                  : TestCase::Duration::TAKES_FOREVER);
         // MCS 12 TB size of 1632 bits  BLER 0.55  SINR 4.43
         AddTestCase(new LenaDataPhyErrorModelTestCase(3, 600, 0.55, 40, Seconds(0.04), rngRun),
-                    (rngRun == 1) ? TestCase::EXTENSIVE : TestCase::TAKES_FOREVER);
+                    (rngRun == 1) ? TestCase::Duration::EXTENSIVE
+                                  : TestCase::Duration::TAKES_FOREVER);
         // MCS 16 TB size of 7272 bits (3648 x 3584) BLER 0.14 SINR 8.48
         // BLER 0.14 = 1 - ((1-0.075)*(1-0.075))
         AddTestCase(new LenaDataPhyErrorModelTestCase(1, 470, 0.14, 29, Seconds(0.04), rngRun),
-                    (rngRun == 1) ? TestCase::EXTENSIVE : TestCase::TAKES_FOREVER);
+                    (rngRun == 1) ? TestCase::Duration::EXTENSIVE
+                                  : TestCase::Duration::TAKES_FOREVER);
     }
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LenaTestPhyErrorModelSuite lenaTestPhyErrorModelSuite;
@@ -158,6 +155,11 @@ LenaDataPhyErrorModelTestCase::DoRun()
     Config::SetDefault("ns3::LteSpectrumPhy::DataErrorModelEnabled", BooleanValue(true));
     Config::SetDefault("ns3::RrFfMacScheduler::HarqEnabled", BooleanValue(false));
     Config::SetGlobal("RngRun", UintegerValue(m_rngRun));
+
+    Config::SetDefault("ns3::RadioBearerStatsCalculator::DlRlcOutputFilename",
+                       StringValue(CreateTempDirFilename("DlRlcStats.txt")));
+    Config::SetDefault("ns3::RadioBearerStatsCalculator::UlRlcOutputFilename",
+                       StringValue(CreateTempDirFilename("UlRlcStats.txt")));
 
     // Disable Uplink Power Control
     Config::SetDefault("ns3::LteUePhy::EnableUplinkPowerControl", BooleanValue(false));
@@ -228,7 +230,7 @@ LenaDataPhyErrorModelTestCase::DoRun()
         uePhy->SetAttribute("NoiseFigure", DoubleValue(9.0));
     }
 
-    Time statsDuration = Seconds(1.0);
+    Time statsDuration = Seconds(1);
     Simulator::Stop(m_statsStartTime + statsDuration - Seconds(0.0001));
 
     lena->EnableRlcTraces();
@@ -390,7 +392,7 @@ LenaDlCtrlPhyErrorModelTestCase::DoRun()
     uePhy->SetAttribute("TxPower", DoubleValue(23.0));
     uePhy->SetAttribute("NoiseFigure", DoubleValue(9.0));
 
-    Time statsDuration = Seconds(1.0);
+    Time statsDuration = Seconds(1);
     Simulator::Stop(m_statsStartTime + statsDuration - Seconds(0.0001));
 
     lena->EnableRlcTraces();

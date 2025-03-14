@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Jaume Nin <jnin@cttc.es>
  * Modified by: Danilo Abrignani <danilo.abrignani@unibo.it> (Carrier Aggregation - GSoC 2015)
@@ -35,7 +24,7 @@ namespace ns3
 {
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * Takes care of storing the information generated at MAC layer. Metrics saved are:
  *   - Timestamp (in seconds)
@@ -63,14 +52,14 @@ class MacStatsCalculator : public LteStatsCalculator
     // Inherited from ns3::Object
     /**
      * Register this type.
-     * \return The object TypeId.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
     /**
      * Set the name of the file where the uplink statistics will be stored.
      *
-     * \param outputFilename string with the name of the file
+     * @param outputFilename string with the name of the file
      */
     void SetUlOutputFilename(std::string outputFilename);
 
@@ -135,9 +124,9 @@ class MacStatsCalculator : public LteStatsCalculator
     /**
      * Trace sink for the ns3::LteEnbMac::DlScheduling trace source
      *
-     * \param macStats
-     * \param path
-     * \param dlSchedulingCallbackInfo DlSchedulingCallbackInfo structure containing all downlink
+     * @param macStats
+     * @param path
+     * @param dlSchedulingCallbackInfo DlSchedulingCallbackInfo structure containing all downlink
      * information that is generated what DlScheduling traces is fired
      */
     static void DlSchedulingCallback(Ptr<MacStatsCalculator> macStats,
@@ -147,14 +136,14 @@ class MacStatsCalculator : public LteStatsCalculator
     /**
      * Trace sink for the ns3::LteEnbMac::UlScheduling trace source
      *
-     * \param macStats
-     * \param path
-     * \param frameNo
-     * \param subframeNo
-     * \param rnti
-     * \param mcs
-     * \param size
-     * \param componentCarrierId
+     * @param macStats
+     * @param path
+     * @param frameNo
+     * @param subframeNo
+     * @param rnti
+     * @param mcs
+     * @param size
+     * @param componentCarrierId
      */
     static void UlSchedulingCallback(Ptr<MacStatsCalculator> macStats,
                                      std::string path,

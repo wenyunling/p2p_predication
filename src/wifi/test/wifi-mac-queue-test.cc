@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2021 IITP RAS
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Alexander Krotov <krotov@iitp.ru>
  */
@@ -27,10 +16,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test DROP_OLDEST setting.
+ * @brief Test DROP_OLDEST setting.
  *
  * This test verifies the correctness of DROP_OLDEST policy when packets
  * are pushed into the front of the queue. This case is not handled
@@ -40,7 +29,7 @@ class WifiMacQueueDropOldestTest : public TestCase
 {
   public:
     /**
-     * \brief Constructor
+     * @brief Constructor
      */
     WifiMacQueueDropOldestTest();
 
@@ -123,10 +112,10 @@ WifiMacQueueDropOldestTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test extraction of expired MPDUs from MAC queue container
+ * @brief Test extraction of expired MPDUs from MAC queue container
  *
  * This test verifies the correctness of the WifiMacQueueContainer methods
  * (ExtractExpiredMpdus and ExtractAllExpiredMpdus) that extract MPDUs with
@@ -143,9 +132,9 @@ class WifiExtractExpiredMpdusTest : public TestCase
     /**
      * Enqueue a new MPDU into the container.
      *
-     * \param rxAddr Receiver Address of the MPDU
-     * \param inflight whether the MPDU is inflight
-     * \param expiryTime the expity time for the MPDU
+     * @param rxAddr Receiver Address of the MPDU
+     * @param inflight whether the MPDU is inflight
+     * @param expiryTime the expity time for the MPDU
      */
     void Enqueue(Mac48Address rxAddr, bool inflight, Time expiryTime);
 
@@ -429,10 +418,10 @@ WifiExtractExpiredMpdusTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Wifi MAC Queue Test Suite
+ * @brief Wifi MAC Queue Test Suite
  */
 class WifiMacQueueTestSuite : public TestSuite
 {
@@ -441,10 +430,10 @@ class WifiMacQueueTestSuite : public TestSuite
 };
 
 WifiMacQueueTestSuite::WifiMacQueueTestSuite()
-    : TestSuite("wifi-mac-queue", UNIT)
+    : TestSuite("wifi-mac-queue", Type::UNIT)
 {
-    AddTestCase(new WifiMacQueueDropOldestTest, TestCase::QUICK);
-    AddTestCase(new WifiExtractExpiredMpdusTest, TestCase::QUICK);
+    AddTestCase(new WifiMacQueueDropOldestTest, TestCase::Duration::QUICK);
+    AddTestCase(new WifiExtractExpiredMpdusTest, TestCase::Duration::QUICK);
 }
 
 static WifiMacQueueTestSuite g_wifiMacQueueTestSuite; ///< the test suite

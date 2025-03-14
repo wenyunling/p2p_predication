@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 INRIA, UDcast
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  *  Mohamed Amine Ismail <amine.ismail@sophia.inria.fr>
  */
@@ -39,8 +28,8 @@ class WimaxConnection;
 class SubscriberStationNetDevice;
 
 /**
- * \ingroup wimax
- * \brief SsServiceFlowManager class
+ * @ingroup wimax
+ * @brief SsServiceFlowManager class
  */
 class SsServiceFlowManager : public ServiceFlowManager
 {
@@ -57,7 +46,7 @@ class SsServiceFlowManager : public ServiceFlowManager
      *
      * Creates a service flow manager and attaches it to a device
      *
-     * \param device the device to which the service flow manager will be attached
+     * @param device the device to which the service flow manager will be attached
      */
     SsServiceFlowManager(Ptr<SubscriberStationNetDevice> device);
     ~SsServiceFlowManager() override;
@@ -65,38 +54,38 @@ class SsServiceFlowManager : public ServiceFlowManager
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
     /**
-     * \brief add a service flow to the list
-     * \param serviceFlow the service flow to add
+     * @brief add a service flow to the list
+     * @param serviceFlow the service flow to add
      */
     void AddServiceFlow(ServiceFlow* serviceFlow);
     /**
-     * \brief add a service flow to the list
-     * \param serviceFlow the service flow to add
+     * @brief add a service flow to the list
+     * @param serviceFlow the service flow to add
      */
     void AddServiceFlow(ServiceFlow serviceFlow);
     /**
-     * \brief sets the maximum retries on DSA request message
-     * \param maxDsaReqRetries the maximum retries on DSA request message
+     * @brief sets the maximum retries on DSA request message
+     * @param maxDsaReqRetries the maximum retries on DSA request message
      */
     void SetMaxDsaReqRetries(uint8_t maxDsaReqRetries);
     /**
-     * \return the maximum retries on DSA request message
+     * @return the maximum retries on DSA request message
      */
     uint8_t GetMaxDsaReqRetries() const;
 
     /**
      * Get DSA response timeout event
-     * \returns the DSA response timeout event
+     * @returns the DSA response timeout event
      */
     EventId GetDsaRspTimeoutEvent() const;
     /**
      * Get DSA ack timeout event
-     * \returns the DSA ack timeout event
+     * @returns the DSA ack timeout event
      */
     EventId GetDsaAckTimeoutEvent() const;
 
@@ -105,26 +94,26 @@ class SsServiceFlowManager : public ServiceFlowManager
 
     /**
      * Create DSA request
-     * \param serviceFlow the service flow
-     * \returns the DSA request
+     * @param serviceFlow the service flow
+     * @returns the DSA request
      */
     DsaReq CreateDsaReq(const ServiceFlow* serviceFlow);
 
     /**
      * Create DSA ack
-     * \returns the packet
+     * @returns the packet
      */
     Ptr<Packet> CreateDsaAck();
 
     /**
      * Schedule DSA response
-     * \param serviceFlow the service flow
+     * @param serviceFlow the service flow
      */
     void ScheduleDsaReq(const ServiceFlow* serviceFlow);
 
     /**
      * Process DSA response
-     * \param dsaRsp the DSA response
+     * @param dsaRsp the DSA response
      */
     void ProcessDsaRsp(const DsaRsp& dsaRsp);
 

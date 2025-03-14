@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  */
@@ -53,7 +42,7 @@ class LtePdcpSapProvider
      * This method is to be called when upper RRC entity has a
      * RRC PDU ready to send
      *
-     * \param params Parameters
+     * @param params Parameters
      */
     virtual void TransmitPdcpSdu(TransmitPdcpSduParameters params) = 0;
 };
@@ -83,7 +72,7 @@ class LtePdcpSapUser
     /**
      * Called by the PDCP entity to notify the RRC entity of the reception of a new RRC PDU
      *
-     * \param params Parameters
+     * @param params Parameters
      */
     virtual void ReceivePdcpSdu(ReceivePdcpSduParameters params) = 0;
 };
@@ -96,7 +85,7 @@ class LtePdcpSpecificLtePdcpSapProvider : public LtePdcpSapProvider
     /**
      * Constructor
      *
-     * \param pdcp PDCP
+     * @param pdcp PDCP
      */
     LtePdcpSpecificLtePdcpSapProvider(C* pdcp);
 
@@ -131,7 +120,7 @@ class LtePdcpSpecificLtePdcpSapUser : public LtePdcpSapUser
     /**
      * Constructor
      *
-     * \param rrc RRC
+     * @param rrc RRC
      */
     LtePdcpSpecificLtePdcpSapUser(C* rrc);
 

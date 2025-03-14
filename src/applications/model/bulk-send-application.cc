@@ -1,25 +1,13 @@
 /*
  * Copyright (c) 2010 Georgia Institute of Technology
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: George F. Riley <riley@ece.gatech.edu>
  */
 
 #include "bulk-send-application.h"
 
-#include "ns3/address.h"
 #include "ns3/boolean.h"
 #include "ns3/log.h"
 #include "ns3/node.h"
@@ -28,6 +16,7 @@
 #include "ns3/simulator.h"
 #include "ns3/socket-factory.h"
 #include "ns3/socket.h"
+#include "ns3/tcp-socket-base.h"
 #include "ns3/tcp-socket-factory.h"
 #include "ns3/trace-source-accessor.h"
 #include "ns3/uinteger.h"
@@ -44,7 +33,7 @@ BulkSendApplication::GetTypeId()
 {
     static TypeId tid =
         TypeId("ns3::BulkSendApplication")
-            .SetParent<Application>()
+            .SetParent<SourceApplication>()
             .SetGroupName("Applications")
             .AddConstructor<BulkSendApplication>()
             .AddAttribute("SendSize",
@@ -52,17 +41,6 @@ BulkSendApplication::GetTypeId()
                           UintegerValue(512),
                           MakeUintegerAccessor(&BulkSendApplication::m_sendSize),
                           MakeUintegerChecker<uint32_t>(1))
-            .AddAttribute("Remote",
-                          "The address of the destination",
-                          AddressValue(),
-                          MakeAddressAccessor(&BulkSendApplication::m_peer),
-                          MakeAddressChecker())
-            .AddAttribute("Local",
-                          "The Address on which to bind the socket. If not set, it is generated "
-                          "automatically.",
-                          AddressValue(),
-                          MakeAddressAccessor(&BulkSendApplication::m_local),
-                          MakeAddressChecker())
             .AddAttribute("MaxBytes",
                           "The total number of bytes to send. "
                           "Once these bytes are sent, "
@@ -88,7 +66,12 @@ BulkSendApplication::GetTypeId()
             .AddTraceSource("TxWithSeqTsSize",
                             "A new packet is created with SeqTsSizeHeader",
                             MakeTraceSourceAccessor(&BulkSendApplication::m_txTraceWithSeqTsSize),
-                            "ns3::PacketSink::SeqTsSizeCallback");
+                            "ns3::PacketSink::SeqTsSizeCallback")
+            .AddTraceSource("TcpRetransmission",
+                            "The TCP socket retransmitted a packet",
+                            MakeTraceSourceAccessor(&BulkSendApplication::m_retransmissionTrace),
+                            "ns3::TcpSocketBase::RetransmissionCallback");
+
     return tid;
 }
 
@@ -153,6 +136,8 @@ BulkSendApplication::StartApplication() // Called at time specified by Start
                            "In other words, use TCP instead of UDP.");
         }
 
+        NS_ABORT_MSG_IF(m_peer.IsInvalid(), "'Remote' attribute not properly set");
+
         if (!m_local.IsInvalid())
         {
             NS_ABORT_MSG_IF((Inet6SocketAddress::IsMatchingType(m_peer) &&
@@ -179,11 +164,22 @@ BulkSendApplication::StartApplication() // Called at time specified by Start
             NS_FATAL_ERROR("Failed to bind socket");
         }
 
+        if (InetSocketAddress::IsMatchingType(m_peer))
+        {
+            m_socket->SetIpTos(m_tos); // Affects only IPv4 sockets.
+        }
         m_socket->Connect(m_peer);
         m_socket->ShutdownRecv();
         m_socket->SetConnectCallback(MakeCallback(&BulkSendApplication::ConnectionSucceeded, this),
                                      MakeCallback(&BulkSendApplication::ConnectionFailed, this));
         m_socket->SetSendCallback(MakeCallback(&BulkSendApplication::DataSend, this));
+        Ptr<TcpSocketBase> tcpSocket = DynamicCast<TcpSocketBase>(m_socket);
+        if (tcpSocket)
+        {
+            tcpSocket->TraceConnectWithoutContext(
+                "Retransmission",
+                MakeCallback(&BulkSendApplication::PacketRetransmitted, this));
+        }
     }
     if (m_connected)
     {
@@ -328,6 +324,17 @@ BulkSendApplication::DataSend(Ptr<Socket> socket, uint32_t)
         socket->GetPeerName(to);
         SendData(from, to);
     }
+}
+
+void
+BulkSendApplication::PacketRetransmitted(Ptr<const Packet> p,
+                                         const TcpHeader& header,
+                                         const Address& localAddr,
+                                         const Address& peerAddr,
+                                         Ptr<const TcpSocketBase> socket)
+{
+    NS_LOG_FUNCTION(this << p << header << localAddr << peerAddr << socket);
+    m_retransmissionTrace(p, header, localAddr, peerAddr, socket);
 }
 
 } // Namespace ns3

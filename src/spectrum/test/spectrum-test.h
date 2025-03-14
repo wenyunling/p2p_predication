@@ -2,18 +2,7 @@
  * Copyright (c) 2009 University of Washington
  * Copyright (c) 2011 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  * part of the code copied from test.h
@@ -22,27 +11,27 @@
 #ifndef SPECTRUM_TEST_H
 #define SPECTRUM_TEST_H
 
-#include <ns3/spectrum-value.h>
-#include <ns3/test.h>
+#include "ns3/spectrum-value.h"
+#include "ns3/test.h"
 
 /**
- * \ingroup spectrum
- * \defgroup spectrum-test Spectrum module tests
+ * @ingroup spectrum
+ * @defgroup spectrum-test Spectrum module tests
  */
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
- * \brief Test if two SpectrumModel instances are equal within a given tolerance.
+ * @brief Test if two SpectrumModel instances are equal within a given tolerance.
  *
  * This test compares component-by-component the two SpectrumModel
  * instances; if any pair of components differs by more than the given
  * tolerance, the test fails.
  *
- * \param actual the actual value obtained by the simulator
- * \param expected the expected value obtained by off-line calculations
- * \param tol the tolerance
- * \param msg the message to print if the test fails
+ * @param actual the actual value obtained by the simulator
+ * @param expected the expected value obtained by off-line calculations
+ * @param tol the tolerance
+ * @param msg the message to print if the test fails
  *
  */
 #define NS_TEST_ASSERT_MSG_SPECTRUM_MODEL_EQ_TOL(actual, expected, tol, msg)                       \
@@ -96,18 +85,18 @@
     } while (false);
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
- * \brief Test if two SpectrumValue instances are equal within a given tolerance.
+ * @brief Test if two SpectrumValue instances are equal within a given tolerance.
  *
  * This test compares component-by-component the two SpectrumValue
  * instances; if any pair of components differs by more than the given
  * tolerance, the test fails.
  *
- * \param actual the actual value obtained by the simulator
- * \param expected the expected value obtained by off-line calculations
- * \param tol the tolerance
- * \param msg the message to print if the test fails
+ * @param actual the actual value obtained by the simulator
+ * @param expected the expected value obtained by off-line calculations
+ * @param tol the tolerance
+ * @param msg the message to print if the test fails
  *
  */
 #define NS_TEST_ASSERT_MSG_SPECTRUM_VALUE_EQ_TOL(actual, expected, tol, msg)                       \

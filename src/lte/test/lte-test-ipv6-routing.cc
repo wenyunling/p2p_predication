@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2017 Jadavpur University, India
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manoj Kumar Rana <manoj24.rana@gmail.com>
  */
@@ -50,9 +39,9 @@ the followed route for a packet
 using namespace ns3;
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Lte Ipv6 routing test case.
+ * @brief Lte Ipv6 routing test case.
  */
 class LteIpv6RoutingTestCase : public TestCase
 {
@@ -61,35 +50,35 @@ class LteIpv6RoutingTestCase : public TestCase
     ~LteIpv6RoutingTestCase() override;
 
     /**
-     * \brief Initialize testing parameters.
+     * @brief Initialize testing parameters.
      */
     void Checker();
 
     /**
-     * \brief sent Packets from client's IPv6 interface.
-     * \param p packet
-     * \param ipv6 Ipv6 object
-     * \param interface Ipv6interface from which the packet is transmitted
+     * @brief sent Packets from client's IPv6 interface.
+     * @param p packet
+     * @param ipv6 Ipv6 object
+     * @param interface Ipv6interface from which the packet is transmitted
      */
     void SentAtClient(Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface);
 
     /**
-     * \brief Received Packets at client's IPv6 interface.
-     * \param p packet
-     * \param ipv6 Ipv6 object
-     * \param interface Ipv6interface at which the packet is received
+     * @brief Received Packets at client's IPv6 interface.
+     * @param p packet
+     * @param ipv6 Ipv6 object
+     * @param interface Ipv6interface at which the packet is received
      */
     void ReceivedAtClient(Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface);
 
     /**
-     * \brief Received Packet at pgw from enb.
-     * \param p packet
+     * @brief Received Packet at pgw from enb.
+     * @param p packet
      */
     void EnbToPgw(Ptr<Packet> p);
 
     /**
-     * \brief Received Packet at pgw from enb.
-     * \param p packet
+     * @brief Received Packet at pgw from enb.
+     * @param p packet
      */
     void TunToPgw(Ptr<Packet> p);
 
@@ -322,8 +311,8 @@ LteIpv6RoutingTestCase::DoRun()
     serverApps.Add(echoServer2.Install(ueNodes.Get(1)));
     serverApps.Add(echoServer3.Install(ueNodes.Get(2)));
 
-    serverApps.Start(Seconds(4.0));
-    serverApps.Stop(Seconds(12.0));
+    serverApps.Start(Seconds(4));
+    serverApps.Stop(Seconds(12));
 
     UdpEchoClientHelper echoClient1(m_remoteHostAddr, 10);
     UdpEchoClientHelper echoClient2(m_ueIpIface.GetAddress(1, 1), 11);
@@ -345,14 +334,14 @@ LteIpv6RoutingTestCase::DoRun()
     ApplicationContainer clientApps2 = echoClient2.Install(ueNodes.Get(0));
     ApplicationContainer clientApps3 = echoClient3.Install(ueNodes.Get(0));
 
-    clientApps1.Start(Seconds(4.0));
-    clientApps1.Stop(Seconds(6.0));
+    clientApps1.Start(Seconds(4));
+    clientApps1.Stop(Seconds(6));
 
     clientApps2.Start(Seconds(6.1));
-    clientApps2.Stop(Seconds(8.0));
+    clientApps2.Stop(Seconds(8));
 
     clientApps3.Start(Seconds(8.1));
-    clientApps3.Stop(Seconds(10.0));
+    clientApps3.Stop(Seconds(10));
 
     // Set Cllback for Client Sent and Received packets
     Ptr<Ipv6L3Protocol> ipL3 = (ueNodes.Get(0))->GetObject<Ipv6L3Protocol>();
@@ -369,7 +358,7 @@ LteIpv6RoutingTestCase::DoRun()
     appPgw->TraceConnectWithoutContext("RxFromTun",
                                        MakeCallback(&LteIpv6RoutingTestCase::TunToPgw, this));
 
-    Simulator::Schedule(Time(Seconds(12.0)), &LteIpv6RoutingTestCase::Checker, this);
+    Simulator::Schedule(Seconds(12), &LteIpv6RoutingTestCase::Checker, this);
 
     Simulator::Stop(Seconds(14));
     Simulator::Run();
@@ -378,7 +367,7 @@ LteIpv6RoutingTestCase::DoRun()
 }
 
 /**
- * \brief test suite 1
+ * @brief test suite 1
  */
 class LteIpv6RoutingTestSuite : public TestSuite
 {
@@ -387,13 +376,13 @@ class LteIpv6RoutingTestSuite : public TestSuite
 };
 
 LteIpv6RoutingTestSuite::LteIpv6RoutingTestSuite()
-    : TestSuite("lte-ipv6-routing-test", UNIT)
+    : TestSuite("lte-ipv6-routing-test", Type::UNIT)
 {
-    AddTestCase(new LteIpv6RoutingTestCase, TestCase::QUICK);
+    AddTestCase(new LteIpv6RoutingTestCase, TestCase::Duration::QUICK);
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteIpv6RoutingTestSuite g_lteipv6testsuite;

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2021 Universita' degli Studi di Napoli Federico II
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Stefano Avallone <stavallo@unina.it>
  */
@@ -24,6 +13,8 @@
 
 #include "ns3/mac48-address.h"
 #include "ns3/simulator.h"
+
+#include <vector>
 
 namespace ns3
 {
@@ -79,8 +70,23 @@ WifiMacQueueContainer::GetQueueId(Ptr<const WifiMpdu> mpdu)
 {
     const WifiMacHeader& hdr = mpdu->GetHeader();
 
-    auto addrType = hdr.GetAddr1().IsGroup() ? WIFI_BROADCAST : WIFI_UNICAST;
-    auto address = hdr.GetAddr1().IsGroup() ? hdr.GetAddr2() : hdr.GetAddr1();
+    WifiReceiverAddressType addrType;
+    Mac48Address address;
+    if (hdr.GetAddr1().IsBroadcast())
+    {
+        addrType = WIFI_BROADCAST;
+        address = hdr.GetAddr2();
+    }
+    else if (hdr.GetAddr1().IsGroup())
+    {
+        addrType = WIFI_GROUPCAST;
+        address = hdr.IsQosAmsdu() ? mpdu->begin()->second.GetDestinationAddr() : hdr.GetAddr1();
+    }
+    else
+    {
+        addrType = WIFI_UNICAST;
+        address = hdr.GetAddr1();
+    }
 
     if (hdr.IsCtl())
     {
@@ -160,14 +166,16 @@ WifiMacQueueContainer::DoExtractExpiredMpdus(ContainerQueue& queue) const
             ++lastExpiredIt;
         }
 
-        if (lastExpiredIt != firstExpiredIt)
+        if (lastExpiredIt == firstExpiredIt)
         {
-            // transfer non-inflight MPDUs with expired lifetime to the tail of m_expiredQueue
-            m_expiredQueue.splice(m_expiredQueue.end(), queue, firstExpiredIt, lastExpiredIt);
-            ret->second = m_expiredQueue.end();
+            break;
         }
 
-    } while (lastExpiredIt != firstExpiredIt);
+        // transfer non-inflight MPDUs with expired lifetime to the tail of m_expiredQueue
+        m_expiredQueue.splice(m_expiredQueue.end(), queue, firstExpiredIt, lastExpiredIt);
+        ret->second = m_expiredQueue.end();
+
+    } while (true);
 
     return *ret;
 }
@@ -209,14 +217,14 @@ std::hash<ns3::WifiContainerQueueId>::operator()(ns3::WifiContainerQueueId queue
     auto [type, addrType, address, tid] = queueId;
     const std::size_t size = tid.has_value() ? 8 : 7;
 
-    uint8_t buffer[size];
+    std::vector<uint8_t> buffer(size);
     buffer[0] = type;
-    address.CopyTo(buffer + 1);
+    address.CopyTo(&buffer[1]);
     if (tid.has_value())
     {
         buffer[7] = *tid;
     }
 
-    std::string s(buffer, buffer + size);
+    std::string s(buffer.begin(), buffer.end());
     return std::hash<std::string>{}(s);
 }

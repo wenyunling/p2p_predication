@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2014 Piotr Gawlowicz
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Piotr Gawlowicz <gawlowicz.p@gmail.com>
  *
@@ -30,7 +19,7 @@ namespace ns3
 {
 
 /**
- * \brief Distributed Fractional Frequency Reuse algorithm implementation.
+ * @brief Distributed Fractional Frequency Reuse algorithm implementation.
  */
 class LteFfrDistributedAlgorithm : public LteFfrAlgorithm
 {
@@ -39,8 +28,8 @@ class LteFfrDistributedAlgorithm : public LteFfrAlgorithm
     ~LteFfrDistributedAlgorithm() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -84,33 +73,33 @@ class LteFfrDistributedAlgorithm : public LteFfrAlgorithm
     /**
      * Set down link configuration function
      *
-     * \param cellId cell ID
-     * \param bandwidth the bandwidth
+     * @param cellId cell ID
+     * @param bandwidth the bandwidth
      */
     void SetDownlinkConfiguration(uint16_t cellId, uint8_t bandwidth);
     /**
      * Set up link configuration function
      *
-     * \param cellId cell ID
-     * \param bandwidth the bandwidth
+     * @param cellId cell ID
+     * @param bandwidth the bandwidth
      */
     void SetUplinkConfiguration(uint16_t cellId, uint8_t bandwidth);
     /**
-     * Initialize down link RGB maps function
+     * Initialize down link RBG maps function
      */
     void InitializeDownlinkRbgMaps();
     /**
-     * Initialize up link RGB maps function
+     * Initialize up link RBG maps function
      */
     void InitializeUplinkRbgMaps();
 
     /**
-     * Initialize up link RGB maps function
+     * Initialize up link RBG maps function
      *
-     * \param rnti the RNTI
-     * \param cellId the cell ID
-     * \param rsrp the RSRP
-     * \param rsrq the RSRQ
+     * @param rnti the RNTI
+     * @param cellId the cell ID
+     * @param rsrp the RSRP
+     * @param rsrq the RSRQ
      */
     void UpdateNeighbourMeasurements(uint16_t rnti, uint16_t cellId, uint8_t rsrp, uint8_t rsrq);
 
@@ -119,7 +108,7 @@ class LteFfrDistributedAlgorithm : public LteFfrAlgorithm
     /**
      * Send load information function
      *
-     * \param targetCellId the cell ID
+     * @param targetCellId the cell ID
      */
     void SendLoadInformation(uint16_t targetCellId);
 
@@ -164,7 +153,7 @@ class LteFfrDistributedAlgorithm : public LteFfrAlgorithm
     uint8_t m_rsrpMeasId; ///< RSRP measurement ID
 
     /**
-     * \brief Measurements reported by a UE for a cell ID.
+     * @brief Measurements reported by a UE for a cell ID.
      *
      * The values are quantized according 3GPP TS 36.133 section 9.1.4 and 9.1.7.
      */

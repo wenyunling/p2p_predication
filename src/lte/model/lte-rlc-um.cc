@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  */
@@ -357,7 +346,7 @@ LteRlcUm::DoNotifyTxOpportunity(LteMacSapUser::TxOpportunityParameters txOpParam
             firstSegment = m_txBuffer.begin()->m_pdu->Copy();
             firstSegmentTime = m_txBuffer.begin()->m_waitingSince;
             m_txBufferSize -= firstSegment->GetSize();
-            m_txBuffer.erase(m_txBuffer.begin());
+            m_txBuffer.pop_front();
             NS_LOG_LOGIC("        txBufferSize = " << m_txBufferSize);
         }
     }
@@ -584,7 +573,7 @@ LteRlcUm::DoReceivePdu(LteMacSapUser::ReceivePduParameters rxPduParams)
     //    - if VR(UX) <= VR(UR); or
     //    - if VR(UX) falls outside of the reordering window and VR(UX) is not equal to VR(UH)::
     //        - stop and reset t-Reordering;
-    if (m_reorderingTimer.IsRunning())
+    if (m_reorderingTimer.IsPending())
     {
         NS_LOG_LOGIC("Reordering timer is running");
 
@@ -600,7 +589,7 @@ LteRlcUm::DoReceivePdu(LteMacSapUser::ReceivePduParameters rxPduParams)
     //    - if VR(UH) > VR(UR):
     //        - start t-Reordering;
     //        - set VR(UX) to VR(UH).
-    if (!m_reorderingTimer.IsRunning())
+    if (!m_reorderingTimer.IsPending())
     {
         NS_LOG_LOGIC("Reordering timer is not running");
 

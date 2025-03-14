@@ -1,30 +1,19 @@
 /*
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Gabriel Ferreira <gabrielcarvfer@gmail.com>
  */
 
-#include <ns3/rectangle.h>
-#include <ns3/simulator.h>
-#include <ns3/test.h>
+#include "ns3/rectangle.h"
+#include "ns3/simulator.h"
+#include "ns3/test.h"
 
 using namespace ns3;
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief Rectangle detection of closest border to a point, inside or outside.
+ * @brief Rectangle detection of closest border to a point, inside or outside.
  */
 class RectangleClosestBorderTestSuite : public TestSuite
 {
@@ -36,29 +25,29 @@ class RectangleClosestBorderTestSuite : public TestSuite
 };
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief TestCase to check the rectangle line intersection
+ * @brief TestCase to check the rectangle line intersection
  */
 class RectangleClosestBorderTestCase : public TestCase
 {
   public:
     /**
-     * \brief Create RectangleClosestBorderTestCase
-     * \param x Index of the first position to generate
-     * \param y Index of the second position to generate
-     * \param rectangle The 2D rectangle
-     * \param side The expected result of the test
+     * @brief Create RectangleClosestBorderTestCase
+     * @param x Index of the first position to generate
+     * @param y Index of the second position to generate
+     * @param rectangle The 2D rectangle
+     * @param side The expected result of the test
      */
     RectangleClosestBorderTestCase(double x, double y, Rectangle rectangle, Rectangle::Side side);
     /**
-     * \brief Builds the test name string based on provided parameter values
-     * \param x Index of the first position to generate
-     * \param y Index of the second position to generate
-     * \param rectangle The 2D rectangle
-     * \param side The expected result of the test
+     * @brief Builds the test name string based on provided parameter values
+     * @param x Index of the first position to generate
+     * @param y Index of the second position to generate
+     * @param rectangle The 2D rectangle
+     * @param side The expected result of the test
      *
-     * \return The name string
+     * @return The name string
      */
     std::string BuildNameString(double x, double y, Rectangle rectangle, Rectangle::Side side);
     /**
@@ -68,7 +57,7 @@ class RectangleClosestBorderTestCase : public TestCase
 
   private:
     /**
-     * \brief Setup the simulation according to the configuration set by the
+     * @brief Setup the simulation according to the configuration set by the
      *        class constructor, run it, and verify the result.
      */
     void DoRun() override;
@@ -93,7 +82,7 @@ class RectangleClosestBorderTestCase : public TestCase
  */
 
 RectangleClosestBorderTestSuite::RectangleClosestBorderTestSuite()
-    : TestSuite("rectangle-closest-border", UNIT)
+    : TestSuite("rectangle-closest-border", Type::UNIT)
 {
     // Rectangle in the positive x-plane to check the intersection with.
     Rectangle rectangle = Rectangle(0.0, 10.0, 0.0, 10.0);
@@ -117,51 +106,51 @@ RectangleClosestBorderTestSuite::RectangleClosestBorderTestSuite()
      */
     // Left side (1 and 15)
     AddTestCase(new RectangleClosestBorderTestCase(-5, 5, rectangle, Rectangle::LEFTSIDE),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new RectangleClosestBorderTestCase(2, 5, rectangle, Rectangle::LEFTSIDE),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     // Right side (5 and 17)
     AddTestCase(new RectangleClosestBorderTestCase(17, 5, rectangle, Rectangle::RIGHTSIDE),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new RectangleClosestBorderTestCase(7, 5, rectangle, Rectangle::RIGHTSIDE),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     // Bottom side (8 and 14)
     AddTestCase(new RectangleClosestBorderTestCase(5, -7, rectangle, Rectangle::BOTTOMSIDE),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new RectangleClosestBorderTestCase(5, 1, rectangle, Rectangle::BOTTOMSIDE),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     // Top side (3 and 16)
     AddTestCase(new RectangleClosestBorderTestCase(5, 15, rectangle, Rectangle::TOPSIDE),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new RectangleClosestBorderTestCase(5, 7, rectangle, Rectangle::TOPSIDE),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     // Left-Bottom corner (9 and 10)
     AddTestCase(new RectangleClosestBorderTestCase(-1, -1, rectangle, Rectangle::BOTTOMLEFTCORNER),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new RectangleClosestBorderTestCase(0, 0, rectangle, Rectangle::BOTTOMLEFTCORNER),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     // Right-Bottom corner (7 and 13)
     AddTestCase(new RectangleClosestBorderTestCase(11, -1, rectangle, Rectangle::BOTTOMRIGHTCORNER),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new RectangleClosestBorderTestCase(9, 1, rectangle, Rectangle::BOTTOMRIGHTCORNER),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     // Left-Top corner (2 and 11)
     AddTestCase(new RectangleClosestBorderTestCase(-1, 11, rectangle, Rectangle::TOPLEFTCORNER),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new RectangleClosestBorderTestCase(1, 9, rectangle, Rectangle::TOPLEFTCORNER),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     // Right-Top corner (4 and 12)
     AddTestCase(new RectangleClosestBorderTestCase(11, 11, rectangle, Rectangle::TOPRIGHTCORNER),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new RectangleClosestBorderTestCase(9, 9, rectangle, Rectangle::TOPRIGHTCORNER),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     // Central position (18)
     AddTestCase(new RectangleClosestBorderTestCase(5, 5, rectangle, Rectangle::TOPSIDE),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 }
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  * Static variable for test initialization
  */
 static RectangleClosestBorderTestSuite rectangleClosestBorderTestSuite;

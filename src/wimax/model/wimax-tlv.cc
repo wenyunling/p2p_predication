@@ -1,18 +1,7 @@
 /*
  *  Copyright (c) 2009 INRIA, UDcast
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  *         Mohamed Amine Ismail <amine.ismail@sophia.inria.fr>
  *
@@ -168,15 +157,15 @@ Tlv::Deserialize(Buffer::Iterator i)
     switch (m_type)
     {
     case HMAC_TUPLE:
-        /// \todo implement Deserialize HMAC_TUPLE
+        /// @todo implement Deserialize HMAC_TUPLE
         NS_FATAL_ERROR("Not implemented-- please implement and contribute a patch");
         break;
     case MAC_VERSION_ENCODING:
-        /// \todo implement Deserialize MAC_VERSION_ENCODING
+        /// @todo implement Deserialize MAC_VERSION_ENCODING
         NS_FATAL_ERROR("Not implemented-- please implement and contribute a patch");
         break;
     case CURRENT_TRANSMIT_POWER:
-        /// \todo implement Deserialize CURRENT_TRANSMIT_POWER
+        /// @todo implement Deserialize CURRENT_TRANSMIT_POWER
         NS_FATAL_ERROR("Not implemented-- please implement and contribute a patch");
         break;
     case DOWNLINK_SERVICE_FLOW: {
@@ -192,11 +181,11 @@ Tlv::Deserialize(Buffer::Iterator i)
         break;
     }
     case VENDOR_ID_EMCODING:
-        /// \todo implement Deserialize VENDOR_ID_EMCODING
+        /// @todo implement Deserialize VENDOR_ID_EMCODING
         NS_FATAL_ERROR("Not implemented-- please implement and contribute a patch");
         break;
     case VENDOR_SPECIFIC_INFORMATION:
-        /// \todo implement Deserialize  VENDOR_SPECIFIC_INFORMATION
+        /// @todo implement Deserialize  VENDOR_SPECIFIC_INFORMATION
         NS_FATAL_ERROR("Not implemented-- please implement and contribute a patch");
         break;
     default:
@@ -438,19 +427,12 @@ SfVectorTlvValue::Deserialize(Buffer::Iterator i, uint64_t valueLen)
             break;
         }
         case ARQ_RETRY_TIMEOUT_Transmitter_Delay:
-            break;
         case ARQ_RETRY_TIMEOUT_Receiver_Delay:
-            break;
         case ARQ_BLOCK_LIFETIME:
-            break;
         case ARQ_SYNC_LOSS:
-            break;
         case ARQ_DELIVER_IN_ORDER:
-            break;
         case ARQ_PURGE_TIMEOUT:
-            break;
         case ARQ_BLOCK_SIZE:
-            break;
         case reserved2:
             break;
         case CS_Specification: {

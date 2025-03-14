@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2013 Budiarto Herman
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Budiarto Herman <budiarto.herman@magister.fi>
  *
@@ -22,8 +11,8 @@
 
 #include "lte-common.h"
 
-#include <ns3/double.h>
-#include <ns3/log.h>
+#include "ns3/double.h"
+#include "ns3/log.h"
 
 #include <algorithm>
 #include <list>
@@ -130,45 +119,43 @@ A3RsrpHandoverAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults me
         return;
     }
 
-    if (measResults.haveMeasResultNeighCells && !measResults.measResultListEutra.empty())
-    {
-        uint16_t bestNeighbourCellId = 0;
-        uint8_t bestNeighbourRsrp = 0;
-
-        for (auto it = measResults.measResultListEutra.begin();
-             it != measResults.measResultListEutra.end();
-             ++it)
-        {
-            if (it->haveRsrpResult)
-            {
-                if ((bestNeighbourRsrp < it->rsrpResult) && IsValidNeighbour(it->physCellId))
-                {
-                    bestNeighbourCellId = it->physCellId;
-                    bestNeighbourRsrp = it->rsrpResult;
-                }
-            }
-            else
-            {
-                NS_LOG_WARN("RSRP measurement is missing from cell ID " << it->physCellId);
-            }
-        }
-
-        if (bestNeighbourCellId > 0)
-        {
-            NS_LOG_LOGIC("Trigger Handover to cellId " << bestNeighbourCellId);
-            NS_LOG_LOGIC("target cell RSRP " << (uint16_t)bestNeighbourRsrp);
-            NS_LOG_LOGIC("serving cell RSRP " << (uint16_t)measResults.measResultPCell.rsrpResult);
-
-            // Inform eNodeB RRC about handover
-            m_handoverManagementSapUser->TriggerHandover(rnti, bestNeighbourCellId);
-        }
-    }
-    else
+    if (!measResults.haveMeasResultNeighCells || measResults.measResultListEutra.empty())
     {
         NS_LOG_WARN(
             this << " Event A3 received without measurement results from neighbouring cells");
+        return;
     }
 
+    uint16_t bestNeighbourCellId = 0;
+    uint8_t bestNeighbourRsrp = 0;
+
+    for (auto it = measResults.measResultListEutra.begin();
+         it != measResults.measResultListEutra.end();
+         ++it)
+    {
+        if (it->haveRsrpResult)
+        {
+            if ((bestNeighbourRsrp < it->rsrpResult) && IsValidNeighbour(it->physCellId))
+            {
+                bestNeighbourCellId = it->physCellId;
+                bestNeighbourRsrp = it->rsrpResult;
+            }
+        }
+        else
+        {
+            NS_LOG_WARN("RSRP measurement is missing from cell ID " << it->physCellId);
+        }
+    }
+
+    if (bestNeighbourCellId > 0)
+    {
+        NS_LOG_LOGIC("Trigger Handover to cellId " << bestNeighbourCellId);
+        NS_LOG_LOGIC("target cell RSRP " << (uint16_t)bestNeighbourRsrp);
+        NS_LOG_LOGIC("serving cell RSRP " << (uint16_t)measResults.measResultPCell.rsrpResult);
+
+        // Inform eNodeB RRC about handover
+        m_handoverManagementSapUser->TriggerHandover(rnti, bestNeighbourCellId);
+    }
 } // end of DoReportUeMeas
 
 bool
@@ -177,7 +164,7 @@ A3RsrpHandoverAlgorithm::IsValidNeighbour(uint16_t cellId)
     NS_LOG_FUNCTION(this << cellId);
 
     /**
-     * \todo In the future, this function can be expanded to validate whether the
+     * @todo In the future, this function can be expanded to validate whether the
      *       neighbour cell is a valid target cell, e.g., taking into account the
      *       NRT in ANR and whether it is a CSG cell with closed access.
      */

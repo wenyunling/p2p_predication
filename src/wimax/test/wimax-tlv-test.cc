@@ -1,18 +1,7 @@
 /*
  *  Copyright (c) 2009 INRIA, UDcast
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  *         Mohamed Amine Ismail <amine.ismail@sophia.inria.fr>
  *                              <amine.ismail@udcast.com>
@@ -31,10 +20,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Test the wimax tlv implementation.
+ * @brief Test the wimax tlv implementation.
  */
 class Ns3WimaxCsParamTlvTestCase : public TestCase
 {
@@ -131,10 +120,10 @@ Ns3WimaxCsParamTlvTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Test the service flow tlv implementation.
+ * @brief Test the service flow tlv implementation.
  */
 class Ns3WimaxSfTlvTestCase : public TestCase
 {
@@ -212,10 +201,10 @@ Ns3WimaxSfTlvTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Ns3 Wimax Tlv Test Suite
+ * @brief Ns3 Wimax Tlv Test Suite
  */
 class Ns3WimaxTlvTestSuite : public TestSuite
 {
@@ -224,10 +213,10 @@ class Ns3WimaxTlvTestSuite : public TestSuite
 };
 
 Ns3WimaxTlvTestSuite::Ns3WimaxTlvTestSuite()
-    : TestSuite("wimax-tlv", UNIT)
+    : TestSuite("wimax-tlv", Type::UNIT)
 {
-    AddTestCase(new Ns3WimaxCsParamTlvTestCase, TestCase::QUICK);
-    AddTestCase(new Ns3WimaxSfTlvTestCase, TestCase::QUICK);
+    AddTestCase(new Ns3WimaxCsParamTlvTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new Ns3WimaxSfTlvTestCase, TestCase::Duration::QUICK);
 }
 
 static Ns3WimaxTlvTestSuite ns3WimaxTlvTestSuite; ///< the test suite

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2022 Chandrakant Jena
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Chandrakant Jena <chandrakant.barcelona@gmail.com>
  */
@@ -89,7 +78,7 @@ int
 main(int argc, char* argv[])
 {
     bool logging{false};
-    Time interPacketInterval{Seconds(1.0)};
+    Time interPacketInterval{Seconds(1)};
     uint32_t size{56};
     uint32_t count{5};
     std::string destinationStr;
@@ -257,7 +246,7 @@ main(int argc, char* argv[])
 
     pointToPoint.EnablePcapAll("ping-example");
 
-    Simulator::Stop(Seconds(60.0));
+    Simulator::Stop(Seconds(60));
     Simulator::Run();
     Simulator::Destroy();
     return 0;

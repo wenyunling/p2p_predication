@@ -11,12 +11,10 @@ project(NS3 CXX C)
 file(STRINGS VERSION NS3_VER)
 
 # minimum compiler versions
-set(AppleClang_MinVersion 11.0.0)
-set(Clang_MinVersion 10.0.0)
-set(GNU_MinVersion 9.0.0)
-# 禁用所有警告
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
+set(AppleClang_MinVersion 13.1.6)
+set(Clang_MinVersion 11.0.0)
+set(GNU_MinVersion 10.1.0)
+
 # common options
 option(NS3_ASSERT "Enable assert on failure" OFF)
 option(NS3_DES_METRICS "Enable DES Metrics event collection" OFF)
@@ -61,6 +59,11 @@ option(NS3_CPM "Enable the CPM C++ library manager support" OFF)
 option(NS3_FAST_LINKERS "Use Mold or LLD to speed up linking if available" ON)
 option(NS3_FETCH_OPTIONAL_COMPONENTS
        "Fetch Brite, Click and Openflow dependencies" OFF
+)
+option(
+  NS3_FORCE_LOCAL_DEPENDENCIES
+  "Only search applications, headers, libraries on explicitly set directories"
+  OFF
 )
 option(NS3_GSL "Build with GSL support" ON)
 option(NS3_GTK3 "Build with GTK3 support" ON)
@@ -109,21 +112,6 @@ set(NS3_FILTER_MODULE_EXAMPLES_AND_TESTS
       "List of modules that should have their examples and tests built (e.g. lte;wifi)"
 )
 
-if(${NS3_CCACHE})
-  # Use ccache if available
-  mark_as_advanced(CCACHE)
-  find_program(CCACHE ccache)
-  if(NOT ("${CCACHE}" STREQUAL "CCACHE-NOTFOUND"))
-    message(STATUS "CCache is enabled.")
-    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
-    execute_process(
-      COMMAND
-        ${CCACHE} --set-config
-        sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime
-    )
-  endif()
-endif()
-
 # Include macros used below
 include(build-support/macros-and-definitions.cmake)
 
@@ -132,6 +120,18 @@ subdirlist(libs_to_build ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # Scan contribution libraries
 subdirlist(contrib_libs_to_build ${CMAKE_CURRENT_SOURCE_DIR}/contrib)
+
+# Scan for additional contribution libraries OUTSIDE the ns-3 source directory,
+# in the ns-3-external-contrib directory
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../ns-3-external-contrib)
+  subdirlist(
+    external_contrib_libs_to_build
+    ${CMAKE_CURRENT_SOURCE_DIR}/../ns-3-external-contrib
+  )
+  set(contrib_libs_to_build ${contrib_libs_to_build}
+                            ${external_contrib_libs_to_build}
+  )
+endif()
 
 # Before filtering, we need to load settings from .ns3rc
 parse_ns3rc(
@@ -144,6 +144,33 @@ filter_enabled_and_disabled_modules(
   libs_to_build contrib_libs_to_build NS3_ENABLED_MODULES NS3_DISABLED_MODULES
   ns3rc_enabled_modules ns3rc_disabled_modules
 )
+
+if(${NS3_CCACHE})
+  # Use ccache if available
+  mark_as_advanced(CCACHE)
+  find_program(CCACHE ccache)
+  if(NOT ("${CCACHE}" STREQUAL "CCACHE-NOTFOUND"))
+    message(STATUS "CCache is enabled.")
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
+    execute_process(
+      COMMAND
+        ${CCACHE} --set-config
+        sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime
+    )
+    if(DEFINED MSVC)
+      if(MSVC)
+        file(COPY_FILE ${CCACHE} ${CMAKE_BINARY_DIR}/clang-cl.exe
+             ONLY_IF_DIFFERENT
+        )
+        set(CMAKE_VS_GLOBALS
+            "CLToolExe=clang-cl.exe" "CLToolPath=${CMAKE_BINARY_DIR}"
+            "TrackFileAccess=false" "UseMultiToolTask=true"
+            "DebugInformationFormat=OldStyle"
+        )
+      endif()
+    endif()
+  endif()
+endif()
 
 # ##############################################################################
 # Process options                     #

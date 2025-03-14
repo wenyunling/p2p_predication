@@ -2,18 +2,7 @@
  * Copyright (c) 2022 SIGNET Lab, Department of Information Engineering,
  * University of Padova
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #ifndef TWO_RAY_SPECTRUM_PROPAGATION_LOSS_H
@@ -36,8 +25,8 @@ namespace ns3
 class NetDevice;
 
 /**
- * \ingroup spectrum
- * \brief Two Ray Spectrum Propagation Loss Model
+ * @ingroup spectrum
+ * @brief Two Ray Spectrum Propagation Loss Model
  *
  * This class implements a performance-oriented channel and beamforming models alternative to the
  * ThreeGppSpectrumPropagationLossModel and ThreeGppChannelModel. The main method is
@@ -51,8 +40,8 @@ class NetDevice;
  * ThreeGppChannelModel would prove too computationally intensive. The target applicability of this
  * model, in terms of frequency range, is 0.5-100 GHz.
  *
- * \see PhasedArrayModel
- * \see ChannelCondition
+ * @see PhasedArrayModel
+ * @see ChannelCondition
  */
 class TwoRaySpectrumPropagationLossModel : public PhasedArraySpectrumPropagationLossModel
 {
@@ -71,7 +60,7 @@ class TwoRaySpectrumPropagationLossModel : public PhasedArraySpectrumPropagation
          * Default constructor, requiring the Fluctuating Two Ray fading model parameters as
          * arguments.
          *
-         * \param m the m parameter of the FTR fading model, which represents the "Alpha" and "Beta"
+         * @param m the m parameter of the FTR fading model, which represents the "Alpha" and "Beta"
          * parameters of the Gamma-distributed random variable used to sample the power of the
          * reflected components \param sigma the sigma parameter of the FTR fading model, which
          * expresses the power of the diffuse real and imaginary components \param k the k parameter
@@ -146,24 +135,24 @@ class TwoRaySpectrumPropagationLossModel : public PhasedArraySpectrumPropagation
 
     /**
      * Get the type ID.
-     * \return the object TypeId
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
     /**
      * Sets the propagation scenario
-     * \param scenario the propagation scenario
+     * @param scenario the propagation scenario
      */
     void SetScenario(const std::string& scenario);
 
     /**
      * Sets the center frequency of the model
-     * \param f the center frequency in Hz
+     * @param f the center frequency in Hz
      */
     void SetFrequency(double f);
 
     /**
-     * \brief Compute the received PSD.
+     * @brief Compute the received PSD.
      *
      * This function computes the received PSD by applying the Fluctuating Two-Ray (FTR)
      * fast fading model and the beamforming gain.
@@ -172,12 +161,12 @@ class TwoRaySpectrumPropagationLossModel : public PhasedArraySpectrumPropagation
      * The path loss and shadowing are to be computed separately, using the
      * ThreeGppPropagationLossModel class.
      *
-     * \param txPsd the PSD of the transmitted signal
-     * \param a first node mobility model
-     * \param b second node mobility model
-     * \param aPhasedArrayModel the antenna array of the first node
-     * \param bPhasedArrayModel the antenna array of the second node
-     * \return SpectrumSignalParameters including the PSD of the received signal
+     * @param txPsd the PSD of the transmitted signal
+     * @param a first node mobility model
+     * @param b second node mobility model
+     * @param aPhasedArrayModel the antenna array of the first node
+     * @param bPhasedArrayModel the antenna array of the second node
+     * @return SpectrumSignalParameters including the PSD of the received signal
      */
     Ptr<SpectrumSignalParameters> DoCalcRxPowerSpectralDensity(
         Ptr<const SpectrumSignalParameters> txPsd,
@@ -193,9 +182,9 @@ class TwoRaySpectrumPropagationLossModel : public PhasedArraySpectrumPropagation
     /**
      * Retrieves the LOS condition associated to the specified mobility models
      *
-     * \param a the mobility model of the first node
-     * \param b the mobility model of the second node
-     * \return the LOS condition of the link between a and b
+     * @param a the mobility model of the first node
+     * @param b the mobility model of the second node
+     * @return the LOS condition of the link between a and b
      */
     ChannelCondition::LosConditionValue GetLosCondition(Ptr<const MobilityModel> a,
                                                         Ptr<const MobilityModel> b) const;
@@ -225,9 +214,9 @@ class TwoRaySpectrumPropagationLossModel : public PhasedArraySpectrumPropagation
      * reference curves and then estimate the FTR parameters based on the reference data,
      * respectively.
      *
-     * \param a first node mobility model
-     * \param b second node mobility model
-     * \return the corresponding FTR model parameters
+     * @param a first node mobility model
+     * @param b second node mobility model
+     * @return the corresponding FTR model parameters
      */
     FtrParams GetFtrParameters(Ptr<const MobilityModel> a, Ptr<const MobilityModel> b) const;
 
@@ -250,8 +239,8 @@ class TwoRaySpectrumPropagationLossModel : public PhasedArraySpectrumPropagation
      * Two-Ray Fading Model for mmWave Communications," 2016 IEEE Globecom Workshops (GC Wkshps) for
      * further details on such model.
      *
-     * \param params the FTR fading model parameters
-     * \return the stochastic power gain due to the fast fading
+     * @param params the FTR fading model parameters
+     * @return the stochastic power gain due to the fast fading
      */
     double GetFtrFastFading(const FtrParams& params) const;
 
@@ -271,11 +260,11 @@ class TwoRaySpectrumPropagationLossModel : public PhasedArraySpectrumPropagation
      * beamforming." IEEE Wireless Communications Letters 7.5 (2018) for further details on this
      * approach.
      *
-     * \param a first node mobility model
-     * \param b second node mobility model
-     * \param aPhasedArrayModel the antenna array of the first node
-     * \param bPhasedArrayModel the antenna array of the second node
-     * \return the beamforming gain
+     * @param a first node mobility model
+     * @param b second node mobility model
+     * @param aPhasedArrayModel the antenna array of the first node
+     * @param bPhasedArrayModel the antenna array of the second node
+     * @return the beamforming gain
      */
     double CalcBeamformingGain(Ptr<const MobilityModel> a,
                                Ptr<const MobilityModel> b,
@@ -286,9 +275,9 @@ class TwoRaySpectrumPropagationLossModel : public PhasedArraySpectrumPropagation
      * Get the index of the closest carrier frequency for which the FTR estimated parameters are
      * available.
      *
-     * \param frequencies the vector of carrier frequencies which have been calibrated
-     * \param targetFc  the carrier frequency of the current simulation
-     * \return the index of frequencies representing the argmin over frequencies of
+     * @param frequencies the vector of carrier frequencies which have been calibrated
+     * @param targetFc  the carrier frequency of the current simulation
+     * @return the index of frequencies representing the argmin over frequencies of
      * abs(frequencies[index] - targetFc)
      */
     std::size_t SearchClosestFc(const std::vector<double>& frequencies, double targetFc) const;

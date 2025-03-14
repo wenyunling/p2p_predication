@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Leonard Tracy <lentracy@gmail.com>
  */
@@ -27,12 +16,12 @@
 using namespace ns3;
 
 /**
- * \ingroup uan
- * \brief Helper class for UAN CW MAC example.
+ * @ingroup uan
+ * @brief Helper class for UAN CW MAC example.
  *
  * An experiment measures the average throughput for a series of CW values.
  *
- * \see uan-cw-example.cc
+ * @see uan-cw-example.cc
  */
 class Experiment
 {
@@ -40,21 +29,21 @@ class Experiment
     /**
      * Run an experiment across a range of congestion window values.
      *
-     * \param uan The Uan stack helper to configure nodes in the model.
-     * \return The data set of CW values and measured throughput
+     * @param uan The Uan stack helper to configure nodes in the model.
+     * @return The data set of CW values and measured throughput
      */
     Gnuplot2dDataset Run(UanHelper& uan);
     /**
      * Receive all available packets from a socket.
      *
-     * \param socket The receive socket.
+     * @param socket The receive socket.
      */
     void ReceivePacket(Ptr<Socket> socket);
     /**
      * Assign new random positions to a set of nodes.  New positions
      * are randomly assigned within the bounding box.
      *
-     * \param nodes The nodes to reposition.
+     * @param nodes The nodes to reposition.
      */
     void UpdatePositions(NodeContainer& nodes) const;
     /** Save the throughput from a single run. */
@@ -62,7 +51,7 @@ class Experiment
     /**
      * Compute average throughput for a set of runs, then increment CW.
      *
-     * \param cw CW value for completed runs.
+     * @param cw CW value for completed runs.
      */
     void IncrementCw(uint32_t cw);
 

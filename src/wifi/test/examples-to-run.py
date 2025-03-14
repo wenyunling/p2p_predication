@@ -35,7 +35,7 @@ cpp_examples = [
         "True",
     ),
     (
-        "wifi-manager-example --wifiManager=Aarf --standard=802.11a --maxSlrc=1 --stepTime=0.1",
+        "wifi-manager-example --wifiManager=Aarf --standard=802.11a --maxRetryCount=1 --stepTime=0.1",
         "True",
         "True",
     ),
@@ -62,7 +62,7 @@ cpp_examples = [
         "True",
     ),
     (
-        "wifi-manager-example --wifiManager=Aarfcd --standard=802.11a --maxSlrc=1 --stepTime=0.1",
+        "wifi-manager-example --wifiManager=Aarfcd --standard=802.11a --maxRetryCount=1 --stepTime=0.1",
         "True",
         "True",
     ),
@@ -93,7 +93,7 @@ cpp_examples = [
         "True",
     ),
     (
-        "wifi-manager-example --wifiManager=Amrr --standard=802.11a --maxSlrc=1 --stepTime=0.1",
+        "wifi-manager-example --wifiManager=Amrr --standard=802.11a --maxRetryCount=1 --stepTime=0.1",
         "True",
         "True",
     ),
@@ -120,7 +120,7 @@ cpp_examples = [
         "True",
     ),
     (
-        "wifi-manager-example --wifiManager=Arf --standard=802.11a --maxSlrc=1 --stepTime=0.1",
+        "wifi-manager-example --wifiManager=Arf --standard=802.11a --maxRetryCount=1 --stepTime=0.1",
         "True",
         "True",
     ),
@@ -147,7 +147,7 @@ cpp_examples = [
         "True",
     ),
     (
-        "wifi-manager-example --wifiManager=Cara --standard=802.11a --maxSlrc=1 --stepTime=0.1",
+        "wifi-manager-example --wifiManager=Cara --standard=802.11a --maxRetryCount=1 --stepTime=0.1",
         "True",
         "True",
     ),
@@ -174,7 +174,7 @@ cpp_examples = [
         "True",
     ),
     (
-        "wifi-manager-example --wifiManager=Onoe --standard=802.11a --maxSlrc=1 --stepTime=0.1",
+        "wifi-manager-example --wifiManager=Onoe --standard=802.11a --maxRetryCount=1 --stepTime=0.1",
         "True",
         "True",
     ),
@@ -201,7 +201,7 @@ cpp_examples = [
         "True",
     ),
     (
-        "wifi-manager-example --wifiManager=Rraa --standard=802.11a --maxSlrc=1 --stepTime=0.1",
+        "wifi-manager-example --wifiManager=Rraa --standard=802.11a --maxRetryCount=1 --stepTime=0.1",
         "True",
         "True",
     ),
@@ -232,7 +232,7 @@ cpp_examples = [
         "True",
     ),
     (
-        "wifi-manager-example --wifiManager=Minstrel --standard=802.11a --maxSlrc=1 --stepTime=0.1",
+        "wifi-manager-example --wifiManager=Minstrel --standard=802.11a --maxRetryCount=1 --stepTime=0.1",
         "True",
         "True",
     ),
@@ -2139,27 +2139,27 @@ cpp_examples = [
         "False",
     ),
     (
-        "wifi-test-interference-helper --enableCapture=0 --txPowerA=5 --txPowerB=15 --delay=10 --txModeA=OfdmRate6Mbps --txModeB=OfdmRate6Mbps --checkResults=1 --expectRxASuccessful=0 --expectRxBSuccessful=0",
+        "wifi-test-interference-helper --enableCapture=0 --txPowerA=5 --txPowerB=15 --delay=10us --txModeA=OfdmRate6Mbps --txModeB=OfdmRate6Mbps --checkResults=1 --expectRxASuccessful=0 --expectRxBSuccessful=0",
         "True",
         "True",
     ),
     (
-        "wifi-test-interference-helper --enableCapture=0 --txPowerA=5 --txPowerB=15  --delay=17 --standard=WIFI_PHY_STANDARD_80211ac --preamble=WIFI_PREAMBLE_VHT_SU --txModeA=VhtMcs0 --txModeB=VhtMcs0 --checkResults=1 --expectRxASuccessful=0 --expectRxBSuccessful=0",
+        "wifi-test-interference-helper --enableCapture=0 --txPowerA=5 --txPowerB=15  --delay=17us --standard=WIFI_PHY_STANDARD_80211ac --preamble=WIFI_PREAMBLE_VHT_SU --txModeA=VhtMcs0 --txModeB=VhtMcs0 --checkResults=1 --expectRxASuccessful=0 --expectRxBSuccessful=0",
         "True",
         "True",
     ),
     (
-        "wifi-test-interference-helper --enableCapture=0 --txPowerA=5 --txPowerB=15  --delay=20 --standard=WIFI_PHY_STANDARD_80211ac --preamble=WIFI_PREAMBLE_VHT_SU --txModeA=VhtMcs0 --txModeB=VhtMcs0 --checkResults=1 --expectRxASuccessful=0 --expectRxBSuccessful=0",
+        "wifi-test-interference-helper --enableCapture=0 --txPowerA=5 --txPowerB=15  --delay=20us --standard=WIFI_PHY_STANDARD_80211ac --preamble=WIFI_PREAMBLE_VHT_SU --txModeA=VhtMcs0 --txModeB=VhtMcs0 --checkResults=1 --expectRxASuccessful=0 --expectRxBSuccessful=0",
         "True",
         "True",
     ),
     (
-        "wifi-test-interference-helper --enableCapture=0 --txPowerA=5 --txPowerB=15  --delay=27 --standard=WIFI_PHY_STANDARD_80211ac --preamble=WIFI_PREAMBLE_VHT_SU --txModeA=VhtMcs0 --txModeB=VhtMcs0 --checkResults=1 --expectRxASuccessful=0 --expectRxBSuccessful=0",
+        "wifi-test-interference-helper --enableCapture=0 --txPowerA=5 --txPowerB=15  --delay=27us --standard=WIFI_PHY_STANDARD_80211ac --preamble=WIFI_PREAMBLE_VHT_SU --txModeA=VhtMcs0 --txModeB=VhtMcs0 --checkResults=1 --expectRxASuccessful=0 --expectRxBSuccessful=0",
         "True",
         "True",
     ),
     (
-        "wifi-test-interference-helper --enableCapture=1 --txPowerA=5 --txPowerB=15 --delay=10 --txModeA=OfdmRate6Mbps --txModeB=OfdmRate6Mbps --checkResults=1 --expectRxASuccessful=0 --expectRxBSuccessful=1",
+        "wifi-test-interference-helper --enableCapture=1 --txPowerA=5 --txPowerB=15 --delay=10us --txModeA=OfdmRate6Mbps --txModeB=OfdmRate6Mbps --checkResults=1 --expectRxASuccessful=0 --expectRxBSuccessful=1",
         "True",
         "False",
     ),

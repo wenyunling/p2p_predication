@@ -1,18 +1,7 @@
 /*
  *  Copyright (c) 2007,2008, 2009 INRIA, UDcast
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mohamed Amine Ismail <amine.ismail@sophia.inria.fr>
  *                              <amine.ismail@udcast.com>
@@ -27,10 +16,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Test the network entry procedure.
+ * @brief Test the network entry procedure.
  * Create a network with a BS and 10 SS and check that all the SS perform the
  * network entry correctly
  *
@@ -90,10 +79,10 @@ Ns3WimaxNetworkEntryTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Test if the management connections are correctly setup.
+ * @brief Test if the management connections are correctly setup.
  * Create a network with a BS and 10 SS and check that the management
  * connections are correctly setup for all SS
  *
@@ -154,10 +143,10 @@ Ns3WimaxManagementConnectionsTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Ns3 Wimax SS Mac Test Suite
+ * @brief Ns3 Wimax SS Mac Test Suite
  */
 class Ns3WimaxSSMacTestSuite : public TestSuite
 {
@@ -166,10 +155,10 @@ class Ns3WimaxSSMacTestSuite : public TestSuite
 };
 
 Ns3WimaxSSMacTestSuite::Ns3WimaxSSMacTestSuite()
-    : TestSuite("wimax-ss-mac-layer", UNIT)
+    : TestSuite("wimax-ss-mac-layer", Type::UNIT)
 {
-    AddTestCase(new Ns3WimaxNetworkEntryTestCase, TestCase::QUICK);
-    AddTestCase(new Ns3WimaxManagementConnectionsTestCase, TestCase::QUICK);
+    AddTestCase(new Ns3WimaxNetworkEntryTestCase, TestCase::Duration::QUICK);
+    AddTestCase(new Ns3WimaxManagementConnectionsTestCase, TestCase::Duration::QUICK);
 }
 
 static Ns3WimaxSSMacTestSuite ns3WimaxSSMacTestSuite; ///< the test suite

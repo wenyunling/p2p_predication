@@ -1,17 +1,6 @@
 /*
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Hossam Khader <hossamkhader@gmail.com>
  */
@@ -32,6 +21,7 @@
 using namespace ns3;
 
 /**
+ * @ingroup uan
  *
  * This example shows the usage of raw packets transfer data.
  * Two nodes are sending their remaining energy percentage (1 byte)
@@ -74,15 +64,15 @@ class UanExperiment
 
     /**
      * Send a packet from one of the nodes
-     * \param node The sending node
-     * \param pkt The packet
-     * \param dst the destination
+     * @param node The sending node
+     * @param pkt The packet
+     * @param dst the destination
      */
     void SendSinglePacket(Ptr<Node> node, Ptr<Packet> pkt, Mac8Address dst);
 
     /**
      * Print the received packet
-     * \param socket The receiving socket
+     * @param socket The receiving socket
      */
     void PrintReceivedPacket(Ptr<Socket> socket);
 
@@ -130,11 +120,11 @@ UanExperiment::SetupCommunications()
     Ptr<UanChannel> channel = CreateObject<UanChannel>();
     UanHelper uanHelper;
     NetDeviceContainer netDeviceContainer = uanHelper.Install(m_nodes, channel);
-    EnergySourceContainer energySourceContainer;
+    energy::EnergySourceContainer energySourceContainer;
     auto node = m_nodes.Begin();
     while (node != m_nodes.End())
     {
-        energySourceContainer.Add((*node)->GetObject<EnergySourceContainer>()->Get(0));
+        energySourceContainer.Add((*node)->GetObject<energy::EnergySourceContainer>()->Get(0));
         node++;
     }
     AcousticModemEnergyModelHelper acousticModemEnergyModelHelper;
@@ -193,7 +183,8 @@ UanExperiment::SendPackets()
     while (node != m_nodes.End())
     {
         uint8_t energy =
-            ((*node)->GetObject<EnergySourceContainer>()->Get(0)->GetEnergyFraction()) * 100;
+            ((*node)->GetObject<energy::EnergySourceContainer>()->Get(0)->GetEnergyFraction()) *
+            100;
 
         Ptr<Packet> pkt = Create<Packet>(&energy, 1);
 

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  */
@@ -35,20 +24,23 @@ NS_LOG_COMPONENT_DEFINE("LteRlcAmTransmitterTest");
  */
 
 LteRlcAmTransmitterTestSuite::LteRlcAmTransmitterTestSuite()
-    : TestSuite("lte-rlc-am-transmitter", SYSTEM)
+    : TestSuite("lte-rlc-am-transmitter", Type::SYSTEM)
 {
     // LogLevel logLevel = (LogLevel)(LOG_PREFIX_FUNC | LOG_PREFIX_TIME | LOG_LEVEL_ALL);
     // LogComponentEnable ("LteRlcAmTransmitterTest", logLevel);
 
-    AddTestCase(new LteRlcAmTransmitterOneSduTestCase("One SDU, one PDU"), TestCase::QUICK);
-    AddTestCase(new LteRlcAmTransmitterSegmentationTestCase("Segmentation"), TestCase::QUICK);
-    AddTestCase(new LteRlcAmTransmitterConcatenationTestCase("Concatenation"), TestCase::QUICK);
+    AddTestCase(new LteRlcAmTransmitterOneSduTestCase("One SDU, one PDU"),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteRlcAmTransmitterSegmentationTestCase("Segmentation"),
+                TestCase::Duration::QUICK);
+    AddTestCase(new LteRlcAmTransmitterConcatenationTestCase("Concatenation"),
+                TestCase::Duration::QUICK);
     AddTestCase(new LteRlcAmTransmitterReportBufferStatusTestCase("ReportBufferStatus primitive"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteRlcAmTransmitterTestSuite lteRlcAmTransmitterTestSuite;

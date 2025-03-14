@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Marco Miozzo <marco.miozzo@cttc.es>
  */
@@ -23,11 +12,11 @@
 #include "lte-common.h"
 #include "lte-vendor-specific-parameters.h"
 
-#include <ns3/boolean.h>
-#include <ns3/log.h>
-#include <ns3/math.h>
-#include <ns3/pointer.h>
-#include <ns3/simulator.h>
+#include "ns3/boolean.h"
+#include "ns3/log.h"
+#include "ns3/math.h"
+#include "ns3/pointer.h"
+#include "ns3/simulator.h"
 
 #include <cfloat>
 #include <climits>
@@ -40,10 +29,10 @@ NS_LOG_COMPONENT_DEFINE("RrFfMacScheduler");
 
 /// Type 0 allocation RBG
 static const int Type0AllocationRbg[4] = {
-    10,  // RGB size 1
-    26,  // RGB size 2
-    63,  // RGB size 3
-    110, // RGB size 4
+    10,  // RBG size 1
+    26,  // RBG size 2
+    63,  // RBG size 3
+    110, // RBG size 4
 };       // see table 7.1.6.1-1 of 36.213
 
 NS_OBJECT_ENSURE_REGISTERED(RrFfMacScheduler);
@@ -298,7 +287,7 @@ RrFfMacScheduler::DoSchedDlRlcBufferReq(
     // initialize statistics of the flow in case of new flows
     if (newLc)
     {
-        m_p10CqiRxed[params.m_rnti] = 1; // only codeword 0 at this stage (SISO)
+        m_p10CqiRxed.emplace(params.m_rnti, 1); // only codeword 0 at this stage (SISO)
         // initialized to 1 (i.e., the lowest value for transmitting a signal)
         m_p10CqiTimers[params.m_rnti] = m_cqiTimersThreshold;
     }
@@ -1092,7 +1081,7 @@ RrFfMacScheduler::DoSchedDlTriggerReq(
         if (rbgAllocatedNum == rbgNum)
         {
             m_nextRntiDl = newEl.m_rnti; // store last RNTI served
-            break;                       // no more RGB to be allocated
+            break;                       // no more RBG to be allocated
         }
     } while ((*it).m_rnti != m_nextRntiDl);
 
@@ -1834,7 +1823,7 @@ void
 RrFfMacScheduler::TransmissionModeConfigurationUpdate(uint16_t rnti, uint8_t txMode)
 {
     NS_LOG_FUNCTION(this << " RNTI " << rnti << " txMode " << (uint16_t)txMode);
-    FfMacCschedSapUser::CschedUeConfigUpdateIndParameters params;
+    FfMacCschedSapUser::CschedUeConfigUpdateIndParameters params{};
     params.m_rnti = rnti;
     params.m_transmissionMode = txMode;
     m_cschedSapUser->CschedUeConfigUpdateInd(params);

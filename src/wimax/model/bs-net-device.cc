@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007,2008,2009 INRIA, UDcast
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Jahanzeb Farooq <jahanzeb.farooq@sophia.inria.fr>
  *          Mohamed Amine Ismail <amine.ismail@sophia.inria.fr>
@@ -790,7 +779,6 @@ BaseStationNetDevice::DoReceive(Ptr<Packet> packet)
             {
             case ManagementMessageType::MESSAGE_TYPE_REG_REQ:
                 // not yet implemented
-                break;
             case ManagementMessageType::MESSAGE_TYPE_REG_RSP:
                 // from other base station, ignore
                 break;
@@ -831,7 +819,7 @@ BaseStationNetDevice::DoReceive(Ptr<Packet> packet)
                 C_Packet->RemoveHeader(llc);
                 source = m_ssManager->GetMacAddress(cid);
                 m_bsRxTrace(packet);
-                ForwardUp(packet->Copy(), source, Mac48Address("ff:ff:ff:ff:ff:ff"));
+                ForwardUp(packet->Copy(), source, Mac48Address::GetBroadcast());
             }
             else
             {
@@ -861,7 +849,7 @@ BaseStationNetDevice::DoReceive(Ptr<Packet> packet)
                     NS_LOG_INFO("\t fullPacket size = " << fullPacket->GetSize() << std::endl);
                     source = m_ssManager->GetMacAddress(cid);
                     m_bsRxTrace(fullPacket);
-                    ForwardUp(fullPacket->Copy(), source, Mac48Address("ff:ff:ff:ff:ff:ff"));
+                    ForwardUp(fullPacket->Copy(), source, Mac48Address::GetBroadcast());
                 }
                 else
                 {
@@ -979,7 +967,7 @@ BaseStationNetDevice::CreateDescriptorMessages(bool sendDcd, bool sendUcd)
 void
 BaseStationNetDevice::SendBursts()
 {
-    Time txTime = Seconds(0);
+    Time txTime;
     std::pair<OfdmDlMapIe*, Ptr<PacketBurst>> pair;
     WimaxPhy::ModulationType modulationType = WimaxPhy::MODULATION_TYPE_BPSK_12;
     std::list<std::pair<OfdmDlMapIe*, Ptr<PacketBurst>>>* downlinkBursts =
@@ -1189,11 +1177,9 @@ void
 BaseStationNetDevice::MarkUplinkAllocations()
 {
     uint16_t symbolsToAllocation = 0;
-    std::list<OfdmUlMapIe> uplinkAllocations = m_uplinkScheduler->GetUplinkAllocations();
-    for (auto iter = uplinkAllocations.begin(); iter != uplinkAllocations.end(); ++iter)
+    const auto& uplinkAllocations = m_uplinkScheduler->GetUplinkAllocations();
+    for (const auto& uplinkAllocation : uplinkAllocations)
     {
-        OfdmUlMapIe uplinkAllocation = *iter;
-
         if (uplinkAllocation.GetUiuc() == OfdmUlBurstProfile::UIUC_END_OF_MAP)
         {
             break;

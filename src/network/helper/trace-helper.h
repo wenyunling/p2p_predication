@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #ifndef TRACE_HELPER_H
@@ -30,7 +19,7 @@ namespace ns3
 {
 
 /**
- * \brief Manage pcap files for device models
+ * @brief Manage pcap files for device models
  *
  * Handling pcap files is a common operation for ns-3 devices.  It is useful to
  * provide a common base class for dealing with these ops.
@@ -164,7 +153,7 @@ PcapHelper::HookDefaultSink(Ptr<T> object, std::string tracename, Ptr<PcapFileWr
 }
 
 /**
- * \brief Manage ASCII trace files for device models
+ * @brief Manage ASCII trace files for device models
  *
  * Handling ascii trace files is a common operation for ns-3 devices.  It is
  * useful to provide a common base class for dealing with these ops.
@@ -617,7 +606,7 @@ AsciiTraceHelper::HookDefaultReceiveSinkWithContext(Ptr<T> object,
 }
 
 /**
- * \brief Base class providing common user-level pcap operations for helpers
+ * @brief Base class providing common user-level pcap operations for helpers
  * representing net devices.
  */
 class PcapHelperForDevice
@@ -691,9 +680,9 @@ class PcapHelperForDevice
      * @brief Enable pcap output on each device (which is of the appropriate type)
      * in the nodes provided in the container.
      *
-     * \param prefix Filename prefix to use for pcap files.
-     * \param n container of nodes.
-     * \param promiscuous If true capture all possible packets available at the device.
+     * @param prefix Filename prefix to use for pcap files.
+     * @param n container of nodes.
+     * @param promiscuous If true capture all possible packets available at the device.
      */
     void EnablePcap(std::string prefix, NodeContainer n, bool promiscuous = false);
 
@@ -722,7 +711,7 @@ class PcapHelperForDevice
 };
 
 /**
- * \brief Base class providing common user-level ascii trace operations for helpers
+ * @brief Base class providing common user-level ascii trace operations for helpers
  * representing net devices.
  */
 class AsciiTraceHelperForDevice
@@ -831,8 +820,8 @@ class AsciiTraceHelperForDevice
      * @brief Enable ascii trace output on each device (which is of the
      * appropriate type) in the nodes provided in the container.
      *
-     * \param prefix Filename prefix to use for ascii files.
-     * \param n container of nodes.
+     * @param prefix Filename prefix to use for ascii files.
+     * @param n container of nodes.
      */
     void EnableAscii(std::string prefix, NodeContainer n);
 
@@ -842,7 +831,7 @@ class AsciiTraceHelperForDevice
      *
      * @param stream An OutputStreamWrapper representing an existing file to use
      *               when writing trace data.
-     * \param n container of nodes.
+     * @param n container of nodes.
      */
     void EnableAscii(Ptr<OutputStreamWrapper> stream, NodeContainer n);
 

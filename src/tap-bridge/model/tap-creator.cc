@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #include "tap-encode-decode.h"
@@ -138,7 +127,7 @@ SendSocket(const char* path, int fd)
     // an "ancillary element" but the msghdr uses the control message termimology
     // so we call it "control."
     //
-    size_t msg_size = sizeof(int);
+    constexpr size_t msg_size = sizeof(int);
     char control[CMSG_SPACE(msg_size)];
 
     //
@@ -200,12 +189,7 @@ SendSocket(const char* path, int fd)
 }
 
 static int
-CreateTap(const char* dev,
-          const char* gw,
-          const char* ip,
-          const char* mac,
-          const char* mode,
-          const char* netmask)
+CreateTap(const char* dev, const char* ip, const char* mac, const char* mode, const char* netmask)
 {
     //
     // Creation and management of Tap devices is done via the tun device
@@ -286,7 +270,6 @@ main(int argc, char* argv[])
 {
     int c;
     char* dev = (char*)"";
-    char* gw = nullptr;
     char* ip = nullptr;
     char* mac = nullptr;
     char* netmask = nullptr;
@@ -295,15 +278,12 @@ main(int argc, char* argv[])
 
     opterr = 0;
 
-    while ((c = getopt(argc, argv, "vd:g:i:m:n:o:p:")) != -1)
+    while ((c = getopt(argc, argv, "vd:i:m:n:o:p:")) != -1)
     {
         switch (c)
         {
         case 'd':
             dev = optarg; // name of the new tap device
-            break;
-        case 'g':
-            gw = optarg; // gateway address for the new device
             break;
         case 'i':
             ip = optarg; // ip address of the new device
@@ -333,14 +313,6 @@ main(int argc, char* argv[])
     // create the device for us.  This name is given in dev
     //
     LOG("Provided Device Name is \"" << dev << "\"");
-
-    //
-    // We have got to be able to provide a gateway to the external Linux host
-    // so it can talk to the ns-3 network.  This ip address is provided in
-    // gw.
-    //
-    ABORT_IF(gw == nullptr, "Gateway Address is a required argument", 0);
-    LOG("Provided Gateway Address is \"" << gw << "\"");
 
     //
     // We have got to be able to assign an IP address to the tap device we are
@@ -396,7 +368,7 @@ main(int argc, char* argv[])
     // us to execute the following code:
     //
     LOG("Creating Tap");
-    int sock = CreateTap(dev, gw, ip, mac, operatingMode, netmask);
+    int sock = CreateTap(dev, ip, mac, operatingMode, netmask);
     ABORT_IF(sock == -1, "main(): Unable to create tap socket", 1);
 
     //

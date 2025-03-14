@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  */
@@ -20,8 +9,8 @@
 #ifndef FF_MAC_COMMON_H
 #define FF_MAC_COMMON_H
 
-#include <ns3/ptr.h>
-#include <ns3/simple-ref-count.h>
+#include "ns3/ptr.h"
+#include "ns3/simple-ref-count.h"
 
 #include <vector>
 
@@ -86,8 +75,8 @@ enum NormalExtended_e
 };
 
 /**
- * \brief See section 4.3.1 dlDciListElement
- * \struct DlDciListElement_s
+ * @brief See section 4.3.1 dlDciListElement
+ * @struct DlDciListElement_s
  */
 struct DlDciListElement_s
 {
@@ -149,8 +138,8 @@ struct DlDciListElement_s
 };
 
 /**
- * \brief See section 4.3.2 ulDciListElement
- * \struct UlDciListElement_s
+ * @brief See section 4.3.2 ulDciListElement
+ * @struct UlDciListElement_s
  */
 struct UlDciListElement_s
 {
@@ -174,7 +163,7 @@ struct UlDciListElement_s
 };
 
 /**
- * \brief Base class for storing the values of vendor specific parameters
+ * @brief Base class for storing the values of vendor specific parameters
  */
 struct VendorSpecificValue : public SimpleRefCount<VendorSpecificValue>
 {
@@ -182,8 +171,8 @@ struct VendorSpecificValue : public SimpleRefCount<VendorSpecificValue>
 };
 
 /**
- * \brief See section 4.3.3 vendorSpecificListElement
- * \struct VendorSpecificListElement_s
+ * @brief See section 4.3.3 vendorSpecificListElement
+ * @struct VendorSpecificListElement_s
  */
 struct VendorSpecificListElement_s
 {
@@ -193,8 +182,8 @@ struct VendorSpecificListElement_s
 };
 
 /**
- * \brief See section 4.3.4 logicalChannelConfigListElement
- * \struct LogicalChannelConfigListElement_s
+ * @brief See section 4.3.4 logicalChannelConfigListElement
+ * @struct LogicalChannelConfigListElement_s
  */
 struct LogicalChannelConfigListElement_s
 {
@@ -227,8 +216,8 @@ struct LogicalChannelConfigListElement_s
 };
 
 /**
- * \brief See section 4.3.6 rachListElement
- * \struct RachListElement_s
+ * @brief See section 4.3.6 rachListElement
+ * @struct RachListElement_s
  */
 struct RachListElement_s
 {
@@ -237,8 +226,8 @@ struct RachListElement_s
 };
 
 /**
- * \brief See section 4.3.7 phichListElement
- * \struct PhichListElement_s
+ * @brief See section 4.3.7 phichListElement
+ * @struct PhichListElement_s
  */
 struct PhichListElement_s
 {
@@ -254,7 +243,7 @@ struct PhichListElement_s
 };
 
 /**
- * \brief See section 4.3.9 rlcPDU_ListElement
+ * @brief See section 4.3.9 rlcPDU_ListElement
  */
 struct RlcPduListElement_s
 {
@@ -263,8 +252,8 @@ struct RlcPduListElement_s
 };
 
 /**
- * \brief See section 4.3.8 buildDataListElement
- * \struct BuildDataListElement_s
+ * @brief See section 4.3.8 buildDataListElement
+ * @struct BuildDataListElement_s
  */
 struct BuildDataListElement_s
 {
@@ -275,7 +264,7 @@ struct BuildDataListElement_s
 };
 
 /**
- * \brief Substitutive structure for specifying BuildRarListElement_s::m_grant field
+ * @brief Substitutive structure for specifying BuildRarListElement_s::m_grant field
  */
 struct UlGrant_s
 {
@@ -291,7 +280,7 @@ struct UlGrant_s
 };
 
 /**
- * \brief See section 4.3.10 buildRARListElement
+ * @brief See section 4.3.10 buildRARListElement
  */
 struct BuildRarListElement_s
 {
@@ -302,7 +291,7 @@ struct BuildRarListElement_s
 };
 
 /**
- * \brief See section 4.3.11 buildBroadcastListElement
+ * @brief See section 4.3.11 buildBroadcastListElement
  */
 struct BuildBroadcastListElement_s
 {
@@ -319,7 +308,7 @@ struct BuildBroadcastListElement_s
 };
 
 /**
- * \brief See section 4.3.12 ulInfoListElement
+ * @brief See section 4.3.12 ulInfoListElement
  */
 struct UlInfoListElement_s
 {
@@ -338,7 +327,7 @@ struct UlInfoListElement_s
 };
 
 /**
- * \brief See section 4.3.13 srListElement
+ * @brief See section 4.3.13 srListElement
  */
 struct SrListElement_s
 {
@@ -346,7 +335,7 @@ struct SrListElement_s
 };
 
 /**
- * \brief See section 4.3.15 macCEValue
+ * @brief See section 4.3.15 macCEValue
  */
 struct MacCeValue_u
 {
@@ -356,7 +345,7 @@ struct MacCeValue_u
 };
 
 /**
- * \brief See section 4.3.14 macCEListElement
+ * @brief See section 4.3.14 macCEListElement
  */
 struct MacCeListElement_s
 {
@@ -374,7 +363,7 @@ struct MacCeListElement_s
 };
 
 /**
- * \brief See section 4.3.16 drxConfig
+ * @brief See section 4.3.16 drxConfig
  */
 struct DrxConfig_s
 {
@@ -388,7 +377,7 @@ struct DrxConfig_s
 };
 
 /**
- * \brief See section 4.3.17 spsConfig
+ * @brief See section 4.3.17 spsConfig
  */
 struct SpsConfig_s
 {
@@ -401,35 +390,39 @@ struct SpsConfig_s
 };
 
 /**
- * \brief See section 4.3.18 srConfig
+ * @brief See section 4.3.18 srConfig
  */
 struct SrConfig_s
 {
-    enum SetupRelease_e m_action
+    /// Actions
+    enum SetupRelease_e
     {
         setup
-    }; ///< action
+    };
 
+    SetupRelease_e m_action;            ///< action
     uint8_t m_schedInterval{UINT8_MAX}; ///< sched interval
     uint8_t m_dsrTransMax{UINT8_MAX};   ///< trans max
 };
 
 /**
- * \brief See section 4.3.19 cqiConfig
+ * @brief See section 4.3.19 cqiConfig
  */
 struct CqiConfig_s
 {
-    enum SetupRelease_e m_action
+    /// Actions
+    enum SetupRelease_e
     {
         setup
-    }; ///< action
+    };
 
+    SetupRelease_e m_action;                 ///< CQI action
     uint16_t m_cqiSchedInterval{UINT16_MAX}; ///< CQI schedule interval
     uint8_t m_riSchedInterval{UINT8_MAX};    ///< RI schedule interval
 };
 
 /**
- * \brief See section 4.3.20 ueCapabilities
+ * @brief See section 4.3.20 ueCapabilities
  */
 struct UeCapabilities_s
 {
@@ -441,7 +434,7 @@ struct UeCapabilities_s
 };
 
 /**
- * \brief See section 4.3.22 siMessageListElement
+ * @brief See section 4.3.22 siMessageListElement
  */
 struct SiMessageListElement_s
 {
@@ -450,7 +443,7 @@ struct SiMessageListElement_s
 };
 
 /**
- * \brief See section 4.3.21 siConfiguration
+ * @brief See section 4.3.21 siConfiguration
  */
 struct SiConfiguration_s
 {
@@ -461,7 +454,7 @@ struct SiConfiguration_s
 };
 
 /**
- * \brief See section 4.3.23 dlInfoListElement
+ * @brief See section 4.3.23 dlInfoListElement
  */
 struct DlInfoListElement_s
 {
@@ -480,7 +473,7 @@ struct DlInfoListElement_s
 };
 
 /**
- * \brief See section 4.3.28 bwPart
+ * @brief See section 4.3.28 bwPart
  */
 struct BwPart_s
 {
@@ -490,7 +483,7 @@ struct BwPart_s
 };
 
 /**
- * \brief See section 4.3.27 higherLayerSelected
+ * @brief See section 4.3.27 higherLayerSelected
  */
 struct HigherLayerSelected_s
 {
@@ -499,7 +492,7 @@ struct HigherLayerSelected_s
 };
 
 /**
- * \brief See section 4.3.26 ueSelected
+ * @brief See section 4.3.26 ueSelected
  */
 struct UeSelected_s
 {
@@ -509,7 +502,7 @@ struct UeSelected_s
 };
 
 /**
- * \brief See section 4.3.25 sbMeasResult
+ * @brief See section 4.3.25 sbMeasResult
  */
 struct SbMeasResult_s
 {
@@ -519,7 +512,7 @@ struct SbMeasResult_s
 };
 
 /**
- * \brief See section 4.3.24 cqiListElement
+ * @brief See section 4.3.24 cqiListElement
  */
 struct CqiListElement_s
 {
@@ -548,7 +541,7 @@ struct CqiListElement_s
 };
 
 /**
- * \brief See section 4.3.29 ulCQI
+ * @brief See section 4.3.29 ulCQI
  */
 struct UlCqi_s
 {
@@ -567,7 +560,7 @@ struct UlCqi_s
 };
 
 /**
- * \brief See section 4.3.30 pagingInfoListElement
+ * @brief See section 4.3.30 pagingInfoListElement
  */
 struct PagingInfoListElement_s
 {

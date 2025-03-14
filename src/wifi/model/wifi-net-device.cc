@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2005,2006 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
@@ -60,7 +49,7 @@ WifiNetDevice::GetTypeId()
                           PointerValue(),
                           MakePointerAccessor(&WifiNetDevice::GetChannel),
                           MakePointerChecker<Channel>(),
-                          TypeId::DEPRECATED,
+                          TypeId::SupportLevel::DEPRECATED,
                           "class WifiNetDevice; use the Channel "
                           "attribute of WifiPhy")
             .AddAttribute("Phy",
@@ -254,6 +243,7 @@ WifiNetDevice::SetPhy(const Ptr<WifiPhy> phy)
 {
     m_phys.clear();
     m_phys.push_back(phy);
+    phy->SetPhyId(0);
     m_linkUp = true;
     CompleteConfig();
 }
@@ -264,6 +254,10 @@ WifiNetDevice::SetPhys(const std::vector<Ptr<WifiPhy>>& phys)
     NS_ABORT_MSG_IF(phys.size() > 1 && !m_ehtConfiguration,
                     "Multiple PHYs only allowed for 11be multi-link devices");
     m_phys = phys;
+    for (std::size_t id = 0; id < phys.size(); ++id)
+    {
+        m_phys.at(id)->SetPhyId(id);
+    }
     m_linkUp = true;
     CompleteConfig();
 }
@@ -478,17 +472,7 @@ bool
 WifiNetDevice::Send(Ptr<Packet> packet, const Address& dest, uint16_t protocolNumber)
 {
     NS_LOG_FUNCTION(this << packet << dest << protocolNumber);
-    NS_ASSERT(Mac48Address::IsMatchingType(dest));
-
-    Mac48Address realTo = Mac48Address::ConvertFrom(dest);
-
-    LlcSnapHeader llc;
-    llc.SetType(protocolNumber);
-    packet->AddHeader(llc);
-
-    m_mac->NotifyTx(packet);
-    m_mac->Enqueue(packet, realTo);
-    return true;
+    return DoSend(packet, std::nullopt, dest, protocolNumber);
 }
 
 Ptr<Node>
@@ -579,18 +563,41 @@ WifiNetDevice::SendFrom(Ptr<Packet> packet,
                         uint16_t protocolNumber)
 {
     NS_LOG_FUNCTION(this << packet << source << dest << protocolNumber);
-    NS_ASSERT(Mac48Address::IsMatchingType(dest));
-    NS_ASSERT(Mac48Address::IsMatchingType(source));
+    return DoSend(packet, source, dest, protocolNumber);
+}
 
-    Mac48Address realTo = Mac48Address::ConvertFrom(dest);
-    Mac48Address realFrom = Mac48Address::ConvertFrom(source);
+bool
+WifiNetDevice::DoSend(Ptr<Packet> packet,
+                      std::optional<Address> source,
+                      const Address& dest,
+                      uint16_t protocolNumber)
+{
+    NS_LOG_FUNCTION(this << packet << dest << protocolNumber << source.value_or(Address()));
+
+    if (source)
+    {
+        NS_ASSERT_MSG(Mac48Address::IsMatchingType(*source),
+                      *source << " is not compatible with a Mac48Address");
+    }
+    NS_ASSERT_MSG(Mac48Address::IsMatchingType(dest),
+                  dest << " is not compatible with a Mac48Address");
+
+    auto realTo = Mac48Address::ConvertFrom(dest);
 
     LlcSnapHeader llc;
     llc.SetType(protocolNumber);
     packet->AddHeader(llc);
 
     m_mac->NotifyTx(packet);
-    m_mac->Enqueue(packet, realTo, realFrom);
+    if (source)
+    {
+        auto realFrom = Mac48Address::ConvertFrom(*source);
+        m_mac->Enqueue(packet, realTo, realFrom);
+    }
+    else
+    {
+        m_mac->Enqueue(packet, realTo);
+    }
 
     return true;
 }

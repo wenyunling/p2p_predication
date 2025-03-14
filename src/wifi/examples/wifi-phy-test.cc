@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2005,2006 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
@@ -39,7 +28,7 @@ class PsrExperiment
     struct Input
     {
         Input();
-        double distance;      ///< distance
+        meter_u distance;     ///< distance
         std::string txMode;   ///< transmit mode
         uint8_t txPowerLevel; ///< transmit power level
         uint32_t packetSize;  ///< packet size
@@ -56,8 +45,8 @@ class PsrExperiment
 
     /**
      * Run function
-     * \param input the PSR experiment
-     * \returns the PSR experiment output
+     * @param input the PSR experiment
+     * @returns the PSR experiment output
      */
     PsrExperiment::Output Run(PsrExperiment::Input input);
 
@@ -66,15 +55,15 @@ class PsrExperiment
     void Send();
     /**
      * Send receive function
-     * \param psdu the PSDU
-     * \param rxSignalInfo the info on the received signal (\see RxSignalInfo)
-     * \param txVector the wifi transmit vector
-     * \param statusPerMpdu reception status per MPDU
+     * @param psdu the PSDU
+     * @param rxSignalInfo the info on the received signal (\see RxSignalInfo)
+     * @param txVector the wifi transmit vector
+     * @param statusPerMpdu reception status per MPDU
      */
     void Receive(Ptr<const WifiPsdu> psdu,
                  RxSignalInfo rxSignalInfo,
-                 WifiTxVector txVector,
-                 std::vector<bool> statusPerMpdu);
+                 const WifiTxVector& txVector,
+                 const std::vector<bool>& statusPerMpdu);
     Ptr<WifiPhy> m_tx; ///< transmit
     Input m_input;     ///< input
     Output m_output;   ///< output
@@ -95,8 +84,8 @@ PsrExperiment::Send()
 void
 PsrExperiment::Receive(Ptr<const WifiPsdu> psdu,
                        RxSignalInfo rxSignalInfo,
-                       WifiTxVector txVector,
-                       std::vector<bool> statusPerMpdu)
+                       const WifiTxVector& txVector,
+                       const std::vector<bool>& statusPerMpdu)
 {
     m_output.received++;
 }
@@ -186,8 +175,8 @@ class CollisionExperiment
 
     /**
      * Run function
-     * \param input the collision experiment data
-     * \returns the experiment output
+     * @param input the collision experiment data
+     * @returns the experiment output
      */
     CollisionExperiment::Output Run(CollisionExperiment::Input input);
 
@@ -198,15 +187,15 @@ class CollisionExperiment
     void SendB() const;
     /**
      * Receive function
-     * \param psdu the PSDU
-     * \param rxSignalInfo the info on the received signal (\see RxSignalInfo)
-     * \param txVector the wifi transmit vector
-     * \param statusPerMpdu reception status per MPDU
+     * @param psdu the PSDU
+     * @param rxSignalInfo the info on the received signal (\see RxSignalInfo)
+     * @param txVector the wifi transmit vector
+     * @param statusPerMpdu reception status per MPDU
      */
     void Receive(Ptr<const WifiPsdu> psdu,
                  RxSignalInfo rxSignalInfo,
-                 WifiTxVector txVector,
-                 std::vector<bool> statusPerMpdu);
+                 const WifiTxVector& txVector,
+                 const std::vector<bool>& statusPerMpdu);
     Ptr<WifiPhy> m_txA; ///< transmit A
     Ptr<WifiPhy> m_txB; ///< transmit B
     uint32_t m_flowIdA; ///< flow ID A
@@ -242,8 +231,8 @@ CollisionExperiment::SendB() const
 void
 CollisionExperiment::Receive(Ptr<const WifiPsdu> psdu,
                              RxSignalInfo rxSignalInfo,
-                             WifiTxVector txVector,
-                             std::vector<bool> statusPerMpdu)
+                             const WifiTxVector& txVector,
+                             const std::vector<bool>& statusPerMpdu)
 {
     FlowIdTag tag;
     if ((*psdu->begin())->GetPacket()->FindFirstMatchingByteTag(tag))
@@ -264,7 +253,7 @@ CollisionExperiment::CollisionExperiment()
 }
 
 CollisionExperiment::Input::Input()
-    : interval(MicroSeconds(0)),
+    : interval(),
       xA(-5),
       xB(5),
       txModeA("OfdmRate6Mbps"),

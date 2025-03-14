@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007-2009 Strasbourg University
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Sebastien Vincent <vincent@clarinet.u-strasbg.fr>
  *         David Gross <gdavid.devel@gmail.com>
@@ -22,6 +11,7 @@
 
 #include "icmpv6-l4-protocol.h"
 
+#include "ipv4-interface.h"
 #include "ipv6-interface.h"
 #include "ipv6-l3-protocol.h"
 #include "ipv6-route.h"
@@ -142,7 +132,16 @@ Icmpv6L4Protocol::GetTypeId()
                           "Multicast RS maximum retransmission duration (0 means unbound).",
                           TimeValue(Seconds(0)),
                           MakeTimeAccessor(&Icmpv6L4Protocol::m_rsMaxRetransmissionDuration),
-                          MakeTimeChecker());
+                          MakeTimeChecker())
+            .AddTraceSource("DadFailure",
+                            "Duplicate Address detected during DAD, the address is now INVALID",
+                            MakeTraceSourceAccessor(&Icmpv6L4Protocol::m_dadFailureAddressTrace),
+                            "ns3::Ipv6Address::TracedCallback")
+            .AddTraceSource(
+                "DadSuccess",
+                "Duplicate Address not detected during DAD, the address is now PREFERRED",
+                MakeTraceSourceAccessor(&Icmpv6L4Protocol::m_dadSuccessAddressTrace),
+                "ns3::Ipv6Address::TracedCallback");
     return tid;
 }
 
@@ -267,7 +266,7 @@ Icmpv6L4Protocol::DoDAD(Ipv6Address target, Ptr<Ipv6Interface> interface)
         return;
     }
 
-    /** \todo disable multicast loopback to prevent NS probing to be received by the sender */
+    /** @todo disable multicast loopback to prevent NS probing to be received by the sender */
 
     NdiscCache::Ipv6PayloadHeaderPair p = ForgeNS("::",
                                                   Ipv6Address::MakeSolicitedAddress(target),
@@ -276,7 +275,7 @@ Icmpv6L4Protocol::DoDAD(Ipv6Address target, Ptr<Ipv6Interface> interface)
 
     /* update last packet UID */
     interface->SetNsDadUid(target, p.first->GetUid());
-    Simulator::Schedule(Time(MilliSeconds(m_solicitationJitter->GetValue())),
+    Simulator::Schedule(MilliSeconds(m_solicitationJitter->GetValue()),
                         &Ipv6Interface::Send,
                         interface,
                         p.first,
@@ -335,7 +334,7 @@ Icmpv6L4Protocol::Receive(Ptr<Packet> packet,
     case Icmpv6Header::ICMPV6_ECHO_REPLY:
         // EchoReply does not contain any info about L4
         // so we can not forward it up.
-        /// \todo implement request / reply consistency check.
+        /// @todo implement request / reply consistency check.
         break;
     case Icmpv6Header::ICMPV6_ERROR_DESTINATION_UNREACHABLE:
         HandleDestinationUnreachable(p, header.GetSource(), header.GetDestination(), interface);
@@ -368,7 +367,7 @@ Icmpv6L4Protocol::Forward(Ipv6Address source,
 
     Ptr<Ipv6L3Protocol> ipv6 = m_node->GetObject<Ipv6L3Protocol>();
 
-    /// \todo assuming the ICMP is carrying a extensionless IP packet
+    /// @todo assuming the ICMP is carrying a extensionless IP packet
 
     uint8_t nextHeader = ipHeader.GetNextHeader();
 
@@ -421,7 +420,7 @@ Icmpv6L4Protocol::HandleRA(Ptr<Packet> packet,
 {
     NS_LOG_FUNCTION(this << packet << src << dst << interface);
 
-    if (m_handleRsTimeoutEvent.IsRunning())
+    if (m_handleRsTimeoutEvent.IsPending())
     {
         m_handleRsTimeoutEvent.Cancel();
         // We need to update this in case we need to restart RS retransmissions.
@@ -440,6 +439,15 @@ Icmpv6L4Protocol::HandleRA(Ptr<Packet> packet,
     Ipv6Address defaultRouter = Ipv6Address::GetZero();
 
     p->RemoveHeader(raHeader);
+
+    // If 'M' flag is set, we need to start DHCPv6.
+    if (raHeader.GetFlagM())
+    {
+        if (!m_startDhcpv6.IsNull())
+        {
+            m_startDhcpv6(ipv6->GetInterfaceForDevice(interface->GetDevice()));
+        }
+    }
 
     if (raHeader.GetLifeTime())
     {
@@ -469,7 +477,7 @@ Icmpv6L4Protocol::HandleRA(Ptr<Packet> packet,
             {
                 p->RemoveHeader(mtuHdr);
                 hasMtu = true;
-                /** \todo case of multiple prefix on single interface */
+                /** @todo case of multiple prefix on single interface */
                 /* interface->GetDevice ()->SetMtu (m.GetMtu ()); */
             }
             break;
@@ -873,6 +881,7 @@ Icmpv6L4Protocol::HandleNA(Ptr<Packet> packet,
             if (ifaddr.GetState() == Ipv6InterfaceAddress::TENTATIVE ||
                 ifaddr.GetState() == Ipv6InterfaceAddress::TENTATIVE_OPTIMISTIC)
             {
+                m_dadFailureAddressTrace(ifaddr.GetAddress());
                 interface->SetState(ifaddr.GetAddress(), Ipv6InterfaceAddress::INVALID);
             }
         }
@@ -1324,7 +1333,7 @@ Icmpv6L4Protocol::SendNS(Ipv6Address src,
     else
     {
         NS_LOG_LOGIC("Destination is Multicast, using DelayedSendMessage");
-        Simulator::Schedule(Time(MilliSeconds(m_solicitationJitter->GetValue())),
+        Simulator::Schedule(MilliSeconds(m_solicitationJitter->GetValue()),
                             &Icmpv6L4Protocol::DelayedSendMessage,
                             this,
                             p,
@@ -1380,7 +1389,7 @@ Icmpv6L4Protocol::SendRS(Ipv6Address src, Ipv6Address dst, Address hardwareAddre
             // First RS transmission - also add some jitter to desynchronize nodes.
             m_rsInitialRetransmissionTime = Simulator::Now();
             rsTimeout = m_rsInitialRetransmissionTime * (1 + m_rsRetransmissionJitter->GetValue());
-            rsDelay = Time(MilliSeconds(m_solicitationJitter->GetValue()));
+            rsDelay = MilliSeconds(m_solicitationJitter->GetValue());
         }
         else
         {
@@ -1423,7 +1432,7 @@ Icmpv6L4Protocol::HandleRsTimeout(Ipv6Address src, Ipv6Address dst, Address hard
         }
     }
 
-    if (m_rsMaxRetransmissionDuration != Time(0) &&
+    if (!m_rsMaxRetransmissionDuration.IsZero() &&
         Simulator::Now() - m_rsInitialRetransmissionTime > m_rsMaxRetransmissionDuration)
     {
         NS_LOG_LOGIC("Maximum RS retransmission time reached, giving up.");
@@ -1853,6 +1862,7 @@ Icmpv6L4Protocol::FunctionDadTimeout(Ipv6Interface* interface, Ipv6Address addr)
      */
     if (found && ifaddr.GetState() != Ipv6InterfaceAddress::INVALID)
     {
+        m_dadSuccessAddressTrace(ifaddr.GetAddress());
         interface->SetState(ifaddr.GetAddress(), Ipv6InterfaceAddress::PREFERRED);
         NS_LOG_LOGIC("DAD OK, interface in state PREFERRED");
 
@@ -1870,7 +1880,7 @@ Icmpv6L4Protocol::FunctionDadTimeout(Ipv6Interface* interface, Ipv6Address addr)
              */
             NS_LOG_LOGIC("Scheduled a first Router Solicitation");
             m_rsRetransmissionCount = 0;
-            Simulator::Schedule(Seconds(0.0),
+            Simulator::Schedule(Seconds(0),
                                 &Icmpv6L4Protocol::SendRS,
                                 this,
                                 ifaddr.GetAddress(),

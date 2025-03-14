@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Jaume Nin <jnin@cttc.es>
  * modified by: Marco Miozzo <mmiozzo@cttc.es>
@@ -24,9 +13,9 @@
 
 #include "lte-stats-calculator.h"
 
+#include "ns3/lte-common.h"
 #include "ns3/nstime.h"
 #include "ns3/uinteger.h"
-#include <ns3/lte-common.h>
 
 #include <fstream>
 #include <string>
@@ -35,7 +24,7 @@ namespace ns3
 {
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * Takes care of storing the information generated at PHY layer regarding
  * transmission. Metrics saved are:
@@ -65,7 +54,7 @@ class PhyTxStatsCalculator : public LteStatsCalculator
     // Inherited from ns3::Object
     /**
      * Register this type.
-     * \return The object TypeId.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
@@ -110,9 +99,9 @@ class PhyTxStatsCalculator : public LteStatsCalculator
     /**
      * trace sink
      *
-     * \param phyTxStats
-     * \param path
-     * \param params
+     * @param phyTxStats
+     * @param path
+     * @param params
      */
     static void DlPhyTransmissionCallback(Ptr<PhyTxStatsCalculator> phyTxStats,
                                           std::string path,
@@ -121,9 +110,9 @@ class PhyTxStatsCalculator : public LteStatsCalculator
     /**
      * trace sink
      *
-     * \param phyTxStats
-     * \param path
-     * \param params
+     * @param phyTxStats
+     * @param path
+     * @param params
      */
     static void UlPhyTransmissionCallback(Ptr<PhyTxStatsCalculator> phyTxStats,
                                           std::string path,

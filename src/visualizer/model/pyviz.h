@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2008 INESC Porto
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * C++ helper functions for use by the python visualizer (for things
  * Python is too slow at).
@@ -38,10 +27,10 @@ namespace ns3
 {
 
 /**
- * \ingroup visualizer
+ * @ingroup visualizer
  *
- * \brief helper class to be used by the visualizer
- * \internal
+ * @brief helper class to be used by the visualizer
+ * @internal
  *
  * This class is not meant to be used by simulations.  It is only
  * meant to be used by the visualizer tool (PyViz).  The only reason
@@ -56,40 +45,40 @@ class PyViz
 
     /**
      * Register drop trace path function
-     * \param tracePath the path to trace
+     * @param tracePath the path to trace
      */
     void RegisterDropTracePath(const std::string& tracePath);
 
     /**
      * Register CSMA like device function
-     * \param deviceTypeName the device type name
+     * @param deviceTypeName the device type name
      */
     void RegisterCsmaLikeDevice(const std::string& deviceTypeName);
     /**
      * Register WIFI like device function
-     * \param deviceTypeName the device type name
+     * @param deviceTypeName the device type name
      */
     void RegisterWifiLikeDevice(const std::string& deviceTypeName);
     /**
      * Register point to point like device function
-     * \param deviceTypeName the device type name
+     * @param deviceTypeName the device type name
      */
     void RegisterPointToPointLikeDevice(const std::string& deviceTypeName);
 
     /**
      * Run simulation until a given (simulated, absolute) time is reached
-     * \param time the run time
+     * @param time the run time
      */
     void SimulatorRunUntil(Time time);
 
     /**
      * Pause function
-     * \param message the pause message
+     * @param message the pause message
      */
     static void Pause(const std::string& message);
     /**
      * Get pause message function
-     * \returns the pause message
+     * @returns the pause message
      */
     std::vector<std::string> GetPauseMessages() const;
 
@@ -106,7 +95,7 @@ class PyViz
         TransmissionSampleList; ///< TransmissionSampleList typedef
     /**
      * Get transmission samples
-     * \returns the transmission sample list
+     * @returns the transmission sample list
      */
     TransmissionSampleList GetTransmissionSamples() const;
 
@@ -120,7 +109,7 @@ class PyViz
     typedef std::vector<PacketDropSample> PacketDropSampleList; ///< PacketDropSampleList typedef
     /**
      * Get packet drop samples
-     * \returns the packet drop sample list
+     * @returns the packet drop sample list
      */
     PacketDropSampleList GetPacketDropSamples() const;
 
@@ -154,14 +143,14 @@ class PyViz
 
     /**
      * Get last packets function
-     * \param nodeId the node ID
-     * \returns the last packets
+     * @param nodeId the node ID
+     * @returns the last packets
      */
     LastPacketsSample GetLastPackets(uint32_t nodeId) const;
 
     /**
      * Set nodes of interest function
-     * \param nodes the collection of nodes
+     * @param nodes the collection of nodes
      */
     void SetNodesOfInterest(std::set<uint32_t> nodes);
 
@@ -192,7 +181,7 @@ class PyViz
 
     /**
      * Get node statistics
-     * \returns the node statistics
+     * @returns the node statistics
      */
     std::vector<NodeStatistics> GetNodesStatistics() const;
 
@@ -216,25 +205,25 @@ class PyViz
 
     /**
      * Set packet capture options function
-     * \param nodeId the node ID
-     * \param options the capture options
+     * @param nodeId the node ID
+     * @param options the capture options
      */
     void SetPacketCaptureOptions(uint32_t nodeId, PacketCaptureOptions options);
 
     // Yes, I know, this is just a utility function, not really related to the class in any way.
     /**
      * Utility function - clips a line to a bounding box.
-     * \param [in] boundsX1 Bounding box, minimum X coord
-     * \param [in] boundsY1 Bounding box, minimum Y coord
-     * \param [in] boundsX2 Bounding box, maximum X coord
-     * \param [in] boundsY2 Bounding box, maximum Y coord
-     * \param [in,out] lineX1 Line, minimum X coord (any on input, clipped to the bounding box
+     * @param [in] boundsX1 Bounding box, minimum X coord
+     * @param [in] boundsY1 Bounding box, minimum Y coord
+     * @param [in] boundsX2 Bounding box, maximum X coord
+     * @param [in] boundsY2 Bounding box, maximum Y coord
+     * @param [in,out] lineX1 Line, minimum X coord (any on input, clipped to the bounding box
      * on output)
-     * \param [in,out] lineY1 Line, minimum Y coord (any on input, clipped to the bounding box
+     * @param [in,out] lineY1 Line, minimum Y coord (any on input, clipped to the bounding box
      * on output)
-     * \param [in,out] lineX2 Line, maximum X coord (any on input, clipped to the bounding box
+     * @param [in,out] lineX2 Line, maximum X coord (any on input, clipped to the bounding box
      * on output)
-     * \param [in,out] lineY2 Line, maximum Y coord (any on input, clipped to the bounding box
+     * @param [in,out] lineY2 Line, maximum Y coord (any on input, clipped to the bounding box
      * on output)
      */
     // -#- @lineX1(direction=inout); @lineY1(direction=inout); @lineX2(direction=inout);
@@ -252,16 +241,16 @@ class PyViz
   private:
     /**
      * Get packet capture options function
-     * \param nodeId the node ID
-     * \param outOptions the packet capture options
-     * \returns true if successful
+     * @param nodeId the node ID
+     * @param outOptions the packet capture options
+     * @returns true if successful
      */
     bool GetPacketCaptureOptions(uint32_t nodeId, const PacketCaptureOptions** outOptions) const;
     /**
      * Filter packet function
-     * \param packet the packet
-     * \param options the capture options
-     * \returns true if successful
+     * @param packet the packet
+     * @param options the capture options
+     * @returns true if successful
      */
     static bool FilterPacket(Ptr<const Packet> packet, const PacketCaptureOptions& options);
 
@@ -281,15 +270,15 @@ class PyViz
         /**
          * Less than operator
          *
-         * \param other object to compare
-         * \return true if less than
+         * @param other object to compare
+         * @return true if less than
          */
         bool operator<(const TransmissionSampleKey& other) const;
         /**
          * Equality operator
          *
-         * \param other object to compare
-         * \return true if equal
+         * @param other object to compare
+         * @return true if equal
          */
         bool operator==(const TransmissionSampleKey& other) const;
         Ptr<Node> transmitter; ///< transmitter
@@ -319,18 +308,18 @@ class PyViz
     // Trace callbacks
     /**
      * Network transmit common trace callback function
-     * \param context the context
-     * \param packet the packet
-     * \param destination the destination MAC address
+     * @param context the context
+     * @param packet the packet
+     * @param destination the destination MAC address
      */
     void TraceNetDevTxCommon(const std::string& context,
                              Ptr<const Packet> packet,
                              const Mac48Address& destination);
     /**
      * Network receive common trace callback function
-     * \param context the context
-     * \param packet the packet
-     * \param source the source MAC address
+     * @param context the context
+     * @param packet the packet
+     * @param source the source MAC address
      */
     void TraceNetDevRxCommon(const std::string& context,
                              Ptr<const Packet> packet,
@@ -338,31 +327,31 @@ class PyViz
 
     /**
      * Wi-Fi transmit trace callback function
-     * \param context the context
-     * \param packet the packet
+     * @param context the context
+     * @param packet the packet
      */
     void TraceNetDevTxWifi(std::string context, Ptr<const Packet> packet);
     /**
      * Wi-Fi receive trace callback function
-     * \param context the context
-     * \param packet the packet
+     * @param context the context
+     * @param packet the packet
      */
     void TraceNetDevRxWifi(std::string context, Ptr<const Packet> packet);
 
     /**
      * Queue drop trace callback function
-     * \param context the context
-     * \param packet the packet
+     * @param context the context
+     * @param packet the packet
      */
     void TraceDevQueueDrop(std::string context, Ptr<const Packet> packet);
     /**
      * Ipv4 drop trace callback function
-     * \param context the context
-     * \param hdr the header
-     * \param packet the packet
-     * \param reason the drop reason
-     * \param dummy_ipv4 the dummy Ipv4
-     * \param interface the interface
+     * @param context the context
+     * @param hdr the header
+     * @param packet the packet
+     * @param reason the drop reason
+     * @param dummy_ipv4 the dummy Ipv4
+     * @param interface the interface
      */
     void TraceIpv4Drop(std::string context,
                        const ns3::Ipv4Header& hdr,
@@ -373,50 +362,50 @@ class PyViz
 
     /**
      * CSMA transmit trace callback function
-     * \param context the context
-     * \param packet the packet
+     * @param context the context
+     * @param packet the packet
      */
     void TraceNetDevTxCsma(std::string context, Ptr<const Packet> packet);
     /**
      * CSMA receive trace callback function
-     * \param context the context
-     * \param packet the packet
+     * @param context the context
+     * @param packet the packet
      */
     void TraceNetDevRxCsma(std::string context, Ptr<const Packet> packet);
     /**
      * CSMA promiscuous receive function
-     * \param context the context
-     * \param packet the packet
+     * @param context the context
+     * @param packet the packet
      */
     void TraceNetDevPromiscRxCsma(std::string context, Ptr<const Packet> packet);
 
     /**
      * Point to point transmit trace callback function
-     * \param context the context
-     * \param packet the packet
+     * @param context the context
+     * @param packet the packet
      */
     void TraceNetDevTxPointToPoint(std::string context, Ptr<const Packet> packet);
     /**
      * Point to point receive trace callback function
-     * \param context the context
-     * \param packet the packet
+     * @param context the context
+     * @param packet the packet
      */
     void TraceNetDevRxPointToPoint(std::string context, Ptr<const Packet> packet);
 
     /**
      * WiMax transmit trace callback function
-     * \param context the context
-     * \param packet the packet
-     * \param destination the destination MAC address
+     * @param context the context
+     * @param packet the packet
+     * @param destination the destination MAC address
      */
     void TraceNetDevTxWimax(std::string context,
                             Ptr<const Packet> packet,
                             const Mac48Address& destination);
     /**
      * WiMax transmit trace callback function
-     * \param context the context
-     * \param packet the packet
-     * \param source the source MAC address
+     * @param context the context
+     * @param packet the packet
+     * @param source the source MAC address
      */
     void TraceNetDevRxWimax(std::string context,
                             Ptr<const Packet> packet,
@@ -424,18 +413,18 @@ class PyViz
 
     /**
      * LTE transmit trace callback function
-     * \param context the context
-     * \param packet the packet
-     * \param destination the destination MAC address
+     * @param context the context
+     * @param packet the packet
+     * @param destination the destination MAC address
      */
     void TraceNetDevTxLte(std::string context,
                           Ptr<const Packet> packet,
                           const Mac48Address& destination);
     /**
      * LTE receive trace callback function
-     * \param context the context
-     * \param packet the packet
-     * \param source the MAC address of the source
+     * @param context the context
+     * @param packet the packet
+     * @param source the MAC address of the source
      */
     void TraceNetDevRxLte(std::string context,
                           Ptr<const Packet> packet,
@@ -443,15 +432,15 @@ class PyViz
 
     /**
      * Find net device statistics function
-     * \param node the node
-     * \param interface the interface number
-     * \returns the device statistics
+     * @param node the node
+     * @param interface the interface number
+     * @returns the device statistics
      */
     inline NetDeviceStatistics& FindNetDeviceStatistics(int node, int interface);
 
     /**
      * Do pause function
-     * \param message the pause message
+     * @param message the pause message
      */
     void DoPause(const std::string& message);
 

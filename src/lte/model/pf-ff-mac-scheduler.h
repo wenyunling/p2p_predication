@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Marco Miozzo <marco.miozzo@cttc.es>
  */
@@ -27,7 +16,7 @@
 #include "lte-common.h"
 #include "lte-ffr-sap.h"
 
-#include <ns3/nstime.h>
+#include "ns3/nstime.h"
 
 #include <map>
 #include <vector>
@@ -45,8 +34,8 @@ struct pfsFlowPerf_t
 };
 
 /**
- * \ingroup ff-api
- * \brief Implements the SCHED SAP and CSCHED SAP for a Proportional Fair scheduler
+ * @ingroup ff-api
+ * @brief Implements the SCHED SAP and CSCHED SAP for a Proportional Fair scheduler
  *
  * This class implements the interface defined by the FfMacScheduler abstract class
  */
@@ -55,7 +44,7 @@ class PfFfMacScheduler : public FfMacScheduler
 {
   public:
     /**
-     * \brief Constructor
+     * @brief Constructor
      *
      * Creates the MAC Scheduler interface implementation
      */
@@ -69,8 +58,8 @@ class PfFfMacScheduler : public FfMacScheduler
     // inherited from Object
     void DoDispose() override;
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -90,10 +79,10 @@ class PfFfMacScheduler : public FfMacScheduler
     friend class MemberSchedSapProvider<PfFfMacScheduler>;
 
     /**
-     * \brief transmission mode configuration update
+     * @brief transmission mode configuration update
      *
-     * \param rnti the RNTI
-     * \param txMode the transmit mode
+     * @param rnti the RNTI
+     * @param txMode the transmit mode
      */
     void TransmissionModeConfigurationUpdate(uint16_t rnti, uint8_t txMode);
 
@@ -104,37 +93,37 @@ class PfFfMacScheduler : public FfMacScheduler
     //
 
     /**
-     * \brief CSched cell config request
+     * @brief CSched cell config request
      *
-     * \param params FfMacCschedSapProvider::CschedCellConfigReqParameters
+     * @param params FfMacCschedSapProvider::CschedCellConfigReqParameters
      */
     void DoCschedCellConfigReq(const FfMacCschedSapProvider::CschedCellConfigReqParameters& params);
 
     /**
-     * \brief CSched UE config request
+     * @brief CSched UE config request
      *
-     * \param params FfMacCschedSapProvider::CschedUeConfigReqParameters
+     * @param params FfMacCschedSapProvider::CschedUeConfigReqParameters
      */
     void DoCschedUeConfigReq(const FfMacCschedSapProvider::CschedUeConfigReqParameters& params);
 
     /**
-     * \brief CSched LC config request
+     * @brief CSched LC config request
      *
-     * \param params FfMacCschedSapProvider::CschedLcConfigReqParameters
+     * @param params FfMacCschedSapProvider::CschedLcConfigReqParameters
      */
     void DoCschedLcConfigReq(const FfMacCschedSapProvider::CschedLcConfigReqParameters& params);
 
     /**
-     * \brief CSched LC release request
+     * @brief CSched LC release request
      *
-     * \param params FfMacCschedSapProvider::CschedLcReleaseReqParameters
+     * @param params FfMacCschedSapProvider::CschedLcReleaseReqParameters
      */
     void DoCschedLcReleaseReq(const FfMacCschedSapProvider::CschedLcReleaseReqParameters& params);
 
     /**
-     * \brief CSched UE release request
+     * @brief CSched UE release request
      *
-     * \param params FfMacCschedSapProvider::CschedLcReleaseReqParameters
+     * @param params FfMacCschedSapProvider::CschedLcReleaseReqParameters
      */
     void DoCschedUeReleaseReq(const FfMacCschedSapProvider::CschedUeReleaseReqParameters& params);
 
@@ -144,107 +133,107 @@ class PfFfMacScheduler : public FfMacScheduler
     //
 
     /**
-     * \brief Sched DL RLC buffer request
+     * @brief Sched DL RLC buffer request
      *
-     * \param params FfMacSchedSapProvider::SchedDlRlcBufferReqParameters
+     * @param params FfMacSchedSapProvider::SchedDlRlcBufferReqParameters
      */
     void DoSchedDlRlcBufferReq(const FfMacSchedSapProvider::SchedDlRlcBufferReqParameters& params);
 
     /**
-     * \brief Sched DL paging buffer request
+     * @brief Sched DL paging buffer request
      *
-     * \param params FfMacSchedSapProvider::SchedDlPagingBufferReqParameters
+     * @param params FfMacSchedSapProvider::SchedDlPagingBufferReqParameters
      */
     void DoSchedDlPagingBufferReq(
         const FfMacSchedSapProvider::SchedDlPagingBufferReqParameters& params);
 
     /**
-     * \brief Sched DL MAC buffer request
+     * @brief Sched DL MAC buffer request
      *
-     * \param params FfMacSchedSapProvider::SchedDlMacBufferReqParameters
+     * @param params FfMacSchedSapProvider::SchedDlMacBufferReqParameters
      */
     void DoSchedDlMacBufferReq(const FfMacSchedSapProvider::SchedDlMacBufferReqParameters& params);
 
     /**
-     * \brief Sched DL trigger request
+     * @brief Sched DL trigger request
      *
-     * \param params FfMacSchedSapProvider::SchedDlTriggerReqParameters
+     * @param params FfMacSchedSapProvider::SchedDlTriggerReqParameters
      */
     void DoSchedDlTriggerReq(const FfMacSchedSapProvider::SchedDlTriggerReqParameters& params);
 
     /**
-     * \brief Sched DL RACH info request
+     * @brief Sched DL RACH info request
      *
-     * \param params FfMacSchedSapProvider::SchedDlRachInfoReqParameters
+     * @param params FfMacSchedSapProvider::SchedDlRachInfoReqParameters
      */
     void DoSchedDlRachInfoReq(const FfMacSchedSapProvider::SchedDlRachInfoReqParameters& params);
 
     /**
-     * \brief Sched DL CQI info request
+     * @brief Sched DL CQI info request
      *
-     * \param params FfMacSchedSapProvider::SchedDlCqiInfoReqParameters
+     * @param params FfMacSchedSapProvider::SchedDlCqiInfoReqParameters
      */
     void DoSchedDlCqiInfoReq(const FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& params);
 
     /**
-     * \brief Sched UL trigger request
+     * @brief Sched UL trigger request
      *
-     * \param params FfMacSchedSapProvider::SchedUlTriggerReqParameters
+     * @param params FfMacSchedSapProvider::SchedUlTriggerReqParameters
      */
     void DoSchedUlTriggerReq(const FfMacSchedSapProvider::SchedUlTriggerReqParameters& params);
 
     /**
-     * \brief Sched UL noise interference request
+     * @brief Sched UL noise interference request
      *
-     * \param params FfMacSchedSapProvider::SchedUlNoiseInterferenceReqParameters
+     * @param params FfMacSchedSapProvider::SchedUlNoiseInterferenceReqParameters
      */
     void DoSchedUlNoiseInterferenceReq(
         const FfMacSchedSapProvider::SchedUlNoiseInterferenceReqParameters& params);
 
     /**
-     * \brief Sched UL SR info request
+     * @brief Sched UL SR info request
      *
-     * \param params FfMacSchedSapProvider::SchedUlSrInfoReqParameters
+     * @param params FfMacSchedSapProvider::SchedUlSrInfoReqParameters
      */
     void DoSchedUlSrInfoReq(const FfMacSchedSapProvider::SchedUlSrInfoReqParameters& params);
 
     /**
-     * \brief Sched UL MAC control info request
+     * @brief Sched UL MAC control info request
      *
-     * \param params FfMacSchedSapProvider::SchedUlMacCtrlInfoReqParameters
+     * @param params FfMacSchedSapProvider::SchedUlMacCtrlInfoReqParameters
      */
     void DoSchedUlMacCtrlInfoReq(
         const FfMacSchedSapProvider::SchedUlMacCtrlInfoReqParameters& params);
 
     /**
-     * \brief Sched UL CQI info request
+     * @brief Sched UL CQI info request
      *
-     * \param params FfMacSchedSapProvider::SchedUlCqiInfoReqParameters
+     * @param params FfMacSchedSapProvider::SchedUlCqiInfoReqParameters
      */
     void DoSchedUlCqiInfoReq(const FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& params);
 
     /**
-     * \brief Get RBG size
+     * @brief Get RBG size
      *
-     * \param dlbandwidth dDL bandwidth
-     * \returns the RBG size
+     * @param dlbandwidth dDL bandwidth
+     * @returns the RBG size
      */
     int GetRbgSize(int dlbandwidth);
 
     /**
-     * \brief LC active per flow
+     * @brief LC active per flow
      *
-     * \param rnti the RNTI
-     * \returns the LC active per flow
+     * @param rnti the RNTI
+     * @returns the LC active per flow
      */
     unsigned int LcActivePerFlow(uint16_t rnti);
 
     /**
-     * \brief Estimate UL SINR
+     * @brief Estimate UL SINR
      *
-     * \param rnti the RNTI
-     * \param rb the RB
-     * \returns the SINR
+     * @param rnti the RNTI
+     * @param rb the RB
+     * @returns the SINR
      */
     double EstimateUlSinr(uint16_t rnti, uint16_t rb);
 
@@ -254,39 +243,39 @@ class PfFfMacScheduler : public FfMacScheduler
     void RefreshUlCqiMaps();
 
     /**
-     * \brief Update DL RCL buffer info
+     * @brief Update DL RCL buffer info
      *
-     * \param rnti the RNTI
-     * \param lcid the LCID
-     * \param size the size
+     * @param rnti the RNTI
+     * @param lcid the LCID
+     * @param size the size
      */
     void UpdateDlRlcBufferInfo(uint16_t rnti, uint8_t lcid, uint16_t size);
     /**
-     * \brief Update UL RCL buffer info
+     * @brief Update UL RCL buffer info
      *
-     * \param rnti the RNTI
-     * \param size the size
+     * @param rnti the RNTI
+     * @param size the size
      */
     void UpdateUlRlcBufferInfo(uint16_t rnti, uint16_t size);
 
     /**
-     * \brief Update and return a new process Id for the RNTI specified
+     * @brief Update and return a new process Id for the RNTI specified
      *
-     * \param rnti the RNTI of the UE to be updated
-     * \return the process id  value
+     * @param rnti the RNTI of the UE to be updated
+     * @return the process id  value
      */
     uint8_t UpdateHarqProcessId(uint16_t rnti);
 
     /**
-     * \brief Return the availability of free process for the RNTI specified
+     * @brief Return the availability of free process for the RNTI specified
      *
-     * \param rnti the RNTI of the UE to be updated
-     * \return the availability
+     * @param rnti the RNTI of the UE to be updated
+     * @return the availability
      */
     bool HarqProcessAvailability(uint16_t rnti);
 
     /**
-     * \brief Refresh HARQ processes according to the timers
+     * @brief Refresh HARQ processes according to the timers
      *
      */
     void RefreshHarqProcesses();

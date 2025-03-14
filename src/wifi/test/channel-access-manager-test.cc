@@ -1,45 +1,51 @@
 /*
  * Copyright (c) 2005,2006 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
 
 #include "ns3/adhoc-wifi-mac.h"
+#include "ns3/ap-wifi-mac.h"
 #include "ns3/channel-access-manager.h"
+#include "ns3/config.h"
 #include "ns3/frame-exchange-manager.h"
 #include "ns3/interference-helper.h"
+#include "ns3/mgt-action-headers.h"
+#include "ns3/mobility-helper.h"
 #include "ns3/multi-model-spectrum-channel.h"
+#include "ns3/packet-socket-client.h"
+#include "ns3/packet-socket-helper.h"
+#include "ns3/packet-socket-server.h"
+#include "ns3/pointer.h"
 #include "ns3/qos-txop.h"
+#include "ns3/rng-seed-manager.h"
 #include "ns3/simulator.h"
+#include "ns3/spectrum-wifi-helper.h"
 #include "ns3/spectrum-wifi-phy.h"
+#include "ns3/sta-wifi-mac.h"
+#include "ns3/string.h"
 #include "ns3/test.h"
+#include "ns3/wifi-net-device.h"
+#include "ns3/wifi-spectrum-phy-interface.h"
 
+#include <iomanip>
 #include <list>
 #include <numeric>
 
 using namespace ns3;
 
+NS_LOG_COMPONENT_DEFINE("WifiChannelAccessManagerTest");
+
 template <typename TxopType>
 class ChannelAccessManagerTest;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief TxopTest Txop Test
+ * @brief TxopTest Txop Test
  */
 template <typename TxopType>
 class TxopTest : public TxopType
@@ -48,15 +54,15 @@ class TxopTest : public TxopType
     /**
      * Constructor
      *
-     * \param test the test channel access manager
-     * \param i the index of the Txop
+     * @param test the test channel access manager
+     * @param i the index of the Txop
      */
     TxopTest(ChannelAccessManagerTest<TxopType>* test, uint32_t i);
 
     /**
      * Queue transmit function
-     * \param txTime the transmit time
-     * \param expectedGrantTime the expected grant time
+     * @param txTime the transmit time
+     * @param expectedGrantTime the expected grant time
      */
     void QueueTx(uint64_t txTime, uint64_t expectedGrantTime);
 
@@ -64,17 +70,17 @@ class TxopTest : public TxopType
     /// allow ChannelAccessManagerTest class access
     friend class ChannelAccessManagerTest<TxopType>;
 
-    /// \copydoc ns3::Txop::DoDispose
+    /// @copydoc ns3::Txop::DoDispose
     void DoDispose() override;
-    /// \copydoc ns3::Txop::NotifyChannelAccessed
+    /// @copydoc ns3::Txop::NotifyChannelAccessed
     void NotifyChannelAccessed(uint8_t linkId, Time txopDuration = Seconds(0)) override;
-    /// \copydoc ns3::Txop::HasFramesToTransmit
+    /// @copydoc ns3::Txop::HasFramesToTransmit
     bool HasFramesToTransmit(uint8_t linkId) override;
-    /// \copydoc ns3::Txop::NotifySleep
+    /// @copydoc ns3::Txop::NotifySleep
     void NotifySleep(uint8_t linkId) override;
-    /// \copydoc ns3::Txop::NotifyWakeUp
+    /// @copydoc ns3::Txop::NotifyWakeUp
     void NotifyWakeUp(uint8_t linkId) override;
-    /// \copydoc ns3::Txop::GenerateBackoff
+    /// @copydoc ns3::Txop::GenerateBackoff
     void GenerateBackoff(uint8_t linkId) override;
 
     typedef std::pair<uint64_t, uint64_t> ExpectedGrant; //!< the expected grant typedef
@@ -95,7 +101,7 @@ class TxopTest : public TxopType
 
     /**
      * Check if the Txop has frames to transmit.
-     * \return true if the Txop has frames to transmit.
+     * @return true if the Txop has frames to transmit.
      */
 
     ChannelAccessManagerTest<TxopType>* m_test; //!< the test DCF/EDCA manager
@@ -103,10 +109,10 @@ class TxopTest : public TxopType
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief ChannelAccessManager Stub
+ * @brief ChannelAccessManager Stub
  */
 class ChannelAccessManagerStub : public ChannelAccessManager
 {
@@ -118,7 +124,7 @@ class ChannelAccessManagerStub : public ChannelAccessManager
     /**
      * Set the Short Interframe Space (SIFS).
      *
-     * \param sifs the SIFS duration
+     * @param sifs the SIFS duration
      */
     void SetSifs(Time sifs)
     {
@@ -128,7 +134,7 @@ class ChannelAccessManagerStub : public ChannelAccessManager
     /**
      * Set the slot duration.
      *
-     * \param slot the slot duration
+     * @param slot the slot duration
      */
     void SetSlot(Time slot)
     {
@@ -138,7 +144,7 @@ class ChannelAccessManagerStub : public ChannelAccessManager
     /**
      * Set the duration of EIFS - DIFS
      *
-     * \param eifsNoDifs the duration of EIFS - DIFS
+     * @param eifsNoDifs the duration of EIFS - DIFS
      */
     void SetEifsNoDifs(Time eifsNoDifs)
     {
@@ -167,10 +173,10 @@ class ChannelAccessManagerStub : public ChannelAccessManager
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Frame Exchange Manager Stub
+ * @brief Frame Exchange Manager Stub
  */
 template <typename TxopType>
 class FrameExchangeManagerStub : public FrameExchangeManager
@@ -179,7 +185,7 @@ class FrameExchangeManagerStub : public FrameExchangeManager
     /**
      * Constructor
      *
-     * \param test the test channel access manager
+     * @param test the test channel access manager
      */
     FrameExchangeManagerStub(ChannelAccessManagerTest<TxopType>* test)
         : m_test(test)
@@ -189,24 +195,24 @@ class FrameExchangeManagerStub : public FrameExchangeManager
     /**
      * Request the FrameExchangeManager to start a frame exchange sequence.
      *
-     * \param dcf the channel access function that gained channel access. It is
+     * @param dcf the channel access function that gained channel access. It is
      *            the DCF on non-QoS stations and an EDCA on QoS stations.
-     * \param allowedWidth the maximum allowed TX width in MHz
-     * \return true if a frame exchange sequence was started, false otherwise
+     * @param allowedWidth the maximum allowed TX width
+     * @return true if a frame exchange sequence was started, false otherwise
      */
-    bool StartTransmission(Ptr<Txop> dcf, uint16_t allowedWidth) override
+    bool StartTransmission(Ptr<Txop> dcf, MHz_u allowedWidth) override
     {
         dcf->NotifyChannelAccessed(0);
         return true;
     }
 
-    /// \copydoc ns3::FrameExchangeManager::NotifyInternalCollision
+    /// @copydoc ns3::FrameExchangeManager::NotifyInternalCollision
     void NotifyInternalCollision(Ptr<Txop> txop) override
     {
         m_test->NotifyInternalCollision(DynamicCast<TxopTest<TxopType>>(txop));
     }
 
-    /// \copydoc ns3::FrameExchangeManager::NotifySwitchingStartNow
+    /// @copydoc ns3::FrameExchangeManager::NotifySwitchingStartNow
     void NotifySwitchingStartNow(Time duration) override
     {
         m_test->NotifyChannelSwitching();
@@ -217,10 +223,10 @@ class FrameExchangeManagerStub : public FrameExchangeManager
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Channel Access Manager Test
+ * @brief Channel Access Manager Test
  */
 template <typename TxopType>
 class ChannelAccessManagerTest : public TestCase
@@ -231,17 +237,17 @@ class ChannelAccessManagerTest : public TestCase
 
     /**
      * Notify access granted function
-     * \param i the index of the Txop
+     * @param i the index of the Txop
      */
     void NotifyAccessGranted(uint32_t i);
     /**
      * Notify internal collision function
-     * \param state the Txop
+     * @param state the Txop
      */
     void NotifyInternalCollision(Ptr<TxopTest<TxopType>> state);
     /**
      * Generate backoff function
-     * \param i the index of the Txop
+     * @param i the index of the Txop
      */
     void GenerateBackoff(uint32_t i);
     /**
@@ -252,111 +258,111 @@ class ChannelAccessManagerTest : public TestCase
   private:
     /**
      * Start test function
-     * \param slotTime the slot time
-     * \param sifs the SIFS
-     * \param eifsNoDifsNoSifs the EIFS no DIFS no SIFS
-     * \param ackTimeoutValue the Ack timeout value
-     * \param chWidth the channel width in MHz
+     * @param slotTime the slot time
+     * @param sifs the SIFS
+     * @param eifsNoDifsNoSifs the EIFS no DIFS no SIFS
+     * @param ackTimeoutValue the Ack timeout value
+     * @param chWidth the channel width
      */
     void StartTest(uint64_t slotTime,
                    uint64_t sifs,
                    uint64_t eifsNoDifsNoSifs,
                    uint32_t ackTimeoutValue = 20,
-                   uint16_t chWidth = 20);
+                   MHz_u chWidth = MHz_u{20});
     /**
      * Add Txop function
-     * \param aifsn the AIFSN
+     * @param aifsn the AIFSN
      */
     void AddTxop(uint32_t aifsn);
     /// End test function
     void EndTest();
     /**
      * Expect internal collision function
-     * \param time the expected time
-     * \param nSlots the number of slots
-     * \param from the expected from
+     * @param time the expected time
+     * @param nSlots the number of slots
+     * @param from the expected from
      */
     void ExpectInternalCollision(uint64_t time, uint32_t nSlots, uint32_t from);
     /**
      * Expect generate backoff function
-     * \param time the expected time
-     * \param nSlots the number of slots
-     * \param from the expected from
+     * @param time the expected time
+     * @param nSlots the number of slots
+     * @param from the expected from
      */
     void ExpectBackoff(uint64_t time, uint32_t nSlots, uint32_t from);
     /**
      * Schedule a check that the channel access manager is busy or idle
-     * \param time the expected time
-     * \param busy whether the manager is expected to be busy
+     * @param time the expected time
+     * @param busy whether the manager is expected to be busy
      */
     void ExpectBusy(uint64_t time, bool busy);
     /**
      * Perform check that channel access manager is busy or idle
-     * \param busy whether expected state is busy
+     * @param busy whether expected state is busy
      */
     void DoCheckBusy(bool busy);
     /**
      * Add receive OK event function
-     * \param at the event time
-     * \param duration the duration
+     * @param at the event time
+     * @param duration the duration
      */
     void AddRxOkEvt(uint64_t at, uint64_t duration);
     /**
      * Add receive error event function for error at end of frame
-     * \param at the event time
-     * \param duration the duration
+     * @param at the event time
+     * @param duration the duration
      */
     void AddRxErrorEvt(uint64_t at, uint64_t duration);
     /**
      * Add receive error event function for error during frame
-     * \param at the event time
-     * \param duration the duration
-     * \param timeUntilError the time after event time to force the error
+     * @param at the event time
+     * @param duration the duration
+     * @param timeUntilError the time after event time to force the error
      */
     void AddRxErrorEvt(uint64_t at, uint64_t duration, uint64_t timeUntilError);
     /**
      * Add receive inside SIFS event function
-     * \param at the event time
-     * \param duration the duration
+     * @param at the event time
+     * @param duration the duration
      */
     void AddRxInsideSifsEvt(uint64_t at, uint64_t duration);
     /**
      * Add transmit event function
-     * \param at the event time
-     * \param duration the duration
+     * @param at the event time
+     * @param duration the duration
      */
     void AddTxEvt(uint64_t at, uint64_t duration);
     /**
      * Add NAV reset function
-     * \param at the event time
-     * \param duration the duration
+     * @param at the event time
+     * @param duration the duration
      */
     void AddNavReset(uint64_t at, uint64_t duration);
     /**
      * Add NAV start function
-     * \param at the event time
-     * \param duration the duration
+     * @param at the event time
+     * @param duration the duration
      */
     void AddNavStart(uint64_t at, uint64_t duration);
     /**
      * Add Ack timeout reset function
-     * \param at the event time
+     * @param at the event time
      */
     void AddAckTimeoutReset(uint64_t at);
     /**
      * Add access function
-     * \param at the event time
-     * \param txTime the transmit time
-     * \param expectedGrantTime the expected grant time
-     * \param from the index of the requesting Txop
+     * @param at the event time
+     * @param txTime the transmit time
+     * @param expectedGrantTime the expected grant time
+     * @param from the index of the requesting Txop
      */
     void AddAccessRequest(uint64_t at, uint64_t txTime, uint64_t expectedGrantTime, uint32_t from);
     /**
      * Add access request with Ack timeout
-     * \param at time to schedule DoAccessRequest event
-     * \param txTime the transmit time
-     * \param expectedGrantTime the expected grant time
-     * \param from the index of the requesting Txop
+     * @param at time to schedule DoAccessRequest event
+     * @param txTime the transmit time
+     * @param expectedGrantTime the expected grant time
+     * @param from the index of the requesting Txop
      */
     void AddAccessRequestWithAckTimeout(uint64_t at,
                                         uint64_t txTime,
@@ -364,11 +370,11 @@ class ChannelAccessManagerTest : public TestCase
                                         uint32_t from);
     /**
      * Add access request with successful ack
-     * \param at time to schedule DoAccessRequest event
-     * \param txTime the transmit time
-     * \param expectedGrantTime the expected grant time
-     * \param ackDelay the delay of the Ack after txEnd
-     * \param from the index of the requesting Txop
+     * @param at time to schedule DoAccessRequest event
+     * @param txTime the transmit time
+     * @param expectedGrantTime the expected grant time
+     * @param ackDelay the delay of the Ack after txEnd
+     * @param from the index of the requesting Txop
      */
     void AddAccessRequestWithSuccessfulAck(uint64_t at,
                                            uint64_t txTime,
@@ -377,19 +383,19 @@ class ChannelAccessManagerTest : public TestCase
                                            uint32_t from);
     /**
      * Add access request with successful Ack
-     * \param txTime the transmit time
-     * \param expectedGrantTime the expected grant time
-     * \param state TxopTest
+     * @param txTime the transmit time
+     * @param expectedGrantTime the expected grant time
+     * @param state TxopTest
      */
     void DoAccessRequest(uint64_t txTime,
                          uint64_t expectedGrantTime,
                          Ptr<TxopTest<TxopType>> state);
     /**
      * Add CCA busy event function
-     * \param at the event time
-     * \param duration the duration
-     * \param channelType the channel type
-     * \param per20MhzDurations vector that indicates for how long each 20 MHz subchannel is busy
+     * @param at the event time
+     * @param duration the duration
+     * @param channelType the channel type
+     * @param per20MhzDurations vector that indicates for how long each 20 MHz subchannel is busy
      */
     void AddCcaBusyEvt(uint64_t at,
                        uint64_t duration,
@@ -397,14 +403,14 @@ class ChannelAccessManagerTest : public TestCase
                        const std::vector<Time>& per20MhzDurations = {});
     /**
      * Add switching event function
-     * \param at the event time
-     * \param duration the duration
+     * @param at the event time
+     * @param duration the duration
      */
     void AddSwitchingEvt(uint64_t at, uint64_t duration);
     /**
      * Add receive start event function
-     * \param at the event time
-     * \param duration the duration
+     * @param at the event time
+     * @param duration the duration
      */
     void AddRxStartEvt(uint64_t at, uint64_t duration);
 
@@ -609,7 +615,7 @@ ChannelAccessManagerTest<TxopType>::StartTest(uint64_t slotTime,
                                               uint64_t sifs,
                                               uint64_t eifsNoDifsNoSifs,
                                               uint32_t ackTimeoutValue,
-                                              uint16_t chWidth)
+                                              MHz_u chWidth)
 {
     m_ChannelAccessManager = CreateObject<ChannelAccessManagerStub>();
     m_feManager = CreateObject<FrameExchangeManagerStub<TxopType>>(this);
@@ -638,7 +644,9 @@ ChannelAccessManagerTest<TxopType>::AddTxop(uint32_t aifsn)
     m_txop.push_back(txop);
     m_ChannelAccessManager->Add(txop);
     // the following causes the creation of a link for the txop object
-    auto mac = CreateObject<AdhocWifiMac>();
+    auto mac = CreateObjectWithAttributes<AdhocWifiMac>(
+        "Txop",
+        PointerValue(CreateObjectWithAttributes<Txop>("AcIndex", StringValue("AC_BE_NQOS"))));
     mac->SetWifiPhys({nullptr});
     txop->SetWifiMac(mac);
     txop->SetAifsn(aifsn);
@@ -1208,7 +1216,7 @@ ChannelAccessManagerTest<QosTxop>::DoRun()
     //     |  rx  | sifs | aifsn |  tx  |
     //                |
     //               52 request access
-    StartTest(4, 6, 10, 20, 40);
+    StartTest(4, 6, 10, 20, MHz_u{40});
     AddTxop(1);
     AddRxOkEvt(20, 30);
     AddCcaBusyEvt(50, 10, WIFI_CHANLIST_SECONDARY);
@@ -1222,7 +1230,7 @@ ChannelAccessManagerTest<QosTxop>::DoRun()
     //     |  rx  | sifs | aifsn |  tx  |
     //                       |
     //                      58 request access
-    StartTest(4, 6, 10, 20, 80);
+    StartTest(4, 6, 10, 20, MHz_u{80});
     AddTxop(1);
     AddRxOkEvt(20, 30);
     AddCcaBusyEvt(50, 10, WIFI_CHANLIST_SECONDARY);
@@ -1236,7 +1244,7 @@ ChannelAccessManagerTest<QosTxop>::DoRun()
     //     |  rx  | sifs | aifsn | idle |  tx  |
     //                               |
     //                              62 request access
-    StartTest(4, 6, 10, 20, 80);
+    StartTest(4, 6, 10, 20, MHz_u{80});
     AddTxop(1);
     AddRxOkEvt(20, 30);
     AddCcaBusyEvt(50, 14, WIFI_CHANLIST_SECONDARY40);
@@ -1251,7 +1259,7 @@ ChannelAccessManagerTest<QosTxop>::DoRun()
     //   |    rx    | sifs | acktxttime | sifs + aifsn |  tx  |
     //                   |
     //                  55 request access
-    StartTest(4, 6, 10, 20, 160);
+    StartTest(4, 6, 10, 20, MHz_u{160});
     AddTxop(1);
     AddRxErrorEvt(20, 30);
     AddCcaBusyEvt(50, 26, WIFI_CHANLIST_SECONDARY);
@@ -1266,7 +1274,7 @@ ChannelAccessManagerTest<QosTxop>::DoRun()
     //   |    rx    | sifs | acktxttime | sifs + aifsn |  tx  |
     //                                        |
     //                                       70 request access
-    StartTest(4, 6, 10, 20, 160);
+    StartTest(4, 6, 10, 20, MHz_u{160});
     AddTxop(1);
     AddRxErrorEvt(20, 30);
     AddCcaBusyEvt(50, 26, WIFI_CHANLIST_SECONDARY40);
@@ -1281,7 +1289,7 @@ ChannelAccessManagerTest<QosTxop>::DoRun()
     //   |    rx    | sifs | acktxttime | sifs + aifsn | idle |  tx  |
     //                                                     |
     //                                                    82 request access
-    StartTest(4, 6, 10, 20, 160);
+    StartTest(4, 6, 10, 20, MHz_u{160});
     AddTxop(1);
     AddRxErrorEvt(20, 30);
     AddCcaBusyEvt(50, 34, WIFI_CHANLIST_SECONDARY80);
@@ -1320,10 +1328,10 @@ ChannelAccessManagerTest<QosTxop>::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the calculation of the largest idle primary channel performed by
+ * @brief Test the calculation of the largest idle primary channel performed by
  * ChannelAccessManager::GetLargestIdlePrimaryChannel().
  *
  * In every test, the ChannelAccessManager is notified of a CCA_BUSY period and
@@ -1343,10 +1351,10 @@ class LargestIdlePrimaryChannelTest : public TestCase
     /**
      * Test a specific combination of operating channel width and busy channel type.
      *
-     * \param chWidth the operating channel width
-     * \param busyChannel the busy channel type
+     * @param chWidth the operating channel width
+     * @param busyChannel the busy channel type
      */
-    void RunOne(uint16_t chWidth, WifiChannelListType busyChannel);
+    void RunOne(MHz_u chWidth, WifiChannelListType busyChannel);
 
     Ptr<ChannelAccessManager> m_cam; //!< channel access manager
     Ptr<SpectrumWifiPhy> m_phy;      //!< PHY object
@@ -1358,7 +1366,7 @@ LargestIdlePrimaryChannelTest::LargestIdlePrimaryChannelTest()
 }
 
 void
-LargestIdlePrimaryChannelTest::RunOne(uint16_t chWidth, WifiChannelListType busyChannel)
+LargestIdlePrimaryChannelTest::RunOne(MHz_u chWidth, WifiChannelListType busyChannel)
 {
     /**
      *                 <  Interval1  >< Interval2 >
@@ -1383,19 +1391,20 @@ LargestIdlePrimaryChannelTest::RunOne(uint16_t chWidth, WifiChannelListType busy
     // After 1ms, we are notified of CCA_BUSY for 1ms on the given channel
     Time ccaBusyStartDelay = MilliSeconds(1);
     Time ccaBusyDuration = MilliSeconds(1);
-    Simulator::Schedule(ccaBusyStartDelay,
-                        &ChannelAccessManager::NotifyCcaBusyStartNow,
-                        m_cam,
-                        ccaBusyDuration,
-                        busyChannel,
-                        std::vector<Time>(chWidth == 20 ? 0 : chWidth / 20, Seconds(0)));
+    Simulator::Schedule(
+        ccaBusyStartDelay,
+        &ChannelAccessManager::NotifyCcaBusyStartNow,
+        m_cam,
+        ccaBusyDuration,
+        busyChannel,
+        std::vector<Time>(chWidth == MHz_u{20} ? 0 : Count20MHzSubchannels(chWidth), Seconds(0)));
 
     // During any interval ending within CCA_BUSY period, the idle channel is the
     // primary channel contiguous to the busy secondary channel, if the busy channel
     // is a secondary channel, or there is no idle channel, otherwise.
-    uint16_t idleWidth = (busyChannel == WifiChannelListType::WIFI_CHANLIST_PRIMARY)
-                             ? 0
-                             : ((1 << (busyChannel - 1)) * 20);
+    const auto idleWidth = (busyChannel == WifiChannelListType::WIFI_CHANLIST_PRIMARY)
+                               ? MHz_u{0}
+                               : ((1 << (busyChannel - 1)) * MHz_u{20});
 
     Time checkTime1 = start + ccaBusyStartDelay + ccaBusyDuration / 2;
     Simulator::Schedule(checkTime1 - start, [=, this]() {
@@ -1472,7 +1481,7 @@ LargestIdlePrimaryChannelTest::RunOne(uint16_t chWidth, WifiChannelListType busy
     Simulator::Schedule(checkTime6 - start, [=, this]() {
         Time interval6 = interval5 + rxDuration / 2;
         NS_TEST_EXPECT_MSG_EQ(m_cam->GetLargestIdlePrimaryChannel(interval6, checkTime6),
-                              0,
+                              MHz_u{0},
                               "Incorrect width of the idle channel in an interval "
                                   << "overlapping RX (channel width: " << chWidth
                                   << " MHz, busy channel: " << busyChannel << ")");
@@ -1487,7 +1496,7 @@ LargestIdlePrimaryChannelTest::DoRun()
     uint8_t channel = 0;
     std::list<WifiChannelListType> busyChannels;
 
-    for (uint16_t chWidth : {20, 40, 80, 160})
+    for (auto chWidth : {MHz_u{20}, MHz_u{40}, MHz_u{80}, MHz_u{160}})
     {
         busyChannels.push_back(static_cast<WifiChannelListType>(channel));
 
@@ -1526,10 +1535,485 @@ LargestIdlePrimaryChannelTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Txop Test Suite
+ * @brief Test the GenerateBackoffIfTxopWithoutTx and ProactiveBackoff attributes of the
+ *        ChannelAccessManager. The backoff values generated by the VO AC of the AP are checked.
+ *
+ * The GenerateBackoffIfTxopWithoutTx test checks the generation of backoff values when the
+ * attribute is set to true. A QoS data frame is queued at the AP but the queue is blocked so
+ * that the frame is not transmitted. A backoff value is kept being generated as long as the
+ * frame is kept in the queue.
+ *
+ *                                                       Backoff                             Last
+ * Backoff                 Backoff        Backoff        value #3,                          backoff
+ * value #0                value #1       value #2       unblock queue                       value
+ *  |              ┌─────┐    |              |              |              ┌─────┐   ┌────┐    |
+ *  |       ┌───┐  │Assoc│    |    |Decrement|    |Decrement|    |Decrement│ADDBA│   │QoS │    |
+ *  |       │ACK│  │Resp │    |AIFS| backoff |slot| backoff |slot| backoff │ Req │. .│data│    |
+ * ──┬─────┬┴───┴──┴─────┴┬───┬────────────────────────────────────────────┴─────┴───┴────┴┬───┬──
+ *   │Assoc│              │ACK│                                                            │ACK│
+ *   │ Req │              └───┘                                                            └───┘
+ *   └─────┘
+ *
+ * The ProactiveBackoff test checks the generation of backoff values when the attribute is set
+ * to true. A noise is generated to trigger the generation of a new backoff value, provided
+ * that the backoff counter is zero.
+ *
+ *
+ * Backoff       Backoff                Backoff                     Backoff
+ * value #0      value #1               value #2                    value #3
+ *  |             |           ┌─────┐    |                           |
+ *  |             |    ┌───┐  │Assoc│    |                           |
+ *  |             |    │ACK│  │Resp │    |SIFS| noise | AIFS+backoff | noise |
+ * ─────────────┬─────┬┴───┴──┴─────┴┬───┬──────────────────────────────────────────────────
+ *              │Assoc│              │ACK│
+ *              │ Req │              └───┘
+ *              └─────┘
+ */
+class BackoffGenerationTest : public TestCase
+{
+  public:
+    /**
+     * Tested attributes
+     */
+    enum TestType : uint8_t
+    {
+        GEN_BACKOFF_IF_TXOP_NO_TX = 0,
+        PROACTIVE_BACKOFF
+    };
+
+    /**
+     * Constructor
+     *
+     * @param type the test type
+     */
+    BackoffGenerationTest(TestType type);
+
+  private:
+    void DoSetup() override;
+    void DoRun() override;
+
+    /**
+     * Callback invoked when a FEM passes PSDUs to the PHY.
+     *
+     * @param psduMap the PSDU map
+     * @param txVector the TX vector
+     * @param txPowerW the tx power in Watts
+     */
+    void Transmit(WifiConstPsduMap psduMap, WifiTxVector txVector, double txPowerW);
+
+    /**
+     * Callback invoked when a new backoff value is generated by the given AC on the station.
+     *
+     * @param ac the AC index
+     * @param backoff the generated backoff value
+     * @param linkId the ID of the link for which the backoff value has been generated
+     */
+    void BackoffGenerated(AcIndex ac, uint32_t backoff, uint8_t linkId);
+
+    /**
+     * Indicate that a new backoff value has not been generated as expected.
+     */
+    void MissedBackoff();
+
+    /**
+     * Generate interference to make CCA busy.
+     */
+    void GenerateInterference();
+
+    Ptr<ApWifiMac> m_apMac;                ///< AP wifi MAC
+    Ptr<StaWifiMac> m_staMac;              ///< MAC of the non-AP STA
+    bool m_generateBackoffIfTxopWithoutTx; ///< whether the GenerateBackoffIfTxopWithoutTx
+                                           ///< attribute is set to true
+    bool m_proactiveBackoff;              ///< whether the ProactiveBackoff attribute is set to true
+    static constexpr uint8_t m_tid{6};    ///< TID of generated packet
+    std::size_t m_nGenBackoff{0};         ///< number of generated backoff values
+    std::size_t m_nExpectedGenBackoff{0}; ///< expected total number of generated backoff values
+    EventId m_nextBackoffGen;             ///< timer elapsing when next backoff value is expected
+                                          ///< to be generated
+    Time m_assocReqStartTxTime{0};        ///< Association Request start TX time
+    Time m_assocReqPpduHdrDuration{0};    ///< Association Request PPDU header TX duration
+    std::size_t m_nAcks{0};               ///< number of transmitted Ack frames
+    const Time m_interferenceDuration{MicroSeconds(10)}; ///< interference duration
+    Ptr<PacketSocketClient> m_client; ///< client to be installed on the AP after association
+};
+
+BackoffGenerationTest::BackoffGenerationTest(TestType type)
+    : TestCase("Check attributes impacting the generation of backoff values"),
+      m_generateBackoffIfTxopWithoutTx(type == GEN_BACKOFF_IF_TXOP_NO_TX),
+      m_proactiveBackoff(type == PROACTIVE_BACKOFF)
+{
+    if (m_proactiveBackoff)
+    {
+        m_nExpectedGenBackoff = 4;
+    }
+}
+
+void
+BackoffGenerationTest::DoSetup()
+{
+    RngSeedManager::SetSeed(1);
+    RngSeedManager::SetRun(1);
+    int64_t streamNumber = 10;
+
+    Config::SetDefault("ns3::ChannelAccessManager::GenerateBackoffIfTxopWithoutTx",
+                       BooleanValue(m_generateBackoffIfTxopWithoutTx));
+    Config::SetDefault("ns3::ChannelAccessManager::ProactiveBackoff",
+                       BooleanValue(m_proactiveBackoff));
+
+    auto apNode = CreateObject<Node>();
+    auto staNode = CreateObject<Node>();
+
+    WifiHelper wifi;
+    wifi.SetStandard(WIFI_STANDARD_80211be);
+    wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
+                                 "DataMode",
+                                 StringValue("EhtMcs0"),
+                                 "ControlMode",
+                                 StringValue("HtMcs0"));
+
+    // MLDs are configured with three links
+    SpectrumWifiPhyHelper phyHelper;
+    phyHelper.SetPcapDataLinkType(WifiPhyHelper::DLT_IEEE802_11_RADIO);
+    phyHelper.Set("ChannelSettings", StringValue("{36, 0, BAND_5GHZ, 0}"));
+    phyHelper.AddChannel(CreateObject<MultiModelSpectrumChannel>());
+
+    WifiMacHelper mac;
+    mac.SetType("ns3::ApWifiMac",
+                "Ssid",
+                SsidValue(Ssid("ns-3-ssid")),
+                "BeaconGeneration",
+                BooleanValue(true));
+
+    auto apDevice = DynamicCast<WifiNetDevice>(wifi.Install(phyHelper, mac, apNode).Get(0));
+
+    mac.SetType("ns3::StaWifiMac",
+                "Ssid",
+                SsidValue(Ssid("ns-3-ssid")),
+                "ActiveProbing",
+                BooleanValue(false));
+
+    auto staDevice = DynamicCast<WifiNetDevice>(wifi.Install(phyHelper, mac, staNode).Get(0));
+
+    m_apMac = DynamicCast<ApWifiMac>(apDevice->GetMac());
+    m_staMac = DynamicCast<StaWifiMac>(staDevice->GetMac());
+
+    // Trace PSDUs passed to the PHY
+    apDevice->GetPhy(SINGLE_LINK_OP_ID)
+        ->TraceConnectWithoutContext("PhyTxPsduBegin",
+                                     MakeCallback(&BackoffGenerationTest::Transmit, this));
+    staDevice->GetPhy(SINGLE_LINK_OP_ID)
+        ->TraceConnectWithoutContext("PhyTxPsduBegin",
+                                     MakeCallback(&BackoffGenerationTest::Transmit, this));
+
+    // Trace backoff generation
+    m_apMac->GetQosTxop(AC_VO)->TraceConnectWithoutContext(
+        "BackoffTrace",
+        MakeCallback(&BackoffGenerationTest::BackoffGenerated, this).Bind(AC_VO));
+
+    // Assign fixed streams to random variables in use
+    streamNumber += WifiHelper::AssignStreams(NetDeviceContainer(apDevice), streamNumber);
+    streamNumber += WifiHelper::AssignStreams(NetDeviceContainer(staDevice), streamNumber);
+
+    Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator>();
+    positionAlloc->Add(Vector(0.0, 0.0, 0.0));
+    positionAlloc->Add(Vector(1.0, 0.0, 0.0));
+
+    MobilityHelper mobility;
+    mobility.SetPositionAllocator(positionAlloc);
+    mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+    mobility.Install(apNode);
+    mobility.Install(staNode);
+
+    // // install packet socket on all nodes
+    PacketSocketHelper packetSocket;
+    packetSocket.Install(apNode);
+    packetSocket.Install(staNode);
+
+    // install a packet socket server on the non-AP station
+    PacketSocketAddress srvAddr;
+    srvAddr.SetSingleDevice(staDevice->GetIfIndex());
+    srvAddr.SetProtocol(1);
+
+    auto server = CreateObject<PacketSocketServer>();
+    server->SetLocal(srvAddr);
+    server->SetStartTime(Seconds(0));
+    server->SetStopTime(Seconds(1));
+    staNode->AddApplication(server);
+
+    // Prepare a packet socket client that generates one packet at the AP. This client will be
+    // installed as soon as association is completed
+    PacketSocketAddress remoteAddr;
+    remoteAddr.SetSingleDevice(apDevice->GetIfIndex());
+    remoteAddr.SetPhysicalAddress(staDevice->GetAddress());
+    remoteAddr.SetProtocol(1);
+
+    m_client = CreateObject<PacketSocketClient>();
+    m_client->SetAttribute("PacketSize", UintegerValue(1000));
+    m_client->SetAttribute("MaxPackets", UintegerValue(1));
+    m_client->SetAttribute("Interval", TimeValue(Time{0}));
+    m_client->SetAttribute("Priority", UintegerValue(m_tid)); // AC VO
+    m_client->SetRemote(remoteAddr);
+    m_client->SetStartTime(Seconds(0));
+    m_client->SetStopTime(Seconds(1));
+
+    // Block VO queue so that the AP does not send QoS data frames
+    m_apMac->GetMacQueueScheduler()->BlockQueues(WifiQueueBlockedReason::TID_NOT_MAPPED,
+                                                 AC_VO,
+                                                 {WIFI_QOSDATA_QUEUE},
+                                                 m_staMac->GetAddress(),
+                                                 m_apMac->GetAddress(),
+                                                 {m_tid},
+                                                 {SINGLE_LINK_OP_ID});
+}
+
+void
+BackoffGenerationTest::DoRun()
+{
+    Simulator::Stop(Seconds(1));
+    Simulator::Run();
+
+    NS_TEST_EXPECT_MSG_EQ(m_nExpectedGenBackoff,
+                          m_nGenBackoff,
+                          "Unexpected total number of generated backoff values");
+
+    Simulator::Destroy();
+}
+
+void
+BackoffGenerationTest::Transmit(WifiConstPsduMap psduMap, WifiTxVector txVector, double txPowerW)
+{
+    auto txDuration =
+        WifiPhy::CalculateTxDuration(psduMap,
+                                     txVector,
+                                     m_apMac->GetWifiPhy(SINGLE_LINK_OP_ID)->GetPhyBand());
+
+    for (const auto& [aid, psdu] : psduMap)
+    {
+        std::stringstream ss;
+        ss << std::setprecision(10) << psdu->GetHeader(0).GetTypeString();
+        if (psdu->GetHeader(0).IsAction())
+        {
+            ss << " ";
+            WifiActionHeader actionHdr;
+            psdu->GetPayload(0)->PeekHeader(actionHdr);
+            actionHdr.Print(ss);
+        }
+        ss << " #MPDUs " << psdu->GetNMpdus() << " duration/ID " << psdu->GetHeader(0).GetDuration()
+           << " RA = " << psdu->GetAddr1() << " TA = " << psdu->GetAddr2()
+           << " ADDR3 = " << psdu->GetHeader(0).GetAddr3()
+           << " ToDS = " << psdu->GetHeader(0).IsToDs()
+           << " FromDS = " << psdu->GetHeader(0).IsFromDs();
+        if (psdu->GetHeader(0).IsAssocReq())
+        {
+            m_assocReqStartTxTime = Simulator::Now();
+            m_assocReqPpduHdrDuration = WifiPhy::CalculatePhyPreambleAndHeaderDuration(txVector);
+        }
+        else if (psdu->GetHeader(0).IsAck())
+        {
+            m_nAcks++;
+            if (m_nAcks == 2)
+            {
+                // generate a packet destined to the non-AP station (this packet is held because
+                // the queue is blocked) as soon as association is completed
+                Simulator::Schedule(txDuration,
+                                    &Node::AddApplication,
+                                    m_apMac->GetDevice()->GetNode(),
+                                    m_client);
+            }
+        }
+        else if (psdu->GetHeader(0).IsQosData())
+        {
+            ss << " seqNo = {";
+            for (auto& mpdu : *PeekPointer(psdu))
+            {
+                ss << mpdu->GetHeader().GetSequenceNumber() << ",";
+            }
+            ss << "} TID = " << +psdu->GetHeader(0).GetQosTid();
+
+            // after sending the QoS data frame, we expect one more backoff value to be generated
+            // (at the end of the TXOP)
+            m_nExpectedGenBackoff = m_nGenBackoff + 1;
+        }
+        NS_LOG_INFO(ss.str());
+    }
+    NS_LOG_INFO("TX duration = " << txDuration.As(Time::MS) << "  TXVECTOR = " << txVector << "\n");
+}
+
+void
+BackoffGenerationTest::BackoffGenerated(AcIndex ac, uint32_t backoff, uint8_t linkId)
+{
+    NS_LOG_INFO("Backoff value " << backoff << " generated by AP on link " << +linkId << " for "
+                                 << ac << "\n");
+
+    // number of backoff values to generate when the GenerateBackoffIfTxopWithoutTx attribute is
+    // set to true (can be any value >= 3)
+    const std::size_t nValues = 5;
+
+    switch (m_nGenBackoff)
+    {
+    case 0:
+        NS_TEST_EXPECT_MSG_EQ(Simulator::Now().IsZero(),
+                              true,
+                              "First backoff value should be generated at initialization time");
+        m_nGenBackoff++;
+        return;
+    case 1:
+        if (m_generateBackoffIfTxopWithoutTx)
+        {
+            NS_TEST_EXPECT_MSG_EQ(m_apMac->IsAssociated(m_staMac->GetAddress()).has_value(),
+                                  true,
+                                  "Second backoff value should be generated after association");
+        }
+        if (m_proactiveBackoff)
+        {
+            NS_TEST_ASSERT_MSG_GT(
+                Simulator::Now(),
+                m_assocReqStartTxTime,
+                "Second backoff value should be generated after AssocReq TX start time");
+            NS_TEST_EXPECT_MSG_LT(Simulator::Now(),
+                                  m_assocReqStartTxTime + m_assocReqPpduHdrDuration,
+                                  "Second backoff value should be generated right after AssocReq "
+                                  "PPDU payload starts");
+        }
+        break;
+    case 2:
+        if (m_proactiveBackoff)
+        {
+            NS_TEST_EXPECT_MSG_EQ(m_apMac->IsAssociated(m_staMac->GetAddress()).has_value(),
+                                  true,
+                                  "Third backoff value should be generated after association");
+            // after a SIFS:
+            Simulator::Schedule(m_apMac->GetWifiPhy(linkId)->GetSifs(), [=, this]() {
+                // generate interference (lasting 10 us)
+                GenerateInterference();
+
+                if (backoff == 0)
+                {
+                    // backoff value is 0, thus a new backoff value is generated due to the
+                    // interference
+                    NS_TEST_EXPECT_MSG_EQ(m_nGenBackoff,
+                                          4,
+                                          "Unexpected number of generated backoff values");
+                }
+                else
+                {
+                    // interference does not cause the generation of a new backoff value because
+                    // the backoff counter is non-zero.
+                    // At the end of the interference:
+                    Simulator::Schedule(m_interferenceDuration, [=, this]() {
+                        auto voEdcaf = m_apMac->GetQosTxop(AC_VO);
+                        // update backoff (backoff info is only updated when some event occurs)
+                        m_apMac->GetChannelAccessManager(linkId)->NeedBackoffUponAccess(voEdcaf,
+                                                                                        true,
+                                                                                        true);
+                        auto delay =
+                            m_apMac->GetChannelAccessManager(linkId)->GetBackoffEndFor(voEdcaf) -
+                            Simulator::Now() + NanoSeconds(1);
+
+                        // right after the backoff counts down to zero:
+                        Simulator::Schedule(delay, [=, this]() {
+                            // check that the number of generated backoff values is still 3
+                            NS_TEST_EXPECT_MSG_EQ(m_nGenBackoff,
+                                                  3,
+                                                  "Unexpected number of generated backoff values");
+                            GenerateInterference();
+                            // check that a new backoff value is generated due to the interference
+                            NS_TEST_EXPECT_MSG_EQ(m_nGenBackoff,
+                                                  4,
+                                                  "Unexpected number of generated backoff values");
+                        });
+                    });
+                }
+            });
+        }
+        break;
+    case nValues:
+        // Unblock VO queue so that the AP can send QoS data frames
+        m_apMac->GetMacQueueScheduler()->UnblockQueues(WifiQueueBlockedReason::TID_NOT_MAPPED,
+                                                       AC_VO,
+                                                       {WIFI_QOSDATA_QUEUE},
+                                                       m_staMac->GetAddress(),
+                                                       m_apMac->GetAddress(),
+                                                       {m_tid},
+                                                       {SINGLE_LINK_OP_ID});
+        break;
+    }
+
+    if (m_generateBackoffIfTxopWithoutTx)
+    {
+        Time delay; // expected time until the generation of the next backoff value
+        const auto offset =
+            NanoSeconds(1); // offset between expected time and the time when check is made
+
+        if (m_nGenBackoff == 1)
+        {
+            // we have to wait an AIFS before invoking backoff
+            delay = m_apMac->GetWifiPhy(linkId)->GetSifs() +
+                    m_apMac->GetQosTxop(AC_VO)->GetAifsn(linkId) *
+                        m_apMac->GetWifiPhy(linkId)->GetSlot();
+        }
+        else if (m_nGenBackoff <= nValues)
+        {
+            NS_TEST_EXPECT_MSG_EQ(m_nextBackoffGen.IsPending(),
+                                  true,
+                                  "Expected a timer to be running");
+            NS_TEST_EXPECT_MSG_EQ(Simulator::GetDelayLeft(m_nextBackoffGen),
+                                  offset,
+                                  "Backoff value generated too early");
+            m_nextBackoffGen.Cancel();
+
+            // we get here when the backoff expired but no transmission occurred, thus we have
+            // generated a new backoff value and we will start decrementing the counter in a slot
+            delay = m_apMac->GetWifiPhy(linkId)->GetSlot();
+        }
+
+        if (m_nGenBackoff < nValues)
+        {
+            // add the time corresponding to the generated number of slots
+            delay += backoff * m_apMac->GetWifiPhy(linkId)->GetSlot();
+
+            m_nextBackoffGen =
+                Simulator::Schedule(delay + offset, &BackoffGenerationTest::MissedBackoff, this);
+        }
+    }
+
+    m_nGenBackoff++;
+}
+
+void
+BackoffGenerationTest::MissedBackoff()
+{
+    NS_TEST_EXPECT_MSG_EQ(true,
+                          false,
+                          "Expected a new backoff value to be generated at time "
+                              << Simulator::Now().As(Time::S));
+}
+
+void
+BackoffGenerationTest::GenerateInterference()
+{
+    NS_LOG_FUNCTION(this);
+    auto phy = DynamicCast<SpectrumWifiPhy>(m_apMac->GetWifiPhy(SINGLE_LINK_OP_ID));
+    auto psd = Create<SpectrumValue>(phy->GetCurrentInterface()->GetRxSpectrumModel());
+    *psd = DbmToW(dBm_u{20}) / 80e6; // PSD spread across 80 MHz to generate some noise
+
+    auto spectrumSignalParams = Create<SpectrumSignalParameters>();
+    spectrumSignalParams->duration = m_interferenceDuration;
+    spectrumSignalParams->txPhy = phy->GetCurrentInterface();
+    spectrumSignalParams->txAntenna = phy->GetAntenna();
+    spectrumSignalParams->psd = psd;
+
+    phy->StartRx(spectrumSignalParams, phy->GetCurrentInterface());
+}
+
+/**
+ * @ingroup wifi-test
+ * @ingroup tests
+ *
+ * @brief Txop Test Suite
  */
 class TxopTestSuite : public TestSuite
 {
@@ -1538,18 +2022,18 @@ class TxopTestSuite : public TestSuite
 };
 
 TxopTestSuite::TxopTestSuite()
-    : TestSuite("wifi-devices-dcf", UNIT)
+    : TestSuite("wifi-devices-dcf", Type::UNIT)
 {
-    AddTestCase(new ChannelAccessManagerTest<Txop>, TestCase::QUICK);
+    AddTestCase(new ChannelAccessManagerTest<Txop>, TestCase::Duration::QUICK);
 }
 
 static TxopTestSuite g_dcfTestSuite;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief QosTxop Test Suite
+ * @brief QosTxop Test Suite
  */
 class QosTxopTestSuite : public TestSuite
 {
@@ -1558,18 +2042,18 @@ class QosTxopTestSuite : public TestSuite
 };
 
 QosTxopTestSuite::QosTxopTestSuite()
-    : TestSuite("wifi-devices-edca", UNIT)
+    : TestSuite("wifi-devices-edca", Type::UNIT)
 {
-    AddTestCase(new ChannelAccessManagerTest<QosTxop>, TestCase::QUICK);
+    AddTestCase(new ChannelAccessManagerTest<QosTxop>, TestCase::Duration::QUICK);
 }
 
 static QosTxopTestSuite g_edcaTestSuite;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief ChannelAccessManager Test Suite
+ * @brief ChannelAccessManager Test Suite
  */
 class ChannelAccessManagerTestSuite : public TestSuite
 {
@@ -1578,9 +2062,13 @@ class ChannelAccessManagerTestSuite : public TestSuite
 };
 
 ChannelAccessManagerTestSuite::ChannelAccessManagerTestSuite()
-    : TestSuite("wifi-channel-access-manager", UNIT)
+    : TestSuite("wifi-channel-access-manager", Type::UNIT)
 {
-    AddTestCase(new LargestIdlePrimaryChannelTest, TestCase::QUICK);
+    AddTestCase(new LargestIdlePrimaryChannelTest, TestCase::Duration::QUICK);
+    AddTestCase(new BackoffGenerationTest(BackoffGenerationTest::GEN_BACKOFF_IF_TXOP_NO_TX),
+                TestCase::Duration::QUICK);
+    AddTestCase(new BackoffGenerationTest(BackoffGenerationTest::PROACTIVE_BACKOFF),
+                TestCase::Duration::QUICK);
 }
 
 static ChannelAccessManagerTestSuite g_camTestSuite;

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Manuel Requena <manuel.requena@cttc.es>
  * Modified by Marco Miozzo <mmiozzo@ctt.es>
@@ -24,12 +13,12 @@
 #include "lte-test-ue-phy.h"
 
 #include "ns3/log.h"
+#include "ns3/lte-chunk-processor.h"
+#include "ns3/lte-helper.h"
 #include "ns3/lte-phy-tag.h"
 #include "ns3/lte-spectrum-signal-parameters.h"
 #include "ns3/simulator.h"
 #include "ns3/spectrum-test.h"
-#include <ns3/lte-chunk-processor.h>
-#include <ns3/lte-helper.h>
 
 using namespace ns3;
 
@@ -43,7 +32,7 @@ NS_LOG_COMPONENT_DEFINE("LteUplinkSinrTest");
  * TestSuite
  */
 LteUplinkSinrTestSuite::LteUplinkSinrTestSuite()
-    : TestSuite("lte-uplink-sinr", SYSTEM)
+    : TestSuite("lte-uplink-sinr", Type::SYSTEM)
 {
     /**
      * Build Spectrum Model values for the TX signal
@@ -85,13 +74,13 @@ LteUplinkSinrTestSuite::LteUplinkSinrTestSuite()
                                               rxPsd2,
                                               theoreticalSinr1,
                                               "sdBm = [-46 -inf] and [-inf -48]"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     AddTestCase(new LteUplinkSrsSinrTestCase(rxPsd1,
                                              rxPsd2,
                                              theoreticalSinr1,
                                              "sdBm = [-46 -inf] and [-inf -48]"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     /**
      * TX signals #2: Power Spectral Density of the signals of interest = [-63 -inf] and [-inf -61]
@@ -113,17 +102,17 @@ LteUplinkSinrTestSuite::LteUplinkSinrTestSuite()
                                               rxPsd4,
                                               theoreticalSinr2,
                                               "sdBm = [-63 -inf] and [-inf -61]"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     AddTestCase(new LteUplinkSrsSinrTestCase(rxPsd3,
                                              rxPsd4,
                                              theoreticalSinr2,
                                              "sdBm = [-63 -inf] and [-inf -61]"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteUplinkSinrTestSuite lteUplinkSinrTestSuite;
@@ -177,12 +166,12 @@ LteUplinkDataSinrTestCase::DoRun()
      */
 
     // Number of packet bursts (2 data + 4 interferences)
-    const int numOfDataPbs = 2;
-    const int numOfIntfPbs = 4;
-    const int numOfPbs = numOfDataPbs + numOfIntfPbs;
+    constexpr int numOfDataPbs = 2;
+    constexpr int numOfIntfPbs = 4;
+    constexpr int numOfPbs = numOfDataPbs + numOfIntfPbs;
 
     // Number of packets in the packet bursts
-    const int numOfPkts = 10;
+    constexpr int numOfPkts = 10;
 
     // Packet bursts
     Ptr<PacketBurst> packetBursts[numOfPbs];
@@ -309,7 +298,7 @@ LteUplinkDataSinrTestCase::DoRun()
     ip4->cellId = pbCellId[5];
     Simulator::Schedule(ti4, &LteSpectrumPhy::StartRx, ulPhy, ip4);
 
-    Simulator::Stop(Seconds(5.0));
+    Simulator::Stop(Seconds(5));
     Simulator::Run();
 
     NS_LOG_INFO("Data Frame - Theoretical SINR: " << *m_expectedSinr);
@@ -382,9 +371,9 @@ LteUplinkSrsSinrTestCase::DoRun()
      */
 
     // Number of packet bursts (2 data + 4 interferences)
-    int numOfDataSignals = 2;
-    int numOfIntfSignals = 4;
-    int numOfSignals = numOfDataSignals + numOfIntfSignals;
+    constexpr int numOfDataSignals = 2;
+    constexpr int numOfIntfSignals = 4;
+    constexpr int numOfSignals = numOfDataSignals + numOfIntfSignals;
 
     uint16_t pbCellId[numOfSignals];
 
@@ -485,7 +474,7 @@ LteUplinkSrsSinrTestCase::DoRun()
     ip4->cellId = pbCellId[5];
     Simulator::Schedule(ti4, &LteSpectrumPhy::StartRx, ulPhy, ip4);
 
-    Simulator::Stop(Seconds(5.0));
+    Simulator::Stop(Seconds(5));
     Simulator::Run();
 
     NS_ASSERT_MSG(m_actualSinr, "no actual SINR reported");

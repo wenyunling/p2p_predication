@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007,2008,2009 INRIA, UDcast
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Jahanzeb Farooq <jahanzeb.farooq@sophia.inria.fr>
  *          Mohamed Amine Ismail <amine.ismail@sophia.inria.fr>
@@ -854,7 +843,7 @@ SubscriberStationNetDevice::DoReceive(Ptr<Packet> packet)
                     Simulator::Cancel(m_linkManager->GetDlMapSyncTimeoutEvent());
                 }
 
-                if (m_lostDlMapEvent.IsRunning())
+                if (m_lostDlMapEvent.IsPending())
                 {
                     Simulator::Cancel(m_lostDlMapEvent);
                 }
@@ -864,7 +853,7 @@ SubscriberStationNetDevice::DoReceive(Ptr<Packet> packet)
                                                        false,
                                                        m_lostDlMapEvent);
 
-                if (m_dcdWaitTimeoutEvent.IsRunning())
+                if (m_dcdWaitTimeoutEvent.IsPending())
                 {
                     Simulator::Cancel(m_dcdWaitTimeoutEvent);
                 }
@@ -874,7 +863,7 @@ SubscriberStationNetDevice::DoReceive(Ptr<Packet> packet)
                                                        false,
                                                        m_dcdWaitTimeoutEvent);
 
-                if (m_ucdWaitTimeoutEvent.IsRunning())
+                if (m_ucdWaitTimeoutEvent.IsPending())
                 {
                     Simulator::Cancel(m_ucdWaitTimeoutEvent);
                 }
@@ -890,7 +879,7 @@ SubscriberStationNetDevice::DoReceive(Ptr<Packet> packet)
                 break;
             }
             case ManagementMessageType::MESSAGE_TYPE_UL_MAP: {
-                if (m_lostUlMapEvent.IsRunning())
+                if (m_lostUlMapEvent.IsPending())
                 {
                     Simulator::Cancel(m_lostUlMapEvent);
                     m_linkManager->ScheduleScanningRestart(m_lostUlMapInterval,
@@ -908,7 +897,7 @@ SubscriberStationNetDevice::DoReceive(Ptr<Packet> packet)
                 {
                     if (m_linkManager->GetRangingIntervalFound())
                     {
-                        if (m_rangOppWaitTimeoutEvent.IsRunning())
+                        if (m_rangOppWaitTimeoutEvent.IsPending())
                         {
                             Simulator::Cancel(m_rangOppWaitTimeoutEvent);
                         }
@@ -923,7 +912,7 @@ SubscriberStationNetDevice::DoReceive(Ptr<Packet> packet)
                     SetState(SS_STATE_ACQUIRING_PARAMETERS);
                 }
 
-                if (m_dcdWaitTimeoutEvent.IsRunning())
+                if (m_dcdWaitTimeoutEvent.IsPending())
                 {
                     Simulator::Cancel(m_dcdWaitTimeoutEvent);
                     m_linkManager->ScheduleScanningRestart(m_intervalT1,
@@ -950,7 +939,7 @@ SubscriberStationNetDevice::DoReceive(Ptr<Packet> packet)
 
                 ProcessUcd(ucd);
 
-                if (m_ucdWaitTimeoutEvent.IsRunning())
+                if (m_ucdWaitTimeoutEvent.IsPending())
                 {
                     Simulator::Cancel(m_ucdWaitTimeoutEvent);
                     m_linkManager->ScheduleScanningRestart(m_intervalT12,
@@ -1029,10 +1018,8 @@ SubscriberStationNetDevice::DoReceive(Ptr<Packet> packet)
             {
             case ManagementMessageType::MESSAGE_TYPE_REG_REQ:
                 // not yet implemented
-                break;
             case ManagementMessageType::MESSAGE_TYPE_REG_RSP:
                 // intended for base station, ignore
-                break;
             case ManagementMessageType::MESSAGE_TYPE_DSA_REQ:
                 /*from other station as DSA initiation
                  by BS is not supported, ignore*/
@@ -1174,13 +1161,11 @@ SubscriberStationNetDevice::ProcessUlMap(const UlMap& ulmap)
     m_nrUlMapRecvd++;
     m_ucdCount = ulmap.GetUcdCount();
     m_allocationStartTime = ulmap.GetAllocationStartTime();
-    std::list<OfdmUlMapIe> ulMapElements = ulmap.GetUlMapElements();
+    const auto& ulMapElements = ulmap.GetUlMapElements();
     m_linkManager->SetRangingIntervalFound(false);
 
-    for (auto iter = ulMapElements.begin(); iter != ulMapElements.end(); ++iter)
+    for (const auto& ulMapIe : ulMapElements)
     {
-        OfdmUlMapIe ulMapIe = *iter;
-
         if (ulMapIe.GetUiuc() == OfdmUlBurstProfile::UIUC_END_OF_MAP)
         {
             break;
@@ -1276,12 +1261,10 @@ SubscriberStationNetDevice::ProcessDcd(const Dcd& dcd)
 
     GetPhy()->GetFrameDuration(dcdChnlEncodings.GetFrameDurationCode());
 
-    std::vector<OfdmDlBurstProfile> dlBurstProfiles = dcd.GetDlBurstProfiles();
+    const auto& dlBurstProfiles = dcd.GetDlBurstProfiles();
 
-    for (auto iter = dlBurstProfiles.begin(); iter != dlBurstProfiles.end(); ++iter)
+    for (const auto& brstProfile : dlBurstProfiles)
     {
-        OfdmDlBurstProfile brstProfile = *iter;
-
         /*NS-2 does this, may be not correct, assumes DIUC/UIUC to
          modulation type mapping in DCD/UCD may change over time*/
         if (brstProfile.GetFecCodeType() == m_modulationType)
@@ -1311,12 +1294,9 @@ SubscriberStationNetDevice::ProcessUcd(const Ucd& ucd)
                                 1); // initializing ranging CW
     OfdmUcdChannelEncodings ucdChnlEncodings = ucd.GetChannelEncodings();
 
-    std::vector<OfdmUlBurstProfile> ulBurstProfiles = ucd.GetUlBurstProfiles();
-
-    for (auto iter = ulBurstProfiles.begin(); iter != ulBurstProfiles.end(); ++iter)
+    const auto& ulBurstProfiles = ucd.GetUlBurstProfiles();
+    for (const auto& brstProfile : ulBurstProfiles)
     {
-        OfdmUlBurstProfile brstProfile = *iter;
-
         /*NS-2 does this, may be not correct, assumes DIUC/UIUC to
          modulation type mapping in DCD/UCD may change over time*/
         if (brstProfile.GetFecCodeType() == m_modulationType)

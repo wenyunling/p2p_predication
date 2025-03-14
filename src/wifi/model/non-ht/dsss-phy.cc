@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2020 Orange Labs
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Rediet <getachew.redieteab@orange.com>
  *          Sébastien Deronne <sebastien.deronne@gmail.com> (for logic ported from wifi-phy)
@@ -31,6 +20,9 @@
 #include "ns3/wifi-utils.h"
 
 #include <array>
+
+#undef NS_LOG_APPEND_CONTEXT
+#define NS_LOG_APPEND_CONTEXT WIFI_PHY_NS_LOG_APPEND_CONTEXT(m_wifiPhy)
 
 namespace ns3
 {
@@ -68,7 +60,7 @@ static const std::array<uint64_t, 4> s_dsssRatesBpsList = {1000000, 2000000, 550
 /**
  * Get the array of possible DSSS rates.
  *
- * \return the DSSS rates in bits per second
+ * @return the DSSS rates in bits per second
  */
 const std::array<uint64_t, 4>&
 GetDsssRatesBpsList()
@@ -150,7 +142,7 @@ Time
 DsssPhy::GetPreambleDuration(const WifiTxVector& txVector) const
 {
     if (txVector.GetPreambleType() == WIFI_PREAMBLE_SHORT &&
-        (txVector.GetMode().GetDataRate(22) > 1000000))
+        (txVector.GetMode().GetDataRate(MHz_u{22}) > 1000000))
     {
         // Section 16.2.2.3 "Short PPDU format" Figure 16-2 "Short PPDU format"; IEEE Std
         // 802.11-2016
@@ -167,7 +159,7 @@ Time
 DsssPhy::GetHeaderDuration(const WifiTxVector& txVector) const
 {
     if (txVector.GetPreambleType() == WIFI_PREAMBLE_SHORT &&
-        (txVector.GetMode().GetDataRate(22) > 1000000))
+        (txVector.GetMode().GetDataRate(MHz_u{22}) > 1000000))
     {
         // Section 16.2.2.3 "Short PPDU format" and Figure 16-2 "Short PPDU format"; IEEE Std
         // 802.11-2016
@@ -191,7 +183,8 @@ DsssPhy::GetPayloadDuration(uint32_t size,
                             double& /* totalAmpduNumSymbols */,
                             uint16_t /* staId */) const
 {
-    return MicroSeconds(lrint(ceil((size * 8.0) / (txVector.GetMode().GetDataRate(22) / 1.0e6))));
+    return MicroSeconds(
+        lrint(ceil((size * 8.0) / (txVector.GetMode().GetDataRate(MHz_u{22}) / 1.0e6))));
 }
 
 Ptr<WifiPpdu>
@@ -241,10 +234,10 @@ DsssPhy::EndReceiveHeader(Ptr<Event> event)
     return status;
 }
 
-uint16_t
+MHz_u
 DsssPhy::GetRxChannelWidth(const WifiTxVector& txVector) const
 {
-    if (m_wifiPhy->GetChannelWidth() > 20)
+    if (m_wifiPhy->GetChannelWidth() > MHz_u{20})
     {
         /*
          * This is a workaround necessary with HE-capable PHYs,
@@ -252,28 +245,29 @@ DsssPhy::GetRxChannelWidth(const WifiTxVector& txVector) const
          * Without this hack, SpectrumWifiPhy::GetBand will crash.
          * FIXME: see issue #402 for a better solution.
          */
-        return 20;
+        return MHz_u{20};
     }
     return PhyEntity::GetRxChannelWidth(txVector);
 }
 
-uint16_t
+MHz_u
 DsssPhy::GetMeasurementChannelWidth(const Ptr<const WifiPpdu> ppdu) const
 {
-    return ppdu ? GetRxChannelWidth(ppdu->GetTxVector()) : 22;
+    return ppdu ? GetRxChannelWidth(ppdu->GetTxVector()) : MHz_u{22};
 }
 
 Ptr<SpectrumValue>
-DsssPhy::GetTxPowerSpectralDensity(double txPowerW, Ptr<const WifiPpdu> ppdu) const
+DsssPhy::GetTxPowerSpectralDensity(Watt_u txPower, Ptr<const WifiPpdu> ppdu) const
 {
+    const auto& centerFrequencies = ppdu->GetTxCenterFreqs();
+    NS_ASSERT(centerFrequencies.size() == 1);
     const auto& txVector = ppdu->GetTxVector();
-    uint16_t centerFrequency = GetCenterFrequencyForChannelWidth(txVector);
-    uint16_t channelWidth = txVector.GetChannelWidth();
-    NS_LOG_FUNCTION(this << centerFrequency << channelWidth << txPowerW);
-    NS_ABORT_MSG_IF(channelWidth != 22, "Invalid channel width for DSSS");
-    Ptr<SpectrumValue> v =
-        WifiSpectrumValueHelper::CreateDsssTxPowerSpectralDensity(centerFrequency,
-                                                                  txPowerW,
+    const auto channelWidth = txVector.GetChannelWidth();
+    NS_LOG_FUNCTION(this << centerFrequencies.front() << channelWidth << txPower);
+    NS_ABORT_MSG_IF(channelWidth != MHz_u{22}, "Invalid channel width for DSSS");
+    auto v =
+        WifiSpectrumValueHelper::CreateDsssTxPowerSpectralDensity(centerFrequencies.front(),
+                                                                  txPower,
                                                                   GetGuardBandwidth(channelWidth));
     return v;
 }

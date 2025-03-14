@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2016 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Biljana Bojovic <biljana.bojovic@cttc.es>
  *
@@ -32,9 +21,9 @@
 using namespace ns3;
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief This system test program creates different test cases with a single eNB and
+ * @brief This system test program creates different test cases with a single eNB and
  * several UEs, all having the same Radio Bearer specification. In each test
  * case, the UEs see the same SINR from the eNB; different test cases are
  * implemented obtained by using different SINR values and different numbers of
@@ -52,11 +41,11 @@ class CarrierAggregationTestCase : public TestCase
     /**
      * Constructor of test case
      *
-     * \param nUser number of users
-     * \param dist the distance
-     * \param dlbandwidth the DL bandwidth
-     * \param ulBandwidth the UL badnwidth
-     * \param numberOfComponentCarriers number of component carriers to be used in test
+     * @param nUser number of users
+     * @param dist the distance
+     * @param dlbandwidth the DL bandwidth
+     * @param ulBandwidth the UL badnwidth
+     * @param numberOfComponentCarriers number of component carriers to be used in test
      * configuration
      */
     CarrierAggregationTestCase(uint16_t nUser,
@@ -67,17 +56,17 @@ class CarrierAggregationTestCase : public TestCase
     ~CarrierAggregationTestCase() override;
     /**
      * DL Scheduling function that is used in this test as callback function of DL scheduling trace
-     * \param dlInfo the DL scheduling callback info
+     * @param dlInfo the DL scheduling callback info
      */
     void DlScheduling(DlSchedulingCallbackInfo dlInfo);
     /**
-     * UL Scheduling function that is used in this test as callback function of UL sceduling trace
-     * \param frameNo the frame number
-     * \param subframeNo the subframe number
-     * \param rnti the RNTI
-     * \param mcs the MCS
-     * \param sizeTb
-     * \param componentCarrierId the component carrier ID
+     * UL Scheduling function that is used in this test as callback function of UL scheduling trace
+     * @param frameNo the frame number
+     * @param subframeNo the subframe number
+     * @param rnti the RNTI
+     * @param mcs the MCS
+     * @param sizeTb
+     * @param componentCarrierId the component carrier ID
      */
     void UlScheduling(uint32_t frameNo,
                       uint32_t subframeNo,
@@ -92,12 +81,12 @@ class CarrierAggregationTestCase : public TestCase
     void DoRun() override;
     /**
      * Builds the test name string based on provided parameter values
-     * \param nUser number of users
-     * \param dist the distance
-     * \param dlBandwidth the DL bandwidth
-     * \param ulBandwidth the UL badnwidth
-     * \param numberOfComponentCarriers number of component carriers
-     * \returns the test name
+     * @param nUser number of users
+     * @param dist the distance
+     * @param dlBandwidth the DL bandwidth
+     * @param ulBandwidth the UL badnwidth
+     * @param numberOfComponentCarriers number of component carriers
+     * @returns the test name
      */
     static std::string BuildNameString(uint16_t nUser,
                                        uint16_t dist,
@@ -119,9 +108,9 @@ class CarrierAggregationTestCase : public TestCase
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test Carrier Aggregation Suite
+ * @brief Test Carrier Aggregation Suite
  */
 class TestCarrierAggregationSuite : public TestSuite
 {

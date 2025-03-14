@@ -1,38 +1,27 @@
 /*
  * Copyright (c) 2022 SIGNET Lab, Department of Information Engineering,
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
-#include <ns3/abort.h>
-#include <ns3/config.h>
-#include <ns3/constant-position-mobility-model.h>
-#include <ns3/double.h>
-#include <ns3/isotropic-antenna-model.h>
-#include <ns3/log.h>
-#include <ns3/mobility-helper.h>
-#include <ns3/node-container.h>
-#include <ns3/pointer.h>
-#include <ns3/simulator.h>
-#include <ns3/string.h>
-#include <ns3/test.h>
-#include <ns3/three-gpp-antenna-model.h>
-#include <ns3/three-gpp-channel-model.h>
-#include <ns3/three-gpp-spectrum-propagation-loss-model.h>
-#include <ns3/two-ray-spectrum-propagation-loss-model.h>
-#include <ns3/uinteger.h>
-#include <ns3/uniform-planar-array.h>
+#include "ns3/abort.h"
+#include "ns3/config.h"
+#include "ns3/constant-position-mobility-model.h"
+#include "ns3/double.h"
+#include "ns3/isotropic-antenna-model.h"
+#include "ns3/log.h"
+#include "ns3/mobility-helper.h"
+#include "ns3/node-container.h"
+#include "ns3/pointer.h"
+#include "ns3/simulator.h"
+#include "ns3/string.h"
+#include "ns3/test.h"
+#include "ns3/three-gpp-antenna-model.h"
+#include "ns3/three-gpp-channel-model.h"
+#include "ns3/three-gpp-spectrum-propagation-loss-model.h"
+#include "ns3/two-ray-spectrum-propagation-loss-model.h"
+#include "ns3/uinteger.h"
+#include "ns3/uniform-planar-array.h"
 
 #include <array>
 
@@ -41,7 +30,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("TwoRaySplmTestSuite");
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
  * Test case for the TwoRaySpectrumPropagationLossModel class.
  *
@@ -69,8 +58,8 @@ class FtrFadingModelAverageTest : public TestCase
 
     /**
      * Compute the average of the FTR squared norm.
-     * \param [in] ftrParams The FTR parameters.
-     * \returns The average of \c N_MEASUREMENTS FTR samples.
+     * @param [in] ftrParams The FTR parameters.
+     * @returns The average of \c N_MEASUREMENTS FTR samples.
      */
     double FtrSquaredNormAverage(
         const TwoRaySpectrumPropagationLossModel::FtrParams& ftrParams) const;
@@ -89,9 +78,9 @@ class FtrFadingModelAverageTest : public TestCase
      * Two-Ray Fading Model for mmWave Communications," 2016 IEEE Globecom Workshops (GC Wkshps) for
      * further details.
      *
-     * \param [in] sigma The sigma parameter of the FTR model.
-     * \param [in] k The k parameter of the FTR model.
-     * \returns The expected mean.
+     * @param [in] sigma The sigma parameter of the FTR model.
+     * @param [in] k The k parameter of the FTR model.
+     * @returns The expected mean.
      */
     constexpr double FtrSquaredNormExpectedMean(double sigma, double k) const;
 
@@ -188,7 +177,7 @@ FtrFadingModelAverageTest::DoRun()
 }
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
  * Test case for the TwoRaySpectrumPropagationLossModel class.
  *
@@ -200,15 +189,15 @@ class ArrayResponseTest : public TestCase
   public:
     /**
      * The constructor of the test case
-     * \param txAntElem the antenna element of the TX antenna panel
-     * \param rxAntElem the antenna element of the RX antenna panel
-     * \param txNumAntennas the number of antenna elements of the TX antenna panel
-     * \param rxNumAntennas the number of antenna elements of the RX antenna panel
-     * \param txPosVec the position of the TX
-     * \param rxPosVec the position of the RX
-     * \param txBearing the bearing angle of the TX antenna panel
-     * \param rxBearing the bearing angle of the RX antenna panel
-     * \param expectedGain the theoretically expected gain for the above parameters
+     * @param txAntElem the antenna element of the TX antenna panel
+     * @param rxAntElem the antenna element of the RX antenna panel
+     * @param txNumAntennas the number of antenna elements of the TX antenna panel
+     * @param rxNumAntennas the number of antenna elements of the RX antenna panel
+     * @param txPosVec the position of the TX
+     * @param rxPosVec the position of the RX
+     * @param txBearing the bearing angle of the TX antenna panel
+     * @param rxBearing the bearing angle of the RX antenna panel
+     * @param expectedGain the theoretically expected gain for the above parameters
      */
     ArrayResponseTest(Ptr<AntennaModel> txAntElem,
                       Ptr<AntennaModel> rxAntElem,
@@ -327,7 +316,7 @@ ArrayResponseTest::DoRun()
 }
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
  * Test case for the TwoRaySpectrumPropagationLossModel class.
  *
@@ -341,12 +330,12 @@ class OverallGainAverageTest : public TestCase
   public:
     /**
      * The constructor of the test case
-     * \param txAntElem the antenna element of the TX antenna panel
-     * \param rxAntElem the antenna element of the RX antenna panel
-     * \param txNumAntennas the number of antenna elements of the TX antenna panel
-     * \param rxNumAntennas the number of antenna elements of the RX antenna panel
-     * \param fc the carrier frequency
-     * \param threeGppScenario the 3GPP scenario
+     * @param txAntElem the antenna element of the TX antenna panel
+     * @param rxAntElem the antenna element of the RX antenna panel
+     * @param txNumAntennas the number of antenna elements of the TX antenna panel
+     * @param rxNumAntennas the number of antenna elements of the RX antenna panel
+     * @param fc the carrier frequency
+     * @param threeGppScenario the 3GPP scenario
      */
     OverallGainAverageTest(Ptr<AntennaModel> txAntElem,
                            Ptr<AntennaModel> rxAntElem,
@@ -358,8 +347,8 @@ class OverallGainAverageTest : public TestCase
     /**
      * Computes the overall power of a PSD
      *
-     * \param psd the PSD
-     * \returns the overall power of the PSD, obtained as the integral of the
+     * @param psd the PSD
+     * @returns the overall power of the PSD, obtained as the integral of the
      *          sub-bands power over the PSD domain
      */
     double ComputePowerSpectralDensityOverallPower(Ptr<const SpectrumValue> psd);
@@ -368,8 +357,8 @@ class OverallGainAverageTest : public TestCase
      * Creates a PSD centered at fc, of bandwidth bw and sub-bands of
      * width rbWidth
      *
-     * \param fc the central frequency of the PSD
-     * \returns a PSD centered at fc, of bandwidth bw and sub-bands of
+     * @param fc the central frequency of the PSD
+     * @returns a PSD centered at fc, of bandwidth bw and sub-bands of
      *          width rbWidths
      */
     Ptr<SpectrumValue> CreateTxPowerSpectralDensity(double fc);
@@ -583,7 +572,7 @@ OverallGainAverageTest::DoRun()
 }
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
  * Test suite for the TwoRaySpectrumPropagationLossModel class
  */
@@ -597,10 +586,10 @@ class TwoRaySplmTestSuite : public TestSuite
 };
 
 TwoRaySplmTestSuite::TwoRaySplmTestSuite()
-    : TestSuite("two-ray-splm-suite", UNIT)
+    : TestSuite("two-ray-splm-suite", Type::UNIT)
 {
     // Test the GetFtrFastFading function of the TwoRaySpectrumPropagationLossModel class
-    AddTestCase(new FtrFadingModelAverageTest, TestCase::QUICK);
+    AddTestCase(new FtrFadingModelAverageTest, TestCase::Duration::QUICK);
 
     // Test the CalcBeamformingGain function of the TwoRaySpectrumPropagationLossModel class
     auto iso = CreateObject<IsotropicAntennaModel>();
@@ -621,7 +610,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       0.0),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(iso,
                                       iso,
                                       4,
@@ -631,7 +620,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       10 * log10(4)),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(iso,
                                       iso,
                                       16,
@@ -641,7 +630,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       10 * log10(16)),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(iso,
                                       iso,
                                       64,
@@ -651,7 +640,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       10 * log10(64)),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(iso,
                                       iso,
                                       4,
@@ -661,7 +650,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       2 * 10 * log10(4)),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(iso,
                                       iso,
                                       16,
@@ -671,7 +660,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       2 * 10 * log10(16)),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(iso,
                                       iso,
                                       64,
@@ -681,7 +670,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       2 * 10 * log10(64)),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(tgpp,
                                       iso,
                                       1,
@@ -691,7 +680,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       maxTgppGain),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(tgpp,
                                       iso,
                                       4,
@@ -701,7 +690,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       10 * log10(4) + maxTgppGain),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(tgpp,
                                       iso,
                                       16,
@@ -711,7 +700,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       10 * log10(16) + maxTgppGain),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(tgpp,
                                       iso,
                                       64,
@@ -721,7 +710,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       10 * log10(64) + maxTgppGain),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(tgpp,
                                       tgpp,
                                       1,
@@ -731,7 +720,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       2 * maxTgppGain),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(tgpp,
                                       tgpp,
                                       4,
@@ -741,7 +730,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       10 * log10(4) + 2 * maxTgppGain),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(tgpp,
                                       tgpp,
                                       16,
@@ -751,7 +740,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       10 * log10(16) + 2 * maxTgppGain),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(tgpp,
                                       tgpp,
                                       64,
@@ -761,7 +750,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       10 * log10(64) + 2 * maxTgppGain),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(tgpp,
                                       tgpp,
                                       4,
@@ -771,7 +760,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       2 * 10 * log10(4) + 2 * maxTgppGain),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(tgpp,
                                       tgpp,
                                       16,
@@ -781,7 +770,7 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       2 * 10 * log10(16) + 2 * maxTgppGain),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
     AddTestCase(new ArrayResponseTest(tgpp,
                                       tgpp,
                                       64,
@@ -791,44 +780,52 @@ TwoRaySplmTestSuite::TwoRaySplmTestSuite()
                                       0.0,
                                       -M_PI,
                                       2 * 10 * log10(64) + 2 * maxTgppGain),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // Deploy 2 squared antenna arrays which face each other. Steer their beam towards the boresight
     // and check the overall resulting channel gain. SE = single element radiation pattern, N =
     // number of radiating elements, Fc = carrier frequency, Scen = 3GPP scenario
     //                                     SE tx,   SE rx, N tx, N rx,    Fc,    Scen
-    AddTestCase(new OverallGainAverageTest(iso, iso, 1, 1, 10e9, "RMa"), TestCase::EXTENSIVE);
-    AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 1, 1, 10e9, "RMa"), TestCase::EXTENSIVE);
-    AddTestCase(new OverallGainAverageTest(iso, iso, 4, 4, 10e9, "RMa"), TestCase::EXTENSIVE);
-    AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 4, 4, 10e9, "RMa"), TestCase::EXTENSIVE);
-    AddTestCase(new OverallGainAverageTest(iso, iso, 1, 1, 10e9, "UMa"), TestCase::EXTENSIVE);
-    AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 1, 1, 10e9, "UMa"), TestCase::EXTENSIVE);
-    AddTestCase(new OverallGainAverageTest(iso, iso, 4, 4, 10e9, "UMa"), TestCase::EXTENSIVE);
-    AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 4, 4, 10e9, "UMa"), TestCase::EXTENSIVE);
+    AddTestCase(new OverallGainAverageTest(iso, iso, 1, 1, 10e9, "RMa"),
+                TestCase::Duration::EXTENSIVE);
+    AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 1, 1, 10e9, "RMa"),
+                TestCase::Duration::EXTENSIVE);
+    AddTestCase(new OverallGainAverageTest(iso, iso, 4, 4, 10e9, "RMa"),
+                TestCase::Duration::EXTENSIVE);
+    AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 4, 4, 10e9, "RMa"),
+                TestCase::Duration::EXTENSIVE);
+    AddTestCase(new OverallGainAverageTest(iso, iso, 1, 1, 10e9, "UMa"),
+                TestCase::Duration::EXTENSIVE);
+    AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 1, 1, 10e9, "UMa"),
+                TestCase::Duration::EXTENSIVE);
+    AddTestCase(new OverallGainAverageTest(iso, iso, 4, 4, 10e9, "UMa"),
+                TestCase::Duration::EXTENSIVE);
+    AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 4, 4, 10e9, "UMa"),
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(iso, iso, 1, 1, 60e9, "UMi-StreetCanyon"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 1, 1, 60e9, "UMi-StreetCanyon"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(iso, iso, 4, 4, 60e9, "UMi-StreetCanyon"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 4, 4, 60e9, "UMi-StreetCanyon"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(iso, iso, 1, 1, 60e9, "InH-OfficeOpen"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 1, 1, 60e9, "InH-OfficeOpen"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(iso, iso, 4, 4, 60e9, "InH-OfficeOpen"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 4, 4, 60e9, "InH-OfficeOpen"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(iso, iso, 1, 1, 100e9, "InH-OfficeMixed"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 1, 1, 100e9, "InH-OfficeMixed"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(iso, iso, 4, 4, 100e9, "InH-OfficeMixed"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new OverallGainAverageTest(tgpp, tgpp, 4, 4, 100e9, "InH-OfficeMixed"),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
 }
 
 // Static variable for test initialization

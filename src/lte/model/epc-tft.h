@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo  <nbaldo@cttc.es>
  */
@@ -20,9 +9,9 @@
 #ifndef EPC_TFT_H
 #define EPC_TFT_H
 
-#include <ns3/ipv4-address.h>
-#include <ns3/ipv6-address.h>
-#include <ns3/simple-ref-count.h>
+#include "ns3/ipv4-address.h"
+#include "ns3/ipv6-address.h"
+#include "ns3/simple-ref-count.h"
 
 #include <list>
 
@@ -40,7 +29,7 @@ class EpcTft : public SimpleRefCount<EpcTft>
     /**
      * creates a TFT matching any traffic
      *
-     * \return a newly created TFT that will match any traffic
+     * @return a newly created TFT that will match any traffic
      */
     static Ptr<EpcTft> Default();
 
@@ -73,14 +62,14 @@ class EpcTft : public SimpleRefCount<EpcTft>
 
         /**
          *
-         * \param d the direction
-         * \param ra the remote address
-         * \param la the local address
-         * \param rp the remote port
-         * \param lp the local port
-         * \param tos the type of service
+         * @param d the direction
+         * @param ra the remote address
+         * @param la the local address
+         * @param rp the remote port
+         * @param lp the local port
+         * @param tos the type of service
          *
-         * \return true if the parameters match with the PacketFilter,
+         * @return true if the parameters match with the PacketFilter,
          * false otherwise.
          */
         bool Matches(Direction d,
@@ -92,14 +81,14 @@ class EpcTft : public SimpleRefCount<EpcTft>
 
         /**
          *
-         * \param d the direction
-         * \param ra the remote address
-         * \param la the local address
-         * \param rp the remote port
-         * \param lp the local port
-         * \param tos the type of service
+         * @param d the direction
+         * @param ra the remote address
+         * @param la the local address
+         * @param rp the remote port
+         * @param lp the local port
+         * @param tos the type of service
          *
-         * \return true if the parameters match with the PacketFilter,
+         * @return true if the parameters match with the PacketFilter,
          * false otherwise.
          */
         bool Matches(Direction d,
@@ -140,23 +129,23 @@ class EpcTft : public SimpleRefCount<EpcTft>
     /**
      * add a PacketFilter to the Traffic Flow Template
      *
-     * \param f the PacketFilter to be added
+     * @param f the PacketFilter to be added
      *
-     * \return the id( 0 <= id < 16) of the newly added filter, if the addition was successful. Will
+     * @return the id( 0 <= id < 16) of the newly added filter, if the addition was successful. Will
      * fail if you try to add more than 15 filters. This is to be compliant with TS 24.008.
      */
     uint8_t Add(PacketFilter f);
 
     /**
      *
-     * \param direction
-     * \param remoteAddress
-     * \param localAddress
-     * \param remotePort
-     * \param localPort
-     * \param typeOfService
+     * @param direction
+     * @param remoteAddress
+     * @param localAddress
+     * @param remotePort
+     * @param localPort
+     * @param typeOfService
      *
-     * \return true if any PacketFilter in the TFT matches with the
+     * @return true if any PacketFilter in the TFT matches with the
      * parameters, false otherwise.
      */
     bool Matches(Direction direction,
@@ -168,14 +157,14 @@ class EpcTft : public SimpleRefCount<EpcTft>
 
     /**
      *
-     * \param direction
-     * \param remoteAddress
-     * \param localAddress
-     * \param remotePort
-     * \param localPort
-     * \param typeOfService
+     * @param direction
+     * @param remoteAddress
+     * @param localAddress
+     * @param remotePort
+     * @param localPort
+     * @param typeOfService
      *
-     * \return true if any PacketFilter in the TFT matches with the
+     * @return true if any PacketFilter in the TFT matches with the
      * parameters, false otherwise.
      */
     bool Matches(Direction direction,
@@ -187,7 +176,7 @@ class EpcTft : public SimpleRefCount<EpcTft>
 
     /**
      * Get the packet filters
-     * \return a container of packet filters
+     * @return a container of packet filters
      */
     std::list<PacketFilter> GetPacketFilters() const;
 

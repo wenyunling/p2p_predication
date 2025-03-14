@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2007,2008 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Jahanzeb Farooq <jahanzeb.farooq@sophia.inria.fr>
  */
@@ -28,8 +17,8 @@ namespace ns3
 class WimaxPhy;
 
 /**
- * \ingroup wimax
- * \brief The SendParams class defines the parameters with which Send() function of
+ * @ingroup wimax
+ * @brief The SendParams class defines the parameters with which Send() function of
  *  a particular PHY is called. The sole purpose of this class is to allow
  *  defining the pure virtual Send() function in the PHY base-class (WimaxPhy).
  *  This class shall be sub-classed every time a new PHY is integrated (i.e.,
@@ -70,15 +59,15 @@ class OfdmSendParams : public SendParams
     /**
      * Constructor
      *
-     * \param burst packet burst object
-     * \param modulationType modulation type
-     * \param direction the direction
+     * @param burst packet burst object
+     * @param modulationType modulation type
+     * @param direction the direction
      */
     OfdmSendParams(Ptr<PacketBurst> burst, uint8_t modulationType, uint8_t direction);
     ~OfdmSendParams() override;
 
     /**
-     * \return the packet burst
+     * @return the packet burst
      */
     Ptr<PacketBurst> GetBurst() const
     {
@@ -86,7 +75,7 @@ class OfdmSendParams : public SendParams
     }
 
     /**
-     * \return the modulation type
+     * @return the modulation type
      */
     uint8_t GetModulationType() const
     {
@@ -94,7 +83,7 @@ class OfdmSendParams : public SendParams
     }
 
     /**
-     * \return the direction
+     * @return the direction
      */
     uint8_t GetDirection() const
     {

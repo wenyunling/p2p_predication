@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
@@ -20,7 +9,7 @@
 #ifndef LTE_UE_CMAC_SAP_H
 #define LTE_UE_CMAC_SAP_H
 
-#include <ns3/packet.h>
+#include "ns3/packet.h"
 
 namespace ns3
 {
@@ -50,7 +39,7 @@ class LteUeCmacSapProvider
     /**
      * Configure RACH function
      *
-     * \param rc the RACH config
+     * @param rc the RACH config
      */
     virtual void ConfigureRach(RachConfig rc) = 0;
 
@@ -65,9 +54,9 @@ class LteUeCmacSapProvider
      * tell the MAC to start a non-contention-based random access
      * procedure, e.g., as a consequence of handover
      *
-     * \param rnti
-     * \param rapId Random Access Preamble Identifier
-     * \param prachMask
+     * @param rnti
+     * @param rapId Random Access Preamble Identifier
+     * @param prachMask
      */
     virtual void StartNonContentionBasedRandomAccessProcedure(uint16_t rnti,
                                                               uint8_t rapId,
@@ -85,16 +74,16 @@ class LteUeCmacSapProvider
     /**
      * add a new Logical Channel (LC)
      *
-     * \param lcId the ID of the LC
-     * \param lcConfig the LC configuration provided by the RRC
-     * \param msu the corresponding LteMacSapUser
+     * @param lcId the ID of the LC
+     * @param lcConfig the LC configuration provided by the RRC
+     * @param msu the corresponding LteMacSapUser
      */
     virtual void AddLc(uint8_t lcId, LogicalChannelConfig lcConfig, LteMacSapUser* msu) = 0;
 
     /**
      * remove an existing LC
      *
-     * \param lcId
+     * @param lcId
      */
     virtual void RemoveLc(uint8_t lcId) = 0;
 
@@ -106,19 +95,19 @@ class LteUeCmacSapProvider
 
     /**
      *
-     * \param rnti the cell-specific UE identifier
+     * @param rnti the cell-specific UE identifier
      */
     virtual void SetRnti(uint16_t rnti) = 0;
 
     /**
-     * \brief Notify MAC about the successful RRC connection
+     * @brief Notify MAC about the successful RRC connection
      * establishment.
      */
     virtual void NotifyConnectionSuccessful() = 0;
 
     /**
-     * \brief A method call by UE RRC to communicate the IMSI to the UE MAC
-     * \param imsi the IMSI of the UE
+     * @brief A method call by UE RRC to communicate the IMSI to the UE MAC
+     * @param imsi the IMSI of the UE
      */
     virtual void SetImsi(uint64_t imsi) = 0;
 };
@@ -137,7 +126,7 @@ class LteUeCmacSapUser
     /**
      *
      *
-     * \param rnti the T-C-RNTI, which will eventually become the C-RNTI after contention resolution
+     * @param rnti the T-C-RNTI, which will eventually become the C-RNTI after contention resolution
      */
     virtual void SetTemporaryCellRnti(uint16_t rnti) = 0;
 

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 Lalith Suresh
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors: Lalith Suresh <suresh.lalith@gmail.com>
  */
@@ -31,15 +20,21 @@
 using namespace ns3;
 
 /**
- * \file
- * \ingroup click-tests
+ * @ingroup click
+ * @defgroup click-tests click module tests
+ */
+
+/**
+ * @file
+ * @ingroup click-tests
  * Click test suite.
  */
 
 /**
+ * @ingroup click-tests
  * Add Click Internet stack.
  *
- * \param node Node.
+ * @param node Node.
  */
 static void
 AddClickInternetStack(Ptr<Node> node)
@@ -50,12 +45,13 @@ AddClickInternetStack(Ptr<Node> node)
 }
 
 /**
+ * @ingroup click-tests
  * Add network device.
  *
- * \param node Node.
- * \param macaddr MAC address.
- * \param ipv4addr IPv4 address.
- * \param ipv4mask IPv4 mask.
+ * @param node Node.
+ * @param macaddr MAC address.
+ * @param ipv4addr IPv4 address.
+ * @param ipv4mask IPv4 mask.
  */
 static void
 AddNetworkDevice(Ptr<Node> node, Mac48Address macaddr, Ipv4Address ipv4addr, Ipv4Mask ipv4mask)
@@ -74,7 +70,7 @@ AddNetworkDevice(Ptr<Node> node, Mac48Address macaddr, Ipv4Address ipv4addr, Ipv
 }
 
 /**
- * \ingroup click-tests
+ * @ingroup click-tests
  * Click interface ID from name test.
  */
 class ClickIfidFromNameTest : public TestCase
@@ -124,7 +120,7 @@ ClickIfidFromNameTest::DoRun()
 }
 
 /**
- * \ingroup click-tests
+ * @ingroup click-tests
  * Click IP MAC address from name test.
  */
 class ClickIpMacAddressFromNameTest : public TestCase
@@ -188,7 +184,7 @@ ClickIpMacAddressFromNameTest::DoRun()
 }
 
 /**
- * \ingroup click-tests
+ * @ingroup click-tests
  * Click trivial test.
  */
 class ClickTrivialTest : public TestCase
@@ -236,18 +232,18 @@ ClickTrivialTest::DoRun()
 }
 
 /**
- * \ingroup click-tests
+ * @ingroup click-tests
  * Click interface ID from name test.
  */
 class ClickIfidFromNameTestSuite : public TestSuite
 {
   public:
     ClickIfidFromNameTestSuite()
-        : TestSuite("routing-click", UNIT)
+        : TestSuite("routing-click", Type::UNIT)
     {
-        AddTestCase(new ClickTrivialTest, TestCase::QUICK);
-        AddTestCase(new ClickIfidFromNameTest, TestCase::QUICK);
-        AddTestCase(new ClickIpMacAddressFromNameTest, TestCase::QUICK);
+        AddTestCase(new ClickTrivialTest, TestCase::Duration::QUICK);
+        AddTestCase(new ClickIfidFromNameTest, TestCase::Duration::QUICK);
+        AddTestCase(new ClickIpMacAddressFromNameTest, TestCase::Duration::QUICK);
     }
 };
 

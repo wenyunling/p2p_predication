@@ -1,18 +1,7 @@
 /*
  *  Copyright (c) 2007,2008, 2009 INRIA, UDcast
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mohamed Amine Ismail <amine.ismail@sophia.inria.fr>
  *                              <amine.ismail@udcast.com>
@@ -36,6 +25,7 @@
 
 #include <cmath>
 #include <string>
+#include <vector>
 
 namespace ns3
 {
@@ -536,31 +526,29 @@ SimpleOfdmWimaxPhy::ConvertBurstToBits(Ptr<const PacketBurst> burst)
 Ptr<PacketBurst>
 SimpleOfdmWimaxPhy::ConvertBitsToBurst(Bvec buffer)
 {
-    uint8_t init[buffer.size() / 8];
-    uint8_t* pstart = init;
-    uint8_t temp;
+    const auto bufferSize = buffer.size() / 8;
+    std::vector<uint8_t> bytes(bufferSize, 0);
     int32_t j = 0;
     // recreating byte buffer from bit buffer (Bvec)
-    for (uint32_t i = 0; i < buffer.size(); i += 8)
+    for (std::size_t i = 0; i < buffer.size(); i += 8)
     {
-        temp = 0;
-        for (int l = 0; l < 8; l++)
+        uint8_t temp = 0;
+        for (std::size_t l = 0; l < 8; l++)
         {
             bool bin = buffer.at(i + l);
             temp |= (bin << (7 - l));
         }
 
-        *(pstart + j) = temp;
+        bytes[j] = temp;
         j++;
     }
-    uint16_t bufferSize = buffer.size() / 8;
     uint16_t pos = 0;
     Ptr<PacketBurst> RecvBurst = Create<PacketBurst>();
     while (pos < bufferSize)
     {
         uint16_t packetSize = 0;
         // Get the header type: first bit
-        uint8_t ht = (pstart[pos] >> 7) & 0x01;
+        uint8_t ht = (bytes[pos] >> 7) & 0x01;
         if (ht == 1)
         {
             // BW request header. Size is always 8 bytes
@@ -569,15 +557,15 @@ SimpleOfdmWimaxPhy::ConvertBitsToBurst(Bvec buffer)
         else
         {
             // Read the size
-            uint8_t Len_MSB = pstart[pos + 1] & 0x07;
-            packetSize = (uint16_t)((uint16_t)(Len_MSB << 8) | (uint16_t)(pstart[pos + 2]));
+            uint8_t Len_MSB = bytes[pos + 1] & 0x07;
+            packetSize = (uint16_t)((uint16_t)(Len_MSB << 8) | (uint16_t)(bytes[pos + 2]));
             if (packetSize == 0)
             {
                 break; // padding
             }
         }
 
-        Ptr<Packet> p = Create<Packet>(&(pstart[pos]), packetSize);
+        Ptr<Packet> p = Create<Packet>(&bytes[pos], packetSize);
         RecvBurst->AddPacket(p);
         pos += packetSize;
     }
@@ -786,20 +774,14 @@ SimpleOfdmWimaxPhy::GetCodedFecBlockSize(WimaxPhy::ModulationType modulationType
         blockSize = 24;
         break;
     case MODULATION_TYPE_QPSK_12:
-        blockSize = 48;
-        break;
     case MODULATION_TYPE_QPSK_34:
         blockSize = 48;
         break;
     case MODULATION_TYPE_QAM16_12:
-        blockSize = 96;
-        break;
     case MODULATION_TYPE_QAM16_34:
         blockSize = 96;
         break;
     case MODULATION_TYPE_QAM64_23:
-        blockSize = 144;
-        break;
     case MODULATION_TYPE_QAM64_34:
         blockSize = 144;
         break;

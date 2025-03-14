@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 The Boeing Company
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Authors:
  *  Gary Pei <guangyu.pei@boeing.com>
@@ -29,33 +18,36 @@
 #include "lr-wpan-mac-base.h"
 #include "lr-wpan-phy.h"
 
-#include <ns3/event-id.h>
-#include <ns3/sequence-number.h>
-#include <ns3/traced-callback.h>
-#include <ns3/traced-value.h>
+#include "ns3/event-id.h"
+#include "ns3/sequence-number.h"
+#include "ns3/traced-callback.h"
+#include "ns3/traced-value.h"
 
 #include <deque>
 #include <memory>
 
 namespace ns3
 {
-
 class Packet;
+
+namespace lrwpan
+{
+
 class LrWpanCsmaCa;
 
 /**
- * \defgroup lr-wpan LR-WPAN models
+ * @defgroup lr-wpan LR-WPAN models
  *
  * This section documents the API of the IEEE 802.15.4-related models.  For a generic functional
  * description, please refer to the ns-3 manual.
  */
 
 /**
- * \ingroup lr-wpan
+ * @ingroup lr-wpan
  *
  * Tx options
  */
-enum LrWpanTxOption
+enum TxOption
 {
     TX_OPTION_NONE = 0,    //!< TX_OPTION_NONE
     TX_OPTION_ACK = 1,     //!< TX_OPTION_ACK
@@ -64,11 +56,11 @@ enum LrWpanTxOption
 };
 
 /**
- * \ingroup lr-wpan
+ * @ingroup lr-wpan
  *
  * MAC states
  */
-enum LrWpanMacState
+enum MacState
 {
     MAC_IDLE,               //!< MAC_IDLE
     MAC_CSMA,               //!< MAC_CSMA
@@ -83,16 +75,16 @@ enum LrWpanMacState
 };
 
 /**
- *  Overloaded operator to print the value of a LrWpanMacState.
+ *  Overloaded operator to print the value of a MacState.
  *
- *  \param os The output stream
- *  \param state The text value of the PHY state
- *  \return The output stream with text value of the MAC state
+ *  @param os The output stream
+ *  @param state The text value of the PHY state
+ *  @return The output stream with text value of the MAC state
  */
-std::ostream& operator<<(std::ostream& os, const LrWpanMacState& state);
+std::ostream& operator<<(std::ostream& os, const MacState& state);
 
 /**
- * \ingroup lr-wpan
+ * @ingroup lr-wpan
  *
  * Superframe status
  */
@@ -105,7 +97,7 @@ enum SuperframeStatus
 };
 
 /**
- * \ingroup lr-wpan
+ * @ingroup lr-wpan
  *
  * Superframe type
  */
@@ -116,7 +108,7 @@ enum SuperframeType
 };
 
 /**
- * \ingroup lr-wpan
+ * @ingroup lr-wpan
  *
  * Indicates a pending MAC primitive
  */
@@ -133,27 +125,27 @@ namespace TracedValueCallback
 {
 
 /**
- * \ingroup lr-wpan
- * TracedValue callback signature for LrWpanMacState.
+ * @ingroup lr-wpan
+ * TracedValue callback signature for MacState.
  *
- * \param [in] oldValue original value of the traced variable
- * \param [in] newValue new value of the traced variable
+ * @param [in] oldValue original value of the traced variable
+ * @param [in] newValue new value of the traced variable
  */
-typedef void (*LrWpanMacState)(LrWpanMacState oldValue, LrWpanMacState newValue);
+typedef void (*MacState)(MacState oldValue, MacState newValue);
 
 /**
- * \ingroup lr-wpan
+ * @ingroup lr-wpan
  * TracedValue callback signature for SuperframeStatus.
  *
- * \param [in] oldValue original value of the traced variable
- * \param [in] newValue new value of the traced variable
+ * @param [in] oldValue original value of the traced variable
+ * @param [in] newValue new value of the traced variable
  */
 typedef void (*SuperframeStatus)(SuperframeStatus oldValue, SuperframeStatus newValue);
 
 } // namespace TracedValueCallback
 
 /**
- * \ingroup lr-wpan
+ * @ingroup lr-wpan
  *
  * Class that implements the LR-WPAN MAC state machine
  */
@@ -163,7 +155,7 @@ class LrWpanMac : public LrWpanMacBase
     /**
      * Get the type ID.
      *
-     * \return the object TypeId
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -176,14 +168,14 @@ class LrWpanMac : public LrWpanMacBase
     /**
      * Check if the receiver will be enabled when the MAC is idle.
      *
-     * \return true, if the receiver is enabled during idle periods, false otherwise
+     * @return true, if the receiver is enabled during idle periods, false otherwise
      */
     bool GetRxOnWhenIdle() const;
 
     /**
      * Set if the receiver should be enabled when the MAC is idle.
      *
-     * \param rxOnWhenIdle set to true to enable the receiver during idle periods
+     * @param rxOnWhenIdle set to true to enable the receiver during idle periods
      */
     void SetRxOnWhenIdle(bool rxOnWhenIdle);
 
@@ -191,56 +183,56 @@ class LrWpanMac : public LrWpanMacBase
     /**
      * Set the short address of this MAC.
      *
-     * \param address the new address
+     * @param address the new address
      */
     void SetShortAddress(Mac16Address address);
 
     /**
      * Get the short address of this MAC.
      *
-     * \return the short address
+     * @return the short address
      */
     Mac16Address GetShortAddress() const;
 
     /**
      * Set the extended address of this MAC.
      *
-     * \param address the new address
+     * @param address the new address
      */
     void SetExtendedAddress(Mac64Address address);
 
     /**
      * Get the extended address of this MAC.
      *
-     * \return the extended address
+     * @return the extended address
      */
     Mac64Address GetExtendedAddress() const;
 
     /**
      * Set the PAN id used by this MAC.
      *
-     * \param panId the new PAN id.
+     * @param panId the new PAN id.
      */
     void SetPanId(uint16_t panId);
 
     /**
      * Get the PAN id used by this MAC.
      *
-     * \return the PAN id.
+     * @return the PAN id.
      */
     uint16_t GetPanId() const;
 
     /**
      * Get the coordinator short address currently associated to this device.
      *
-     * \return The coordinator short address
+     * @return The coordinator short address
      */
     Mac16Address GetCoordShortAddress() const;
 
     /**
      * Get the coordinator extended address currently associated to this device.
      *
-     * \return The coordinator extended address
+     * @return The coordinator extended address
      */
     Mac64Address GetCoordExtAddress() const;
 
@@ -260,29 +252,28 @@ class LrWpanMac : public LrWpanMacBase
 
     void MlmePollRequest(MlmePollRequestParams params) override;
 
-    void MlmeSetRequest(LrWpanMacPibAttributeIdentifier id,
-                        Ptr<LrWpanMacPibAttributes> attribute) override;
+    void MlmeSetRequest(MacPibAttributeIdentifier id, Ptr<MacPibAttributes> attribute) override;
 
-    void MlmeGetRequest(LrWpanMacPibAttributeIdentifier id) override;
+    void MlmeGetRequest(MacPibAttributeIdentifier id) override;
 
     /**
      * Set the CSMA/CA implementation to be used by the MAC.
      *
-     * \param csmaCa the CSMA/CA implementation
+     * @param csmaCa the CSMA/CA implementation
      */
     void SetCsmaCa(Ptr<LrWpanCsmaCa> csmaCa);
 
     /**
      * Set the underlying PHY for the MAC.
      *
-     * \param phy the PHY
+     * @param phy the PHY
      */
     void SetPhy(Ptr<LrWpanPhy> phy);
 
     /**
      * Get the underlying PHY of the MAC.
      *
-     * \return the PHY
+     * @return the PHY
      */
     Ptr<LrWpanPhy> GetPhy();
 
@@ -294,82 +285,82 @@ class LrWpanMac : public LrWpanMacBase
      * IEEE 802.15.4-2006 section 6.2.1.3
      * PD-DATA.indication
      * Indicates the transfer of an MPDU from PHY to MAC (receiving)
-     * \param psduLength number of bytes in the PSDU
-     * \param p the packet to be transmitted
-     * \param lqi Link quality (LQI) value measured during reception of the PPDU
+     * @param psduLength number of bytes in the PSDU
+     * @param p the packet to be transmitted
+     * @param lqi Link quality (LQI) value measured during reception of the PPDU
      */
     void PdDataIndication(uint32_t psduLength, Ptr<Packet> p, uint8_t lqi);
 
     /**
      * IEEE 802.15.4-2006 section 6.2.1.2
      * Confirm the end of transmission of an MPDU to MAC
-     * \param status to report to MAC
+     * @param status to report to MAC
      *        PHY PD-DATA.confirm status
      */
-    void PdDataConfirm(LrWpanPhyEnumeration status);
+    void PdDataConfirm(PhyEnumeration status);
 
     /**
      * IEEE 802.15.4-2006 section 6.2.2.2
      * PLME-CCA.confirm status
-     * \param status TRX_OFF, BUSY or IDLE
+     * @param status TRX_OFF, BUSY or IDLE
      */
-    void PlmeCcaConfirm(LrWpanPhyEnumeration status);
+    void PlmeCcaConfirm(PhyEnumeration status);
 
     /**
      * IEEE 802.15.4-2006 section 6.2.2.4
      * PLME-ED.confirm status and energy level
-     * \param status SUCCESS, TRX_OFF or TX_ON
-     * \param energyLevel 0x00-0xff ED level for the channel
+     * @param status SUCCESS, TRX_OFF or TX_ON
+     * @param energyLevel 0x00-0xff ED level for the channel
      */
-    void PlmeEdConfirm(LrWpanPhyEnumeration status, uint8_t energyLevel);
+    void PlmeEdConfirm(PhyEnumeration status, uint8_t energyLevel);
 
     /**
      * IEEE 802.15.4-2006 section 6.2.2.6
      * PLME-GET.confirm
      * Get attributes per definition from Table 23 in section 6.4.2
-     * \param status SUCCESS or UNSUPPORTED_ATTRIBUTE
-     * \param id the attributed identifier
-     * \param attribute the attribute value
+     * @param status SUCCESS or UNSUPPORTED_ATTRIBUTE
+     * @param id the attributed identifier
+     * @param attribute the attribute value
      */
-    void PlmeGetAttributeConfirm(LrWpanPhyEnumeration status,
-                                 LrWpanPibAttributeIdentifier id,
-                                 Ptr<LrWpanPhyPibAttributes> attribute);
+    void PlmeGetAttributeConfirm(PhyEnumeration status,
+                                 PhyPibAttributeIdentifier id,
+                                 Ptr<PhyPibAttributes> attribute);
 
     /**
      * IEEE 802.15.4-2006 section 6.2.2.8
      * PLME-SET-TRX-STATE.confirm
      * Set PHY state
-     * \param status in RX_ON,TRX_OFF,FORCE_TRX_OFF,TX_ON
+     * @param status in RX_ON,TRX_OFF,FORCE_TRX_OFF,TX_ON
      */
-    void PlmeSetTRXStateConfirm(LrWpanPhyEnumeration status);
+    void PlmeSetTRXStateConfirm(PhyEnumeration status);
 
     /**
      * IEEE 802.15.4-2006 section 6.2.2.10
      * PLME-SET.confirm
      * Set attributes per definition from Table 23 in section 6.4.2
-     * \param status SUCCESS, UNSUPPORTED_ATTRIBUTE, INVALID_PARAMETER, or READ_ONLY
-     * \param id the attributed identifier
+     * @param status SUCCESS, UNSUPPORTED_ATTRIBUTE, INVALID_PARAMETER, or READ_ONLY
+     * @param id the attributed identifier
      */
-    void PlmeSetAttributeConfirm(LrWpanPhyEnumeration status, LrWpanPibAttributeIdentifier id);
+    void PlmeSetAttributeConfirm(PhyEnumeration status, PhyPibAttributeIdentifier id);
 
     /**
      * CSMA-CA algorithm calls back the MAC after executing channel assessment.
      *
-     * \param macState indicate BUSY or IDLE channel condition
+     * @param macState indicate BUSY or IDLE channel condition
      */
-    void SetLrWpanMacState(LrWpanMacState macState);
+    void SetLrWpanMacState(MacState macState);
 
     /**
      * Set the max size of the transmit queue.
      *
-     * \param queueSize The transmit queue size.
+     * @param queueSize The transmit queue size.
      */
     void SetTxQMaxSize(uint32_t queueSize);
 
     /**
      * Set the max size of the indirect transmit queue (Pending Transaction list)
      *
-     * \param queueSize The indirect transmit queue size.
+     * @param queueSize The indirect transmit queue size.
      */
     void SetIndTxQMaxSize(uint32_t queueSize);
 
@@ -500,7 +491,7 @@ class LrWpanMac : public LrWpanMacBase
     uint16_t m_macPanId;
 
     /**
-     * Temporally stores the value of the current m_macPanId when a MLME-SCAN.request is performed.
+     * Temporarily stores the value of the current m_macPanId when a MLME-SCAN.request is performed.
      * See IEEE 802.15.4-2011, section 5.1.2.1.2.
      */
     uint16_t m_macPanIdScan;
@@ -518,11 +509,11 @@ class LrWpanMac : public LrWpanMacBase
     SequenceNumber8 m_macBsn;
 
     /**
-     * The contents of the beacon payload.
+     * The set with the contents of the beacon payload.
      * This value is set directly by the MLME-SET primitive.
      * See IEEE 802.15.4-2011, section 6.4.2, Table 52.
      */
-    Ptr<Packet> m_macBeaconPayload;
+    std::vector<uint8_t> m_macBeaconPayload;
 
     /**
      * The length, in octets, of the beacon payload.
@@ -633,14 +624,14 @@ class LrWpanMac : public LrWpanMacBase
     /**
      * Get the macAckWaitDuration attribute value.
      *
-     * \return the maximum number symbols to wait for an acknowledgment frame
+     * @return the maximum number symbols to wait for an acknowledgment frame
      */
     uint64_t GetMacAckWaitDuration() const;
 
     /**
      * Get the macMaxFrameRetries attribute value.
      *
-     * \return the maximum number of retries
+     * @return the maximum number of retries
      */
     uint8_t GetMacMaxFrameRetries() const;
 
@@ -652,83 +643,93 @@ class LrWpanMac : public LrWpanMacBase
     /**
      * Set the macMaxFrameRetries attribute value.
      *
-     * \param retries the maximum number of retries
+     * @param retries the maximum number of retries
      */
     void SetMacMaxFrameRetries(uint8_t retries);
 
     /**
      * Check if the packet destination is its coordinator
      *
-     * \return True if m_txPkt (packet awaiting to be sent) destination is its coordinator
+     * @return True if m_txPkt (packet awaiting to be sent) destination is its coordinator
      */
-    bool isCoordDest();
+    bool IsCoordDest();
 
     /**
      * Check if the packet destination is its coordinator
      *
-     *\param mac The coordinator short MAC Address
+     * @param mac The coordinator short MAC Address
      */
     void SetAssociatedCoor(Mac16Address mac);
 
     /**
      * Check if the packet destination is its coordinator
      *
-     *\param mac The coordinator extended MAC Address
+     * @param mac The coordinator extended MAC Address
      */
     void SetAssociatedCoor(Mac64Address mac);
 
     /**
      * Get the size of the Interframe Space according to MPDU size (m_txPkt).
      *
-     * \return the IFS size in symbols
+     * @return the IFS size in symbols
      */
     uint32_t GetIfsSize();
 
     /**
      * Obtain the number of symbols in the packet which is currently being sent by the MAC layer.
      *
-     *\return packet number of symbols
-     * */
+     * @return packet number of symbols
+     */
     uint64_t GetTxPacketSymbols();
 
     /**
      * Check if the packet to transmit requires acknowledgment
      *
-     *\return True if the Tx packet requires acknowledgment
-     * */
-    bool isTxAckReq();
+     * @return True if the Tx packet requires acknowledgment
+     */
+    bool IsTxAckReq();
 
     /**
      * Print the Pending transaction list.
-     * \param os The reference to the output stream used by this print function.
+     * @param os The reference to the output stream used by this print function.
      */
     void PrintPendingTxQueue(std::ostream& os) const;
 
     /**
      * Print the Transmit Queue.
-     * \param os The reference to the output stream used by this print function.
+     * @param os The reference to the output stream used by this print function.
      */
     void PrintTxQueue(std::ostream& os) const;
 
     /**
+     * Assign a fixed random variable stream number to the random variables
+     * used by this model.  Return the number of streams that have been assigned.
+     *
+     * @param stream first stream index to use
+     * @return the number of stream indices assigned by this model
+     */
+    int64_t AssignStreams(int64_t stream);
+
+    /**
      * TracedCallback signature for sent packets.
      *
-     * \param [in] packet The packet.
-     * \param [in] retries The number of retries.
-     * \param [in] backoffs The number of CSMA backoffs.
+     * @param [in] packet The packet.
+     * @param [in] retries The number of retries.
+     * @param [in] backoffs The number of CSMA backoffs.
      */
     typedef void (*SentTracedCallback)(Ptr<const Packet> packet, uint8_t retries, uint8_t backoffs);
 
     /**
-     * TracedCallback signature for LrWpanMacState change events.
+     * TracedCallback signature for MacState change events.
      *
-     * \param [in] oldValue The original state value.
-     * \param [in] newValue The new state value.
-     * \deprecated The LrWpanMacState is now accessible as the
+     * @param [in] oldValue The original state value.
+     * @param [in] newValue The new state value.
+     * @deprecated The MacState is now accessible as the
      * TracedValue \c MacStateValue. The \c MacState TracedCallback will
      * be removed in a future release.
      */
-    typedef void (*StateTracedCallback)(LrWpanMacState oldState, LrWpanMacState newState);
+    // NS_DEPRECATED() - tag for future removal
+    typedef void (*StateTracedCallback)(MacState oldState, MacState newState);
 
   protected:
     // Inherited from Object.
@@ -776,7 +777,7 @@ class LrWpanMac : public LrWpanMacBase
     /**
      * Called to send an associate response command.
      *
-     * \param rxDataReqPkt The received data request pkt that instigated the Association response
+     * @param rxDataReqPkt The received data request pkt that instigated the Association response
      * command.
      */
     void SendAssocResponseCommand(Ptr<Packet> rxDataReqPkt);
@@ -823,7 +824,7 @@ class LrWpanMac : public LrWpanMacBase
      * Called to begin the Contention Free Period (CFP) in a
      * beacon-enabled mode.
      *
-     * \param superframeType The incoming or outgoing superframe reference
+     * @param superframeType The incoming or outgoing superframe reference
      */
     void StartCFP(SuperframeType superframeType);
 
@@ -831,14 +832,14 @@ class LrWpanMac : public LrWpanMacBase
      * Called to begin the Contention Access Period (CAP) in a
      * beacon-enabled mode.
      *
-     * \param superframeType The incoming or outgoing superframe reference
+     * @param superframeType The incoming or outgoing superframe reference
      */
     void StartCAP(SuperframeType superframeType);
 
     /**
      * Start the Inactive Period in a beacon-enabled mode.
      *
-     * \param superframeType The incoming or outgoing superframe reference
+     * @param superframeType The incoming or outgoing superframe reference
      *
      */
     void StartInactivePeriod(SuperframeType superframeType);
@@ -855,16 +856,24 @@ class LrWpanMac : public LrWpanMacBase
     void BeaconSearchTimeout();
 
     /**
+     * Used to process the reception of a beacon packet.
+     *
+     * @param lqi The value of the link quality indicator (LQI) of the received packet
+     * @param p The packet containing the MAC header and the beacon payload information
+     */
+    void ReceiveBeacon(uint8_t lqi, Ptr<Packet> p);
+
+    /**
      * Send an acknowledgment packet for the given sequence number.
      *
-     * \param seqno the sequence number for the ACK
+     * @param seqno the sequence number for the ACK
      */
     void SendAck(uint8_t seqno);
 
     /**
      * Add an element to the transmission queue.
      *
-     * \param txQElement The element added to the Tx Queue.
+     * @param txQElement The element added to the Tx Queue.
      */
     void EnqueueTxQElement(Ptr<TxQueueElement> txQElement);
 
@@ -877,9 +886,9 @@ class LrWpanMac : public LrWpanMacBase
     /**
      * Change the current MAC state to the given new state.
      *
-     * \param newState the new state
+     * @param newState the new state
      */
-    void ChangeMacState(LrWpanMacState newState);
+    void ChangeMacState(MacState newState);
 
     /**
      * Handle an ACK timeout with a packet retransmission, if there are
@@ -892,7 +901,7 @@ class LrWpanMac : public LrWpanMacBase
      * the mac layer wait an Interframe Space (IFS) time and triggers this function
      * to continue with the MAC flow.
      *
-     * \param ifsTime IFS time
+     * @param ifsTime IFS time
      */
     void IfsWaitTimeout(Time ifsTime);
 
@@ -900,23 +909,23 @@ class LrWpanMac : public LrWpanMacBase
      * Check for remaining retransmissions for the packet currently being sent.
      * Drop the packet, if there are no retransmissions left.
      *
-     * \return true, if the packet should be retransmitted, false otherwise.
+     * @return true, if the packet should be retransmitted, false otherwise.
      */
     bool PrepareRetransmission();
 
     /**
      * Adds a packet to the pending transactions list (Indirect transmissions).
      *
-     * \param p The packet added to pending transaction list.
+     * @param p The packet added to pending transaction list.
      */
     void EnqueueInd(Ptr<Packet> p);
 
     /**
      * Extracts a packet from pending transactions list (Indirect transmissions).
-     * \param dst The extended address used an index to obtain an element from the pending
+     * @param dst The extended address used an index to obtain an element from the pending
      * transaction list.
-     * \param entry The dequeued element from the pending transaction list.
-     * \return The status of the dequeue
+     * @param entry The dequeued element from the pending transaction list.
+     * @return The status of the dequeue
      */
     bool DequeueInd(Mac64Address dst, Ptr<IndTxQueueElement> entry);
 
@@ -928,7 +937,7 @@ class LrWpanMac : public LrWpanMacBase
     /**
      * Remove an element from the pending transaction list.
      *
-     * \param p The packet to be removed from the pending transaction list.
+     * @param p The packet to be removed from the pending transaction list.
      */
     void RemovePendTxQElement(Ptr<Packet> p);
 
@@ -943,7 +952,7 @@ class LrWpanMac : public LrWpanMacBase
      * Constructs a Superframe specification field from the local information,
      * the superframe Specification field is necessary to create a beacon frame.
      *
-     * \returns the Superframe specification field (bitmap)
+     * @returns the Superframe specification field (bitmap)
      */
     uint16_t GetSuperframeField();
 
@@ -951,7 +960,7 @@ class LrWpanMac : public LrWpanMacBase
      * Constructs the Guaranteed Time Slots (GTS) Fields from local information.
      * The GTS Fields are part of the beacon frame.
      *
-     * \returns the Guaranteed Time Slots (GTS) Fields
+     * @returns the Guaranteed Time Slots (GTS) Fields
      */
     GtsFields GetGtsFields();
 
@@ -959,7 +968,7 @@ class LrWpanMac : public LrWpanMacBase
      * Constructs Pending Address Fields from the local information,
      * the Pending Address Fields are part of the beacon frame.
      *
-     * \returns the Pending Address Fields
+     * @returns the Pending Address Fields
      */
     PendingAddrFields GetPendingAddrFields();
 
@@ -976,7 +985,7 @@ class LrWpanMac : public LrWpanMacBase
      * The data should represent:
      * packet, number of retries, total number of csma backoffs
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>, uint8_t, uint8_t> m_sentPktTrace;
 
@@ -984,7 +993,7 @@ class LrWpanMac : public LrWpanMacBase
      * The trace source fired when packets come into the "top" of the device
      * at the L3/L2 transition, when being queued for transmission.
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_macTxEnqueueTrace;
 
@@ -992,7 +1001,7 @@ class LrWpanMac : public LrWpanMacBase
      * The trace source fired when packets are dequeued from the
      * L3/l2 transmission queue.
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_macTxDequeueTrace;
 
@@ -1000,7 +1009,7 @@ class LrWpanMac : public LrWpanMacBase
      * The trace source fired when packets come into the "top" of the device
      * at the L3/L2 transition, when being queued for indirect transmission
      * (pending transaction list).
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_macIndTxEnqueueTrace;
 
@@ -1008,14 +1017,14 @@ class LrWpanMac : public LrWpanMacBase
      * The trace source fired when packets are dequeued from the
      * L3/l2 indirect transmission queue (Pending transaction list).
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_macIndTxDequeueTrace;
 
     /**
      * The trace source fired when packets are being sent down to L1.
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_macTxTrace;
 
@@ -1024,7 +1033,7 @@ class LrWpanMac : public LrWpanMacBase
      * an acknowledgment was received, if requested, or the packet was
      * successfully sent by L1, if no ACK was requested.
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_macTxOkTrace;
 
@@ -1032,7 +1041,7 @@ class LrWpanMac : public LrWpanMacBase
      * The trace source fired when packets are dropped due to missing ACKs or
      * because of transmission failures in L1.
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_macTxDropTrace;
 
@@ -1040,7 +1049,7 @@ class LrWpanMac : public LrWpanMacBase
      * The trace source fired when packets are dropped due to indirect Tx queue
      * overflows or expiration.
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_macIndTxDropTrace;
 
@@ -1049,7 +1058,7 @@ class LrWpanMac : public LrWpanMacBase
      * immediately before being forwarded up to higher layers (at the L2/L3
      * transition).  This is a promiscuous trace.
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_macPromiscRxTrace;
 
@@ -1058,7 +1067,7 @@ class LrWpanMac : public LrWpanMacBase
      * immediately before being forwarded up to higher layers (at the L2/L3
      * transition).  This is a non-promiscuous trace.
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_macRxTrace;
 
@@ -1067,7 +1076,7 @@ class LrWpanMac : public LrWpanMacBase
      * but dropped before being forwarded up to higher layers (at the L2/L3
      * transition).
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_macRxDropTrace;
 
@@ -1087,7 +1096,7 @@ class LrWpanMac : public LrWpanMacBase
      * this would correspond to the point at which the packet is dispatched to
      * packet sniffers in netif_receive_skb.
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_snifferTrace;
 
@@ -1107,19 +1116,20 @@ class LrWpanMac : public LrWpanMacBase
      * this would correspond to the point at which the packet is dispatched to
      * packet sniffers in netif_receive_skb.
      *
-     * \see class CallBackTraceSource
+     * @see class CallBackTraceSource
      */
     TracedCallback<Ptr<const Packet>> m_promiscSnifferTrace;
 
     /**
-     * A trace source that fires when the LrWpanMac changes states.
+     * A trace source that fires when the MAC changes states.
      * Parameters are the old mac state and the new mac state.
      *
-     * \deprecated This TracedCallback is deprecated and will be
+     * @deprecated This TracedCallback is deprecated and will be
      * removed in a future release,  Instead, use the \c MacStateValue
      * TracedValue.
      */
-    TracedCallback<LrWpanMacState, LrWpanMacState> m_macStateLogger;
+    // NS_DEPRECATED() - tag for future removal
+    TracedCallback<MacState, MacState> m_macStateLogger;
 
     /**
      * The PHY associated with this MAC.
@@ -1134,7 +1144,7 @@ class LrWpanMac : public LrWpanMacBase
     /**
      * The current state of the MAC layer.
      */
-    TracedValue<LrWpanMacState> m_lrWpanMacState;
+    TracedValue<MacState> m_macState;
 
     /**
      * The current period of the incoming superframe.
@@ -1167,7 +1177,7 @@ class LrWpanMac : public LrWpanMacBase
     /**
      * The extended 64 address (IEEE EUI-64) used by this MAC.
      */
-    Mac64Address m_selfExt;
+    Mac64Address m_macExtendedAddress;
 
     /**
      * The transmit queue used by the MAC.
@@ -1252,6 +1262,14 @@ class LrWpanMac : public LrWpanMacBase
     uint8_t m_lastRxFrameLqi;
 
     /**
+     * This flag informs the MAC that an association response command was received
+     * before the acknowledgment (ACK) for the data request command that
+     * should precede it. This situation typically occurs due to network saturation.
+     */
+
+    bool m_ignoreDataCmdAck;
+
+    /**
      * Scheduler event for the ACK timeout of the currently transmitted data
      * packet.
      */
@@ -1321,7 +1339,13 @@ class LrWpanMac : public LrWpanMacBase
      * Scheduler event for the end of a ED channel scan.
      */
     EventId m_scanEnergyEvent;
+
+    /**
+     * The uniform random variable used in this mac layer
+     */
+    Ptr<UniformRandomVariable> m_uniformVar;
 };
+} // namespace lrwpan
 } // namespace ns3
 
 #endif /* LR_WPAN_MAC_H */

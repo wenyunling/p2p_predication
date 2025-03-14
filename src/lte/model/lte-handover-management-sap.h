@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2013 Budiarto Herman
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Budiarto Herman <budiarto.herman@magister.fi>
  *
@@ -27,7 +16,7 @@ namespace ns3
 {
 
 /**
- * \brief Service Access Point (SAP) offered by the handover algorithm instance
+ * @brief Service Access Point (SAP) offered by the handover algorithm instance
  *        to the eNodeB RRC instance.
  *
  * This is the *Handover Management SAP Provider*, i.e., the part of the SAP
@@ -40,10 +29,10 @@ class LteHandoverManagementSapProvider
     virtual ~LteHandoverManagementSapProvider();
 
     /**
-     * \brief Send a UE measurement report to handover algorithm.
-     * \param rnti Radio Network Temporary Identity, an integer identifying the UE
+     * @brief Send a UE measurement report to handover algorithm.
+     * @param rnti Radio Network Temporary Identity, an integer identifying the UE
      *             where the report originates from
-     * \param measResults a single report of one measurement identity
+     * @param measResults a single report of one measurement identity
      *
      * The received measurement report is a result of the UE measurement
      * configuration previously configured by calling
@@ -55,7 +44,7 @@ class LteHandoverManagementSapProvider
 }; // end of class LteHandoverManagementSapProvider
 
 /**
- * \brief Service Access Point (SAP) offered by the eNodeB RRC instance to the
+ * @brief Service Access Point (SAP) offered by the eNodeB RRC instance to the
  *        handover algorithm instance.
  *
  * This is the *Handover Management SAP User*, i.e., the part of the SAP that
@@ -67,10 +56,10 @@ class LteHandoverManagementSapUser
     virtual ~LteHandoverManagementSapUser();
 
     /**
-     * \brief Request a certain reporting configuration to be fulfilled by the UEs
+     * @brief Request a certain reporting configuration to be fulfilled by the UEs
      *        attached to the eNodeB entity.
-     * \param reportConfig the UE measurement reporting configuration
-     * \return the measurement identities associated with this newly added
+     * @param reportConfig the UE measurement reporting configuration
+     * @return the measurement identities associated with this newly added
      *         reporting configuration
      *
      * The eNodeB RRC entity is expected to configure the same reporting
@@ -80,16 +69,16 @@ class LteHandoverManagementSapUser
      * handover algorithm through the LteHandoverManagementSapProvider::ReportUeMeas
      * SAP function.
      *
-     * \note This function is only valid before the simulation begins.
+     * @note This function is only valid before the simulation begins.
      */
     virtual std::vector<uint8_t> AddUeMeasReportConfigForHandover(
         LteRrcSap::ReportConfigEutra reportConfig) = 0;
 
     /**
-     * \brief Instruct the eNodeB RRC entity to prepare a handover.
-     * \param rnti Radio Network Temporary Identity, an integer identifying the
+     * @brief Instruct the eNodeB RRC entity to prepare a handover.
+     * @param rnti Radio Network Temporary Identity, an integer identifying the
      *             UE which shall perform the handover
-     * \param targetCellId the cell ID of the target eNodeB
+     * @param targetCellId the cell ID of the target eNodeB
      *
      * This function is used by the handover algorithm entity when a handover
      * decision has been reached.
@@ -103,7 +92,7 @@ class LteHandoverManagementSapUser
 }; // end of class LteHandoverManagementSapUser
 
 /**
- * \brief Template for the implementation of the LteHandoverManagementSapProvider
+ * @brief Template for the implementation of the LteHandoverManagementSapProvider
  *        as a member of an owner class of type C to which all methods are
  *        forwarded.
  */
@@ -114,7 +103,7 @@ class MemberLteHandoverManagementSapProvider : public LteHandoverManagementSapPr
     /**
      * Constructor
      *
-     * \param owner the owner class
+     * @param owner the owner class
      */
     MemberLteHandoverManagementSapProvider(C* owner);
 
@@ -144,7 +133,7 @@ MemberLteHandoverManagementSapProvider<C>::ReportUeMeas(uint16_t rnti,
 }
 
 /**
- * \brief Template for the implementation of the LteHandoverManagementSapUser
+ * @brief Template for the implementation of the LteHandoverManagementSapUser
  *        as a member of an owner class of type C to which all methods are
  *        forwarded.
  */
@@ -155,7 +144,7 @@ class MemberLteHandoverManagementSapUser : public LteHandoverManagementSapUser
     /**
      * Constructor
      *
-     * \param owner the owner class
+     * @param owner the owner class
      */
     MemberLteHandoverManagementSapUser(C* owner);
 

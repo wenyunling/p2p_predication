@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 CTTC
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Jaume Nin <jaume.nin@cttc.es>
  *         Nicola Baldo <nbaldo@cttc.es>
@@ -37,8 +26,8 @@ class PdcpTag : public Tag
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -49,7 +38,7 @@ class PdcpTag : public Tag
     PdcpTag();
     /**
      * Create an PDCP tag with the given senderTimestamp
-     * \param senderTimestamp the time stamp
+     * @param senderTimestamp the time stamp
      */
     PdcpTag(Time senderTimestamp);
 

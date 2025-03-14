@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2010 INRIA
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Mathieu Lacage <mathieu.lacage@cutebugs.net>
  */
@@ -25,13 +14,13 @@
 using namespace ns3;
 
 /**
- * \ingroup network
- * \defgroup network-test Network module unit tests
+ * @ingroup network
+ * @defgroup network-test Network module unit tests
  */
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
  * Buffer unit tests.
  */
@@ -40,9 +29,9 @@ class BufferTest : public TestCase
   private:
     /**
      * Checks the buffer content
-     * \param b The buffer to check
-     * \param n The number of bytes to check
-     * \param array The array of bytes that should be in the buffer
+     * @param b The buffer to check
+     * @param n The number of bytes to check
+     * @param array The array of bytes that should be in the buffer
      */
     void EnsureWrittenBytes(Buffer b, uint32_t n, uint8_t array[]);
 
@@ -396,10 +385,10 @@ BufferTest::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Buffer TestSuite
+ * @brief Buffer TestSuite
  */
 class BufferTestSuite : public TestSuite
 {
@@ -408,9 +397,9 @@ class BufferTestSuite : public TestSuite
 };
 
 BufferTestSuite::BufferTestSuite()
-    : TestSuite("buffer", UNIT)
+    : TestSuite("buffer", Type::UNIT)
 {
-    AddTestCase(new BufferTest, TestCase::QUICK);
+    AddTestCase(new BufferTest, TestCase::Duration::QUICK);
 }
 
 static BufferTestSuite g_bufferTestSuite; //!< Static variable for test initialization

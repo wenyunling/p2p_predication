@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2009 University of Washington
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  */
 
 #include "tap-bridge.h"
@@ -100,7 +89,8 @@ TapBridge::GetTypeId()
                           "when in ConfigureLocal mode.",
                           Ipv4AddressValue("255.255.255.255"),
                           MakeIpv4AddressAccessor(&TapBridge::m_tapGateway),
-                          MakeIpv4AddressChecker())
+                          MakeIpv4AddressChecker(),
+                          TypeId::SupportLevel::OBSOLETE)
             .AddAttribute(
                 "IpAddress",
                 "The IP address to assign to the tap device, when in ConfigureLocal mode.  "
@@ -385,7 +375,6 @@ TapBridge::CreateTap()
         // quite a bit of information.
         //
         // -d<device-name> The name of the tap device we want to create;
-        // -g<gateway-address> The IP address to use as the default gateway;
         // -i<IP-address> The IP address to assign to the new tap device;
         // -m<MAC-address> The MAC-48 address to assign to the new tap device;
         // -n<network-mask> The network mask to assign to the new tap device;
@@ -451,13 +440,6 @@ TapBridge::CreateTap()
         ossDeviceName << "-d" << m_tapDeviceName;
 
         //
-        // The gateway-address is something we can't derive, so we rely on it
-        // being configured via an Attribute through the helper.
-        //
-        std::ostringstream ossGateway;
-        ossGateway << "-g" << m_tapGateway;
-
-        //
         // For flexibility, we do allow a client to override any of the values
         // above via attributes, so only use our found values if the Attribute
         // is not equal to its default value (empty string or broadcast address).
@@ -517,9 +499,9 @@ TapBridge::CreateTap()
         ossPath << "-p" << path;
 
         NS_LOG_DEBUG("Executing: " << TAP_CREATOR << " " << ossDeviceName.str() << " "
-                                   << ossGateway.str() << " " << ossIp.str() << " " << ossMac.str()
-                                   << " " << ossNetmask.str() << " " << ossMode.str() << " "
-                                   << ossPath.str() << " " << ossVerbose.str());
+                                   << ossIp.str() << " " << ossMac.str() << " " << ossNetmask.str()
+                                   << " " << ossMode.str() << " " << ossPath.str() << " "
+                                   << ossVerbose.str());
 
         //
         // Execute the socket creation process image.
@@ -527,13 +509,12 @@ TapBridge::CreateTap()
         status = ::execlp(TAP_CREATOR,
                           TAP_CREATOR,                 // argv[0] (filename)
                           ossDeviceName.str().c_str(), // argv[1] (-d<device name>)
-                          ossGateway.str().c_str(),    // argv[2] (-g<gateway>)
-                          ossIp.str().c_str(),         // argv[3] (-i<IP address>)
-                          ossMac.str().c_str(),        // argv[4] (-m<MAC address>)
-                          ossNetmask.str().c_str(),    // argv[5] (-n<net mask>)
-                          ossMode.str().c_str(),       // argv[6] (-o<operating mode>)
-                          ossPath.str().c_str(),       // argv[7] (-p<path>)
-                          ossVerbose.str().c_str(),    // argv[8] (-v)
+                          ossIp.str().c_str(),         // argv[2] (-i<IP address>)
+                          ossMac.str().c_str(),        // argv[3] (-m<MAC address>)
+                          ossNetmask.str().c_str(),    // argv[4] (-n<net mask>)
+                          ossMode.str().c_str(),       // argv[5] (-o<operating mode>)
+                          ossPath.str().c_str(),       // argv[6] (-p<path>)
+                          ossVerbose.str().c_str(),    // argv[7] (-v)
                           (char*)nullptr);
 
         //
@@ -608,7 +589,7 @@ TapBridge::CreateTap()
         // an "ancillary element" but the msghdr uses the control message termimology
         // so we call it "control."
         //
-        size_t msg_size = sizeof(int);
+        constexpr size_t msg_size = sizeof(int);
         char control[CMSG_SPACE(msg_size)];
 
         //
@@ -731,7 +712,7 @@ TapBridge::ReadCallback(uint8_t* buf, ssize_t len)
     NS_LOG_INFO("TapBridge::ReadCallback(): Received packet on node " << m_nodeId);
     NS_LOG_INFO("TapBridge::ReadCallback(): Scheduling handler");
     Simulator::ScheduleWithContext(m_nodeId,
-                                   Seconds(0.0),
+                                   Seconds(0),
                                    MakeEvent(&TapBridge::ForwardToBridgedDevice, this, buf, len));
 }
 
@@ -799,7 +780,7 @@ TapBridge::ForwardToBridgedDevice(uint8_t* buf, ssize_t len)
         //
         // Packets we are going to forward should not be from a broadcast src
         //
-        NS_ASSERT_MSG(Mac48Address::ConvertFrom(src) != Mac48Address("ff:ff:ff:ff:ff:ff"),
+        NS_ASSERT_MSG(Mac48Address::ConvertFrom(src) != Mac48Address::GetBroadcast(),
                       "TapBridge::ForwardToBridgedDevice:  Source addr is broadcast");
         if (!m_ns3AddressRewritten)
         {
@@ -1156,7 +1137,7 @@ Address
 TapBridge::GetBroadcast() const
 {
     NS_LOG_FUNCTION(this);
-    return Mac48Address("ff:ff:ff:ff:ff:ff");
+    return Mac48Address::GetBroadcast();
 }
 
 bool

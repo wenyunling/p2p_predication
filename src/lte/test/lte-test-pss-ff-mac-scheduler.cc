@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2011 Centre Tecnologic de Telecomunicacions de Catalunya (CTTC)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Author: Marco Miozzo <marco.miozzo@cttc.es>,
  *         Nicola Baldo <nbaldo@cttc.es>
@@ -21,38 +10,38 @@
 
 #include "lte-test-pss-ff-mac-scheduler.h"
 
+#include "ns3/boolean.h"
+#include "ns3/constant-position-mobility-model.h"
 #include "ns3/double.h"
+#include "ns3/enum.h"
+#include "ns3/eps-bearer.h"
+#include "ns3/ff-mac-scheduler.h"
 #include "ns3/internet-module.h"
 #include "ns3/ipv4-global-routing-helper.h"
+#include "ns3/log.h"
+#include "ns3/lte-enb-net-device.h"
+#include "ns3/lte-enb-phy.h"
+#include "ns3/lte-helper.h"
+#include "ns3/lte-ue-net-device.h"
+#include "ns3/lte-ue-phy.h"
+#include "ns3/lte-ue-rrc.h"
+#include "ns3/mobility-helper.h"
+#include "ns3/net-device-container.h"
 #include "ns3/network-module.h"
+#include "ns3/node-container.h"
+#include "ns3/object.h"
 #include "ns3/packet-sink-helper.h"
+#include "ns3/packet.h"
 #include "ns3/point-to-point-epc-helper.h"
 #include "ns3/point-to-point-helper.h"
+#include "ns3/ptr.h"
 #include "ns3/radio-bearer-stats-calculator.h"
+#include "ns3/simulator.h"
+#include "ns3/spectrum-error-model.h"
+#include "ns3/spectrum-interference.h"
 #include "ns3/string.h"
+#include "ns3/test.h"
 #include "ns3/udp-client-server-helper.h"
-#include <ns3/boolean.h>
-#include <ns3/constant-position-mobility-model.h>
-#include <ns3/enum.h>
-#include <ns3/eps-bearer.h>
-#include <ns3/ff-mac-scheduler.h>
-#include <ns3/log.h>
-#include <ns3/lte-enb-net-device.h>
-#include <ns3/lte-enb-phy.h>
-#include <ns3/lte-helper.h>
-#include <ns3/lte-ue-net-device.h>
-#include <ns3/lte-ue-phy.h>
-#include <ns3/lte-ue-rrc.h>
-#include <ns3/mobility-helper.h>
-#include <ns3/net-device-container.h>
-#include <ns3/node-container.h>
-#include <ns3/object.h>
-#include <ns3/packet.h>
-#include <ns3/ptr.h>
-#include <ns3/simulator.h>
-#include <ns3/spectrum-error-model.h>
-#include <ns3/spectrum-interference.h>
-#include <ns3/test.h>
 
 #include <iostream>
 #include <sstream>
@@ -63,7 +52,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("LenaTestPssFfMacScheduler");
 
 LenaTestPssFfMacSchedulerSuite::LenaTestPssFfMacSchedulerSuite()
-    : TestSuite("lte-pss-ff-mac-scheduler", SYSTEM)
+    : TestSuite("lte-pss-ff-mac-scheduler", Type::SYSTEM)
 {
     NS_LOG_INFO("creating LenaTestPssFfMacSchedulerSuite");
 
@@ -93,11 +82,11 @@ LenaTestPssFfMacSchedulerSuite::LenaTestPssFfMacSchedulerSuite()
     //  6 users -> 4 PRB at Itbs 26 -> 373 -> 373000 > 232000 -> throughput = 232000 bytes/sec
     //  12 users -> 2 PRB at Itbs 26 -> 185 -> 185000 < 232000 -> throughput = 185000 bytes/sec
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(1, 0, 232000, 232000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(3, 0, 232000, 232000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(6, 0, 232000, 232000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
 
     // AddTestCase (new LenaPssFfMacSchedulerTestCase1 (12,0,183000,185000,200,1,errorModel));//
     // simulation time = 1.5, otherwise, ul test will fail
@@ -120,11 +109,11 @@ LenaTestPssFfMacSchedulerSuite::LenaTestPssFfMacSchedulerSuite()
     // 12 users -> 3 PRB at Itbs 13 -> 93  bytes * 8/12 UE/TTI  -> 62000 < 232000 -> throughput =
     // 62000  bytes/sec
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(1, 4800, 232000, 232000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(3, 4800, 232000, 232000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(6, 4800, 230500, 125000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     // AddTestCase (new LenaPssFfMacSchedulerTestCase1 (12,4800,115250,62000,200,1,errorModel)); //
     // simulation time = 1.5, otherwise, ul test will fail
 
@@ -147,11 +136,11 @@ LenaTestPssFfMacSchedulerSuite::LenaTestPssFfMacSchedulerSuite()
     // 12 users -> 3 PRB at Itbs 11 -> 73 bytes * 8/12 UE/TTI -> 48667 < 232000 -> throughput =
     // 48667 bytes/sec
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(1, 6000, 232000, 232000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(3, 6000, 232000, 201000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(6, 6000, 198500, 97000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     // AddTestCase (new LenaPssFfMacSchedulerTestCase1 (12,6000,99250,48667,200,1, errorModel)); //
     // simulation time = 1.5, otherwise, ul test will fail
 
@@ -173,18 +162,18 @@ LenaTestPssFfMacSchedulerSuite::LenaTestPssFfMacSchedulerSuite()
     // 12 users -> 3 PRB at Itbs 8 -> 49 bytes * 8/12 UE/TTI -> 32667 < 232000 -> throughput = 32667
     // bytes/sec
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(1, 10000, 232000, 232000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(3, 10000, 232000, 137000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(6, 10000, 129166, 67000, 200, 1, errorModel),
-                TestCase::EXTENSIVE);
+                TestCase::Duration::EXTENSIVE);
     // AddTestCase (new LenaPssFfMacSchedulerTestCase1 (12,10000,64583,32667,200,1,errorModel));//
     // simulation time = 1.5, otherwise, ul test will fail
 
     // DOWNLINK - DISTANCE 100000 -> CQI == 0 -> out of range -> 0 bytes/sec
     // UPLINK - DISTANCE 100000 -> CQI == 0 -> out of range -> 0 bytes/sec
     AddTestCase(new LenaPssFfMacSchedulerTestCase1(1, 100000, 0, 0, 200, 1, errorModel),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // Test Case 2: homogeneous flow test in PSS (different distance)
     // Traffic1 info
@@ -209,7 +198,7 @@ LenaTestPssFfMacSchedulerSuite::LenaTestPssFfMacSchedulerSuite()
     estThrPssDl1.push_back(132000); // User 2 estimated TTI throughput from PSS
     estThrPssDl1.push_back(132000); // User 3 estimated TTI throughput from PSS
     AddTestCase(new LenaPssFfMacSchedulerTestCase2(dist1, estThrPssDl1, packetSize1, 1, errorModel),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // Traffic2 info
     //   UDP traffic: payload size = 200 bytes, interval = 1 ms
@@ -234,7 +223,7 @@ LenaTestPssFfMacSchedulerSuite::LenaTestPssFfMacSchedulerSuite()
     estThrPssDl2.push_back(230000); // User 2 estimated TTI throughput from PSS
     estThrPssDl2.push_back(230000); // User 3 estimated TTI throughput from PSS
     AddTestCase(new LenaPssFfMacSchedulerTestCase2(dist2, estThrPssDl2, packetSize2, 1, errorModel),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     // Test Case 3: heterogeneous flow test in PSS
     //   UDP traffic: payload size = [100,200,300] bytes, interval = 1 ms
@@ -256,11 +245,11 @@ LenaTestPssFfMacSchedulerSuite::LenaTestPssFfMacSchedulerSuite()
     estThrPssDl3.push_back(232000); // User 1 estimated TTI throughput from PSS
     estThrPssDl3.push_back(332000); // User 2 estimated TTI throughput from PSS
     AddTestCase(new LenaPssFfMacSchedulerTestCase2(dist3, estThrPssDl3, packetSize3, 1, errorModel),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LenaTestPssFfMacSchedulerSuite lenaTestPssFfMacSchedulerSuite;
