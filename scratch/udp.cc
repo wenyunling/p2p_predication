@@ -313,15 +313,21 @@ int main(int argc, char* argv[]) {
     p2pEdge.SetDeviceAttribute("DataRate", StringValue("200Mbps"));
     p2pEdge.SetChannelAttribute("Delay", StringValue("10ms"));
 
-    // 错误模型配置
+    // error mode 
     Ptr<RateErrorModel> errorCore = CreateObject<RateErrorModel>();
+    errorCore->SetAttribute("ErrorUnit", StringValue("ERROR_UNIT_PACKET"));
     errorCore->SetAttribute("ErrorRate", DoubleValue(0.001)); // 0.1%
+    p2pCore.SetDeviceAttribute("ReceiveErrorModel", PointerValue(errorCore));
     
-    Ptr<RateErrorModel> errorMid = CreateObject<RateErrorModel>();
+    Ptr<RateErrorModel> errorMid = CreateObject<RateErrorModel>();  
+    errorMid->SetAttribute("ErrorUnit", StringValue("ERROR_UNIT_PACKET"));
     errorMid->SetAttribute("ErrorRate", DoubleValue(0.01));   // 1%
-    
+    p2pMid.SetDeviceAttribute("ReceiveErrorModel", PointerValue(errorMid));
+
     Ptr<RateErrorModel> errorEdge = CreateObject<RateErrorModel>();
+    errorEdge->SetAttribute("ErrorUnit", StringValue("ERROR_UNIT_PACKET"));
     errorEdge->SetAttribute("ErrorRate", DoubleValue(0.05));  // 5%
+    p2pEdge.SetDeviceAttribute("ReceiveErrorModel", PointerValue(errorEdge));
 
     Ipv4AddressHelper address("10.1.0.0", "255.255.255.0");
     NetDeviceContainer allDevices;
@@ -331,9 +337,6 @@ int main(int argc, char* argv[]) {
         for (uint32_t j = i + 1; j < groupCore.GetN(); ++j) {
             NodeContainer pair(groupCore.Get(i), groupCore.Get(j));
             NetDeviceContainer dev = p2pCore.Install(pair);
-            
-            dev.Get(0)->SetAttribute("ReceiveErrorModel", PointerValue(errorCore));
-            dev.Get(1)->SetAttribute("ReceiveErrorModel", PointerValue(errorCore));            
             address.Assign(dev);
             address.NewNetwork();
             allDevices.Add(dev);
@@ -345,8 +348,6 @@ int main(int argc, char* argv[]) {
         NodeContainer pair(groupCore.Get(i), groupMid.Get(i));
         NetDeviceContainer dev = p2pMid.Install(pair);
         
-        dev.Get(0)->SetAttribute("ReceiveErrorModel", PointerValue(errorCore));
-        dev.Get(1)->SetAttribute("ReceiveErrorModel", PointerValue(errorCore));        
         address.Assign(dev);
         address.NewNetwork();
         allDevices.Add(dev);
